@@ -77,16 +77,14 @@ export default function MentorCard({
         if (!showSelectButton && onClickDetail) onClickDetail();
       }}
     >
-      {/* 상단: 이름 + 직업 */}
-      <div className="flex items-start justify-between mb-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <span className="text-xl">{getCategoryIcon(mentor.category)}</span>
-            <h3 className="text-lg font-bold text-gray-800 truncate">{mentor.name}</h3>
-          </div>
-          <p className="text-primary-600 font-medium text-sm">{mentor.jobTitle || mentor.job}</p>
+      {/* 상단: 이름 + 카테고리 */}
+      <div className="mb-3">
+        <div className="flex items-center gap-2 mb-1">
+          <span className="text-xl">{getCategoryIcon(mentor.category)}</span>
+          <h3 className="text-lg font-bold text-gray-800 truncate">{mentor.name}</h3>
         </div>
-        <span className={`category-badge shrink-0 ml-2 ${getCategoryColor(mentor.category)}`}>
+        <p className="text-primary-600 font-medium text-sm mb-2">{mentor.jobTitle || mentor.job}</p>
+        <span className={`category-badge inline-block max-w-full truncate ${getCategoryColor(mentor.category)}`}>
           {getShortCategoryLabel(mentor.category)}
         </span>
       </div>
