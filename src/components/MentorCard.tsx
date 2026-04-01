@@ -82,8 +82,8 @@ export default function MentorCard({
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xl">{getCategoryIcon(mentor.category)}</span>
           <h3 className="text-lg font-bold text-gray-800 truncate">{mentor.name}</h3>
+          <p className="text-primary-600 font-medium text-sm">{mentor.jobTitle || mentor.job}</p>
         </div>
-        <p className="text-primary-600 font-medium text-sm mb-2">{mentor.jobTitle || mentor.job}</p>
         <span className={`category-badge inline-block max-w-full truncate ${getCategoryColor(mentor.category)}`}>
           {getShortCategoryLabel(mentor.category)}
         </span>
