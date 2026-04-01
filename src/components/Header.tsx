@@ -26,12 +26,12 @@ export default function Header() {
           </Link>
 
           {/* 네비게이션 */}
-          <nav className="flex items-center gap-1 sm:gap-2">
+          <nav className="flex items-center gap-0.5 sm:gap-2">
             {navItems.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
-                className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                className={`px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors whitespace-nowrap ${
                   pathname === item.href
                     ? 'bg-primary-100 text-primary-700'
                     : 'text-gray-600 hover:bg-warm-100 hover:text-gray-900'

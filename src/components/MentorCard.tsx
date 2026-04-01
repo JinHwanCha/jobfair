@@ -80,10 +80,10 @@ export default function MentorCard({
       {/* 상단: 이름 + 카테고리 */}
       <div className="mb-3">
         <div className="flex items-center gap-2 mb-1">
-          <span className="text-xl">{getCategoryIcon(mentor.category)}</span>
+          <span className="text-xl shrink-0">{getCategoryIcon(mentor.category)}</span>
           <h3 className="text-lg font-bold text-gray-800 truncate">{mentor.name}</h3>
-          <p className="text-primary-600 font-medium text-sm">{mentor.jobTitle || mentor.job}</p>
         </div>
+        <p className="text-primary-600 font-medium text-sm truncate">{mentor.jobTitle || mentor.job}</p>
         <span className={`category-badge inline-block max-w-full truncate ${getCategoryColor(mentor.category)}`}>
           {getShortCategoryLabel(mentor.category)}
         </span>

@@ -102,7 +102,7 @@ export default function MentorsPage() {
           </div>
 
           {/* 카테고리 필터 */}
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {categories.map((category) => (
               <button
                 key={category}

@@ -9,6 +9,11 @@
   --background-rgb: 253, 250, 247;
 }
 
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
 body {
   color: rgb(var(--foreground-rgb));
   background: rgb(var(--background-rgb));
@@ -49,7 +54,7 @@ body {
   }
   
   .mentor-card {
-    @apply bg-white rounded-2xl shadow-md p-5 border border-warm-200 hover:shadow-lg hover:border-primary-200 transition-all duration-200;
+    @apply bg-white rounded-2xl shadow-md p-5 border border-warm-200 hover:shadow-lg hover:border-primary-200 transition-all duration-200 overflow-hidden;
   }
   
   .time-badge {
