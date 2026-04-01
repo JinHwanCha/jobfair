@@ -52,7 +52,7 @@ export default function MentorModal({ mentor, onClose }: MentorModalProps) {
         <div className="px-6 py-5 space-y-5">
           {/* 직업 정보 */}
           <div className="bg-gradient-to-r from-primary-50 to-warm-100 rounded-xl p-4">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center justify-between flex-wrap gap-1">
               <p className="text-lg font-bold text-primary-700">{mentor.jobTitle || mentor.job}</p>
               <span className={`category-badge ${getCategoryColor(mentor.category)}`}>
                 {getShortCategoryLabel(mentor.category)}
