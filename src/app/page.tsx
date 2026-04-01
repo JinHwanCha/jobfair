@@ -79,14 +79,40 @@ export default async function HomePage() {
               </div>
               <h3 className="font-bold text-gray-800 mb-2">대상</h3>
               <p className="text-gray-600">진로에 관심 있는</p>
-              <p className="text-gray-600">청소년 누구나</p>
+              <p className="text-gray-600">분들 누구나</p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 진행 방식 섹션 */}
+      {/* 멘토 미리보기 섹션 */}
       <section className="py-12 sm:py-16 bg-warm-100">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="section-title mb-0">참여 멘토</h2>
+            <Link
+              href="/mentors"
+              className="text-primary-600 font-medium hover:text-primary-700"
+            >
+              전체 보기 →
+            </Link>
+          </div>
+          
+          <MentorPreview mentors={previewMentors} />
+
+          {mentors.length > 0 && (
+            <div className="text-center mt-8">
+              <Link href="/mentors" className="btn-secondary inline-block">
+                {mentors.length}명의 멘토 모두 보기
+              </Link>
+            </div>
+          )}
+        </div>
+      </section>
+      
+
+      {/* 진행 방식 섹션 */}
+      <section className="py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4">
           <h2 className="section-title text-center">진행 방식</h2>
           
@@ -127,31 +153,6 @@ export default async function HomePage() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* 멘토 미리보기 섹션 */}
-      <section className="py-12 sm:py-16">
-        <div className="max-w-4xl mx-auto px-4">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="section-title mb-0">참여 멘토</h2>
-            <Link
-              href="/mentors"
-              className="text-primary-600 font-medium hover:text-primary-700"
-            >
-              전체 보기 →
-            </Link>
-          </div>
-          
-          <MentorPreview mentors={previewMentors} />
-
-          {mentors.length > 0 && (
-            <div className="text-center mt-8">
-              <Link href="/mentors" className="btn-secondary inline-block">
-                {mentors.length}명의 멘토 모두 보기
-              </Link>
-            </div>
-          )}
         </div>
       </section>
 
