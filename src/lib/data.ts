@@ -224,6 +224,19 @@ export async function importData(data: { applicants: Applicant[]; assignments: A
   }
 }
 
+// 전체 데이터 삭제 (신청자 + 배정 + 멘토슬롯)
+export async function deleteAllData(): Promise<void> {
+  await supabase.from('assignments').delete().neq('applicant_id', '');
+  await supabase.from('mentor_slots').delete().neq('mentor_id', '');
+  await supabase.from('applicants').delete().neq('id', '');
+}
+
+// 개별 신청자 삭제
+export async function deleteApplicant(applicantId: string): Promise<void> {
+  await supabase.from('assignments').delete().eq('applicant_id', applicantId);
+  await supabase.from('applicants').delete().eq('id', applicantId);
+}
+
 // --- DB row ↔ App type 변환 ---
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

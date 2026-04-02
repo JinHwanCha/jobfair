@@ -4,6 +4,17 @@ import { useState, useEffect } from 'react';
 import { Applicant, Assignment, Mentor } from '@/types';
 
 export default function AdminPage() {
+
+  const extractShortCategory = (category: string): string => {
+    const known = [
+      'Building', 'Leading', 'Operating', 'Teaching',
+      'Connecting', 'Creating', 'Healing', 'Influencing',
+      'Protecting Justice', 'Serving',
+    ];
+    const found = known.find(k => category.includes(k));
+    return found || '기타';
+  };
+
   const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors'>('applicants');
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -11,6 +22,7 @@ export default function AdminPage() {
   const [mentorCounts, setMentorCounts] = useState<Record<string, { choice1: number; choice2: number; choice3: number; total: number }>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isAssigning, setIsAssigning] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
   const [message, setMessage] = useState('');
 
   // 데이터 로드
@@ -65,6 +77,65 @@ export default function AdminPage() {
     }
   };
 
+  // 전체 데이터 삭제
+  const deleteAllData = async () => {
+    const code = prompt('관리자 코드를 입력하세요:');
+    if (!code) return;
+
+    if (!confirm('정말로 모든 신청자/배정 데이터를 삭제하시겠습니까?\n이 작업은 되돌릴 수 없습니다.')) {
+      return;
+    }
+
+    setIsDeleting(true);
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/admin', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code }),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        setMessage('모든 데이터가 삭제되었습니다.');
+        loadData();
+      } else {
+        setMessage(`오류: ${result.error}`);
+      }
+    } catch {
+      setMessage('삭제 중 오류가 발생했습니다.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
+  // 개별 신청자 삭제
+  const deleteApplicant = async (applicantId: string, applicantName: string) => {
+    const code = prompt(`"${applicantName}" 신청자를 삭제합니다. 관리자 코드를 입력하세요:`);
+    if (!code) return;
+
+    setMessage('');
+
+    try {
+      const response = await fetch('/api/admin', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, applicantId }),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        setMessage(`"${applicantName}" 신청자가 삭제되었습니다.`);
+        loadData();
+      } else {
+        setMessage(`오류: ${result.error}`);
+      }
+    } catch {
+      setMessage('삭제 중 오류가 발생했습니다.');
+    }
+  };
+
   // 데이터 내보내기
   const exportData = async () => {
     try {
@@ -109,6 +180,13 @@ export default function AdminPage() {
               </p>
             </div>
             <div className="flex gap-2">
+              <button
+                onClick={deleteAllData}
+                disabled={isDeleting || applicants.length === 0}
+                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium disabled:opacity-50"
+              >
+                {isDeleting ? '삭제 중...' : '전체 삭제'}
+              </button>
               <button
                 onClick={exportData}
                 className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium"
@@ -187,6 +265,7 @@ export default function AdminPage() {
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">2지망</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">3지망</th>
                     <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
+                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">삭제</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200">
@@ -206,6 +285,14 @@ export default function AdminPage() {
                       </td>
                       <td className="px-4 py-3 text-sm text-gray-500">
                         {new Date(applicant.createdAt).toLocaleString('ko-KR')}
+                      </td>
+                      <td className="px-4 py-3 text-center">
+                        <button
+                          onClick={() => deleteApplicant(applicant.id, applicant.name)}
+                          className="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded hover:bg-red-50"
+                        >
+                          삭제
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -298,7 +385,7 @@ export default function AdminPage() {
                       <p className="text-sm text-primary-600">{mentor.job}</p>
                     </div>
                     <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
-                      {mentor.category}
+                      {extractShortCategory(mentor.category)}
                     </span>
                   </div>
                   
