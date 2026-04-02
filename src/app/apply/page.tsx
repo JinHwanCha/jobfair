@@ -168,7 +168,7 @@ export default function ApplyPage() {
         </div>
 
         {/* 진행 상태 표시 */}
-        <div className="flex items-center justify-center gap-2 mb-8">
+        <div className="flex items-center justify-center mb-8">
           {[1, 2, 3].map((num) => (
             <div key={num} className="flex items-center">
               <div
