@@ -5,7 +5,7 @@ import { runAutoAssignment } from '@/lib/assignment';
 export async function POST() {
   try {
     const mentors = await getMentors();
-    const applicants = getAllApplicants();
+    const applicants = await getAllApplicants();
 
     if (applicants.length === 0) {
       return NextResponse.json({
@@ -18,8 +18,8 @@ export async function POST() {
     const { assignments, mentorSlots } = runAutoAssignment(applicants, mentors);
 
     // 결과 저장
-    setAssignments(assignments);
-    setMentorSlots(mentorSlots);
+    await setAssignments(assignments);
+    await setMentorSlots(mentorSlots);
 
     return NextResponse.json({
       success: true,

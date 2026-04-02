@@ -1,0 +1,48 @@
+-- Supabase SQL: 직업박람회 테이블 생성
+-- Supabase Dashboard > SQL Editor 에서 실행하세요.
+
+-- 신청자 테이블
+CREATE TABLE IF NOT EXISTS applicants (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  birth_date TEXT NOT NULL,
+  phone4 TEXT NOT NULL,
+  choice1 TEXT NOT NULL,
+  choice2 TEXT NOT NULL,
+  choice3 TEXT NOT NULL,
+  agreed_to_terms BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 배정 결과 테이블
+CREATE TABLE IF NOT EXISTS assignments (
+  applicant_id TEXT PRIMARY KEY,
+  applicant_name TEXT NOT NULL,
+  phone4 TEXT NOT NULL,
+  time1 JSONB,
+  time2 JSONB,
+  time3 JSONB
+);
+
+-- 멘토 슬롯 테이블
+CREATE TABLE IF NOT EXISTS mentor_slots (
+  mentor_id TEXT PRIMARY KEY,
+  time1 JSONB DEFAULT '[]'::JSONB,
+  time2 JSONB DEFAULT '[]'::JSONB,
+  time3 JSONB DEFAULT '[]'::JSONB
+);
+
+-- 인덱스
+CREATE INDEX IF NOT EXISTS idx_applicants_name_phone4 ON applicants (name, phone4);
+CREATE INDEX IF NOT EXISTS idx_assignments_name_phone4 ON assignments (applicant_name, phone4);
+
+-- RLS 비활성화 (서버 사이드 서비스 키 사용)
+ALTER TABLE applicants ENABLE ROW LEVEL SECURITY;
+ALTER TABLE assignments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE mentor_slots ENABLE ROW LEVEL SECURITY;
+
+-- 서비스 키 전체 접근 정책
+CREATE POLICY "Service role full access" ON applicants FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON assignments FOR ALL USING (true) WITH CHECK (true);
+CREATE POLICY "Service role full access" ON mentor_slots FOR ALL USING (true) WITH CHECK (true);

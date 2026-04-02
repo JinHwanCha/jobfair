@@ -58,7 +58,11 @@ export default function MentorsPage() {
       mentor.job.toLowerCase().includes(q) ||
       mentor.field.toLowerCase().includes(q) ||
       mentor.jobTitle.toLowerCase().includes(q) ||
-      mentor.category.toLowerCase().includes(q);
+      mentor.category.toLowerCase().includes(q) ||
+      mentor.experience.toLowerCase().includes(q) ||
+      mentor.mentoringType.toLowerCase().includes(q) ||
+      (mentor.advice && mentor.advice.toLowerCase().includes(q)) ||
+      (mentor.bibleVerse && mentor.bibleVerse.toLowerCase().includes(q));
     return categoryMatch && searchMatch;
   });
 

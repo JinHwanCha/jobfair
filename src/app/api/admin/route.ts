@@ -4,9 +4,9 @@ import { getAllApplicants, getAllAssignments, getMentorApplicationCounts, getMen
 export async function GET() {
   try {
     const mentors = await getMentors();
-    const applicants = getAllApplicants();
-    const assignments = getAllAssignments();
-    const mentorCounts = getMentorApplicationCounts(mentors);
+    const applicants = await getAllApplicants();
+    const assignments = await getAllAssignments();
+    const mentorCounts = await getMentorApplicationCounts(mentors);
 
     return NextResponse.json({
       success: true,

@@ -3,7 +3,7 @@ import { exportData } from '@/lib/data';
 
 export async function GET() {
   try {
-    const data = exportData();
+    const data = await exportData();
 
     return NextResponse.json({
       success: true,
