@@ -24,6 +24,8 @@ export default function AdminPage() {
   const [isAssigning, setIsAssigning] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [message, setMessage] = useState('');
+  const [mentorSearch, setMentorSearch] = useState('');
+  const [mentorCategory, setMentorCategory] = useState('전체');
 
   // 데이터 로드
   const loadData = async () => {
@@ -172,33 +174,33 @@ export default function AdminPage() {
       {/* 헤더 */}
       <header className="bg-white shadow-sm">
         <div className="max-w-6xl mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <div>
-              <h1 className="text-xl font-bold text-gray-800">직업박람회 관리</h1>
+              <h1 className="text-lg sm:text-xl font-bold text-gray-800">직업박람회 관리</h1>
               <p className="text-sm text-gray-500">
                 총 신청자: {applicants.length}명 | 배정 완료: {assignments.length}명
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               <button
                 onClick={deleteAllData}
                 disabled={isDeleting || applicants.length === 0}
-                className="px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-sm font-medium disabled:opacity-50"
+                className="px-3 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 text-xs sm:text-sm font-medium disabled:opacity-50"
               >
                 {isDeleting ? '삭제 중...' : '전체 삭제'}
               </button>
               <button
                 onClick={exportData}
-                className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-sm font-medium"
+                className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-xs sm:text-sm font-medium"
               >
-                데이터 내보내기
+                내보내기
               </button>
               <button
                 onClick={runAssignment}
                 disabled={isAssigning || applicants.length === 0}
-                className="px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-sm font-medium disabled:opacity-50"
+                className="px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600 text-xs sm:text-sm font-medium disabled:opacity-50"
               >
-                {isAssigning ? '배정 중...' : '자동 배정 실행'}
+                {isAssigning ? '배정 중...' : '자동 배정'}
               </button>
             </div>
           </div>
@@ -214,37 +216,37 @@ export default function AdminPage() {
       </header>
 
       {/* 탭 네비게이션 */}
-      <div className="max-w-6xl mx-auto px-4 mt-6">
-        <div className="flex gap-2 bg-white rounded-lg p-1 shadow-sm">
+      <div className="max-w-6xl mx-auto px-4 mt-4 sm:mt-6">
+        <div className="flex gap-1 sm:gap-2 bg-white rounded-lg p-1 shadow-sm">
           <button
             onClick={() => setActiveTab('applicants')}
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               activeTab === 'applicants'
                 ? 'bg-primary-500 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            신청자 목록 ({applicants.length})
+            신청자 ({applicants.length})
           </button>
           <button
             onClick={() => setActiveTab('assignments')}
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               activeTab === 'assignments'
                 ? 'bg-primary-500 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            배정 결과 ({assignments.length})
+            배정 ({assignments.length})
           </button>
           <button
             onClick={() => setActiveTab('mentors')}
-            className={`flex-1 py-2 px-4 rounded-lg text-sm font-medium transition-colors ${
+            className={`flex-1 py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
               activeTab === 'mentors'
                 ? 'bg-primary-500 text-white'
                 : 'text-gray-600 hover:bg-gray-100'
             }`}
           >
-            멘토별 현황 ({mentors.length})
+            멘토 ({mentors.length})
           </button>
         </div>
       </div>
@@ -253,129 +255,220 @@ export default function AdminPage() {
       <div className="max-w-6xl mx-auto px-4 py-6">
         {/* 신청자 목록 */}
         {activeTab === 'applicants' && (
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">생년월일</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">전화뒷자리</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">1지망</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">2지망</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">3지망</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
-                    <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">삭제</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {applicants.map((applicant) => (
-                    <tr key={applicant.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">{applicant.name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{applicant.birthDate}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500">{applicant.phone4}</td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {mentors.find(m => m.id === applicant.choice1)?.name || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {mentors.find(m => m.id === applicant.choice2)?.name || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {mentors.find(m => m.id === applicant.choice3)?.name || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {new Date(applicant.createdAt).toLocaleString('ko-KR')}
-                      </td>
-                      <td className="px-4 py-3 text-center">
-                        <button
-                          onClick={() => deleteApplicant(applicant.id, applicant.name)}
-                          className="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded hover:bg-red-50"
-                        >
-                          삭제
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {applicants.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  아직 신청자가 없습니다.
+          <>
+            {/* 모바일 카드 뷰 */}
+            <div className="sm:hidden space-y-3">
+              {applicants.map((applicant) => (
+                <div key={applicant.id} className="bg-white rounded-xl shadow-sm p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-gray-900">{applicant.name}</span>
+                    <button
+                      onClick={() => deleteApplicant(applicant.id, applicant.name)}
+                      className="text-red-500 text-xs font-medium px-2 py-1 rounded hover:bg-red-50"
+                    >
+                      삭제
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 text-xs text-gray-500">
+                    <span>생년월일: {applicant.birthDate}</span>
+                    <span>전화: {applicant.phone4}</span>
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-1">
+                    <span className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded-full">1지망: {mentors.find(m => m.id === applicant.choice1)?.name || '-'}</span>
+                    <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded-full">2지망: {mentors.find(m => m.id === applicant.choice2)?.name || '-'}</span>
+                    <span className="text-xs bg-purple-50 text-purple-700 px-2 py-0.5 rounded-full">3지망: {mentors.find(m => m.id === applicant.choice3)?.name || '-'}</span>
+                  </div>
+                  <p className="text-xs text-gray-400 mt-2">{new Date(applicant.createdAt).toLocaleString('ko-KR')}</p>
                 </div>
+              ))}
+              {applicants.length === 0 && (
+                <div className="text-center py-12 text-gray-500 bg-white rounded-xl">아직 신청자가 없습니다.</div>
               )}
             </div>
-          </div>
+            {/* 데스크톱 테이블 뷰 */}
+            <div className="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">생년월일</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">전화뒷자리</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">1지망</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">2지망</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">3지망</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
+                      <th className="px-4 py-3 text-center text-xs font-medium text-gray-500 uppercase">삭제</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {applicants.map((applicant) => (
+                      <tr key={applicant.id} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-900">{applicant.name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-500">{applicant.birthDate}</td>
+                        <td className="px-4 py-3 text-sm text-gray-500">{applicant.phone4}</td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {mentors.find(m => m.id === applicant.choice1)?.name || '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {mentors.find(m => m.id === applicant.choice2)?.name || '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {mentors.find(m => m.id === applicant.choice3)?.name || '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {new Date(applicant.createdAt).toLocaleString('ko-KR')}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            onClick={() => deleteApplicant(applicant.id, applicant.name)}
+                            className="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded hover:bg-red-50"
+                          >
+                            삭제
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {applicants.length === 0 && (
+                  <div className="text-center py-12 text-gray-500">아직 신청자가 없습니다.</div>
+                )}
+              </div>
+            </div>
+          </>
         )}
 
         {/* 배정 결과 */}
         {activeTab === 'assignments' && (
-          <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">1타임</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">장소</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">2타임</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">장소</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">3타임</th>
-                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">장소</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {assignments.map((assignment) => (
-                    <tr key={assignment.applicantId} className="hover:bg-gray-50">
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">
-                        {assignment.applicantName}
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        {assignment.time1 ? (
-                          <span className={assignment.time1.isOriginalChoice ? 'text-green-600' : 'text-orange-600'}>
-                            {assignment.time1.mentorName}
+          <>
+            {/* 모바일 카드 뷰 */}
+            <div className="sm:hidden space-y-3">
+              {assignments.map((assignment) => (
+                <div key={assignment.applicantId} className="bg-white rounded-xl shadow-sm p-4">
+                  <h4 className="font-bold text-gray-900 mb-3">{assignment.applicantName}</h4>
+                  <div className="space-y-2">
+                    {[
+                      { label: '1타임', slot: assignment.time1, color: 'blue' },
+                      { label: '2타임', slot: assignment.time2, color: 'green' },
+                      { label: '3타임', slot: assignment.time3, color: 'purple' },
+                    ].map(({ label, slot, color }) => (
+                      <div key={label} className="flex items-center justify-between text-sm">
+                        <span className={`text-xs bg-${color}-50 text-${color}-700 px-2 py-0.5 rounded-full font-medium`}>{label}</span>
+                        {slot ? (
+                          <span className={slot.isOriginalChoice ? 'text-green-600 font-medium' : 'text-orange-600 font-medium'}>
+                            {slot.mentorName}
                           </span>
-                        ) : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {assignment.time1?.location || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        {assignment.time2 ? (
-                          <span className={assignment.time2.isOriginalChoice ? 'text-green-600' : 'text-orange-600'}>
-                            {assignment.time2.mentorName}
-                          </span>
-                        ) : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {assignment.time2?.location || '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm">
-                        {assignment.time3 ? (
-                          <span className={assignment.time3.isOriginalChoice ? 'text-green-600' : 'text-orange-600'}>
-                            {assignment.time3.mentorName}
-                          </span>
-                        ) : '-'}
-                      </td>
-                      <td className="px-4 py-3 text-sm text-gray-500">
-                        {assignment.time3?.location || '-'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-              {assignments.length === 0 && (
-                <div className="text-center py-12 text-gray-500">
-                  아직 배정 결과가 없습니다. 자동 배정을 실행해주세요.
+                        ) : <span className="text-gray-400">-</span>}
+                      </div>
+                    ))}
+                  </div>
                 </div>
+              ))}
+              {assignments.length === 0 && (
+                <div className="text-center py-12 text-gray-500 bg-white rounded-xl">아직 배정 결과가 없습니다. 자동 배정을 실행해주세요.</div>
               )}
             </div>
-          </div>
+            {/* 데스크톱 테이블 뷰 */}
+            <div className="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">1타임</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">장소</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">2타임</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">장소</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">3타임</th>
+                      <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">장소</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {assignments.map((assignment) => (
+                      <tr key={assignment.applicantId} className="hover:bg-gray-50">
+                        <td className="px-4 py-3 text-sm font-medium text-gray-900">
+                          {assignment.applicantName}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {assignment.time1 ? (
+                            <span className={assignment.time1.isOriginalChoice ? 'text-green-600' : 'text-orange-600'}>
+                              {assignment.time1.mentorName}
+                            </span>
+                          ) : '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {assignment.time1?.location || '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {assignment.time2 ? (
+                            <span className={assignment.time2.isOriginalChoice ? 'text-green-600' : 'text-orange-600'}>
+                              {assignment.time2.mentorName}
+                            </span>
+                          ) : '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {assignment.time2?.location || '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm">
+                          {assignment.time3 ? (
+                            <span className={assignment.time3.isOriginalChoice ? 'text-green-600' : 'text-orange-600'}>
+                              {assignment.time3.mentorName}
+                            </span>
+                          ) : '-'}
+                        </td>
+                        <td className="px-4 py-3 text-sm text-gray-500">
+                          {assignment.time3?.location || '-'}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {assignments.length === 0 && (
+                  <div className="text-center py-12 text-gray-500">아직 배정 결과가 없습니다. 자동 배정을 실행해주세요.</div>
+                )}
+              </div>
+            </div>
+          </>
         )}
 
         {/* 멘토별 현황 */}
         {activeTab === 'mentors' && (
+          <>
+          {/* 검색 & 카테고리 필터 */}
+          <div className="mb-4 space-y-3">
+            <input
+              type="text"
+              placeholder="멘토 이름 또는 직업으로 검색..."
+              value={mentorSearch}
+              onChange={(e) => setMentorSearch(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 text-sm"
+            />
+            <div className="flex flex-wrap gap-2">
+              {['전체', ...Array.from(new Set(mentors.map(m => extractShortCategory(m.category)))).sort()].map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setMentorCategory(cat)}
+                  className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
+                    mentorCategory === cat
+                      ? 'bg-primary-600 text-white'
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {mentors.map((mentor) => {
+            {mentors
+              .filter((mentor) => {
+                const q = mentorSearch.toLowerCase();
+                const matchesSearch = !q || mentor.name.toLowerCase().includes(q) || mentor.job.toLowerCase().includes(q);
+                const matchesCategory = mentorCategory === '전체' || extractShortCategory(mentor.category) === mentorCategory;
+                return matchesSearch && matchesCategory;
+              })
+              .map((mentor) => {
               const counts = mentorCounts[mentor.id] || { choice1: 0, choice2: 0, choice3: 0, total: 0 };
               return (
                 <div key={mentor.id} className="bg-white rounded-xl shadow-sm p-5">
@@ -415,6 +508,7 @@ export default function AdminPage() {
               );
             })}
           </div>
+          </>
         )}
       </div>
     </div>
