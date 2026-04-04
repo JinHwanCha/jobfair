@@ -266,10 +266,19 @@ export default function ApplyPage() {
                 return (
                   <div
                     key={num}
-                    className={`p-3 rounded-xl text-center ${
+                    className={`p-3 rounded-xl text-center relative ${
                       mentor ? 'bg-primary-100' : 'bg-warm-100'
                     }`}
                   >
+                    {mentor && (
+                      <button
+                        onClick={() => handleSelectMentor(mentorId, num as 1 | 2 | 3)}
+                        className="absolute -top-2 -right-2 w-6 h-6 bg-gray-400 hover:bg-red-500 text-white rounded-full flex items-center justify-center text-xs font-bold transition-colors z-10"
+                        aria-label={`${num}지망 선택 취소`}
+                      >
+                        ✕
+                      </button>
+                    )}
                     <p className="text-xs text-gray-500 mb-1">{num}지망</p>
                     <p className={`font-medium text-sm truncate ${
                       mentor ? 'text-primary-700' : 'text-gray-400'
@@ -336,24 +345,21 @@ export default function ApplyPage() {
                       showSelectButton
                       onClickDetail={() => setDetailMentor(mentor)}
                       onSelect={() => {
-                        // 빈 슬롯 찾아서 자동 할당
-                        if (!formData.choice1) {
+                        // 이미 선택된 멘토라면 해제 (먼저 체크)
+                        if (formData.choice1 === mentor.id) {
+                          handleSelectMentor(mentor.id, 1);
+                        } else if (formData.choice2 === mentor.id) {
+                          handleSelectMentor(mentor.id, 2);
+                        } else if (formData.choice3 === mentor.id) {
+                          handleSelectMentor(mentor.id, 3);
+                        } else if (!formData.choice1) {
                           handleSelectMentor(mentor.id, 1);
                         } else if (!formData.choice2) {
                           handleSelectMentor(mentor.id, 2);
                         } else if (!formData.choice3) {
                           handleSelectMentor(mentor.id, 3);
                         } else {
-                          // 이미 선택된 멘토라면 해제
-                          if (formData.choice1 === mentor.id) {
-                            handleSelectMentor(mentor.id, 1);
-                          } else if (formData.choice2 === mentor.id) {
-                            handleSelectMentor(mentor.id, 2);
-                          } else if (formData.choice3 === mentor.id) {
-                            handleSelectMentor(mentor.id, 3);
-                          } else {
-                            alert('3개 모두 선택되었습니다. 기존 선택을 해제하고 다시 선택해주세요.');
-                          }
+                          alert('3개 모두 선택되었습니다. 기존 선택을 해제하고 다시 선택해주세요.');
                         }
                       }}
                     />
@@ -363,18 +369,23 @@ export default function ApplyPage() {
             </div>
             )}
 
-            {/* 네비게이션 버튼 */}
-            <div className="flex gap-4">
-              <button onClick={prevStep} className="btn-secondary flex-1">
-                이전
-              </button>
-              <button
-                onClick={nextStep}
-                disabled={!formData.choice1 || !formData.choice2 || !formData.choice3}
-                className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                다음
-              </button>
+            {/* 하단 여백 (플로팅 버튼 공간 확보) */}
+            <div className="h-20"></div>
+
+            {/* 플로팅 네비게이션 버튼 */}
+            <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 p-4 z-30">
+              <div className="max-w-2xl mx-auto flex gap-4">
+                <button onClick={prevStep} className="btn-secondary flex-1">
+                  이전
+                </button>
+                <button
+                  onClick={nextStep}
+                  disabled={!formData.choice1 || !formData.choice2 || !formData.choice3}
+                  className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  다음
+                </button>
+              </div>
             </div>
           </div>
         )}
