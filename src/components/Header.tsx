@@ -30,7 +30,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="bg-white shadow-sm fixed w-full top-0 z-50">
       {/* 헤더 바 - 오버레이 위에 표시 */}
       <div className="relative z-10 bg-white max-w-4xl mx-auto px-4">
         <div className="flex items-center justify-between h-14 sm:h-16">
