@@ -1,10 +1,12 @@
 import { Mentor, Applicant, Assignment, AssignmentSlot, MentorSlot } from '@/types';
 
+const NUM_TIMES = 6;
+
 /**
  * 자동 멘토 배정 알고리즘
  * 
  * 배정 규칙:
- * 1. 1지망 → 2지망 → 3지망 순으로 배정 시도
+ * 1. 1지망 → 2지망 → ... → 6지망 순으로 배정 시도
  * 2. 멘토당 타임별 3명 제한 (maxCapacity)
  * 3. 초과 시 다음 타임으로 자동 배정
  * 4. 모든 지망 실패 시 동일 카테고리 멘토로 배정
@@ -14,12 +16,11 @@ export function runAutoAssignment(
   applicants: Applicant[],
   mentors: Mentor[]
 ): { assignments: Assignment[]; mentorSlots: MentorSlot[] } {
-  // 멘토 슬롯 초기화
+  // 멘토 슬롯 초기화 (타임별 배열)
   const mentorSlots: MentorSlot[] = mentors.map(mentor => ({
     mentorId: mentor.id,
-    time1: [],
-    time2: [],
-    time3: [],
+    time1: [], time2: [], time3: [],
+    time4: [], time5: [], time6: [],
   }));
 
   // 신청 순서대로 정렬
@@ -43,35 +44,33 @@ export function runAutoAssignment(
       applicantId: applicant.id,
       applicantName: applicant.name,
       phone4: applicant.phone4,
-      time1: null,
-      time2: null,
-      time3: null,
+      time1: null, time2: null, time3: null,
+      time4: null, time5: null, time6: null,
     };
 
-    // 지망 순서대로 처리
-    const choices = [
-      { choiceNum: 1, mentorId: applicant.choice1 },
-      { choiceNum: 2, mentorId: applicant.choice2 },
-      { choiceNum: 3, mentorId: applicant.choice3 },
-    ];
+    // 지망 순서대로 수집
+    const choices: { choiceNum: number; mentorId: string }[] = [];
+    for (let i = 1; i <= NUM_TIMES; i++) {
+      const mentorId = (applicant as unknown as Record<string, unknown>)[`choice${i}`] as string;
+      if (mentorId) choices.push({ choiceNum: i, mentorId });
+    }
 
     // 각 타임에 배정될 슬롯 추적
     const assignedTimes = new Set<number>();
 
-    for (const { choiceNum, mentorId } of choices) {
+    for (const { mentorId } of choices) {
       const mentor = mentorMap.get(mentorId);
       if (!mentor) continue;
 
       const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
       if (!mentorSlot) continue;
 
-      // 아직 배정되지 않은 타임 중에서 빈 슬롯 찾기
       const result = tryAssignToMentor(
         applicant.id,
         mentor,
         mentorSlot,
         assignedTimes,
-        true // 원래 선택한 멘토임
+        true
       );
 
       if (result) {
@@ -81,26 +80,61 @@ export function runAutoAssignment(
     }
 
     // 배정되지 않은 타임이 있으면 동일 카테고리 멘토로 대체 배정
-    const unassignedTimes = [1, 2, 3].filter(t => !assignedTimes.has(t));
+    const allTimes = Array.from({ length: NUM_TIMES }, (_, i) => i + 1);
+    const unassignedTimes = allTimes.filter(t => !assignedTimes.has(t));
     
+    const originalChoiceIds = choices.map(c => c.mentorId);
+
+    // 이미 배정된 멘토 ID 추적 (중복 배정 방지)
+    const assignedMentorIds = new Set<string>();
+    for (const t of assignedTimes) {
+      const key = `time${t}` as keyof Assignment;
+      const slot = assignment[key] as AssignmentSlot | null;
+      if (slot) assignedMentorIds.add(slot.mentorId);
+    }
+
     for (const timeNum of unassignedTimes) {
       // 원래 선택한 멘토들의 카테고리 우선 순위로 대체 멘토 찾기
-      const originalChoices = [applicant.choice1, applicant.choice2, applicant.choice3];
-      const originalCategories = originalChoices
+      const originalCategories = originalChoiceIds
         .map(id => mentorMap.get(id)?.category)
         .filter((c): c is string => !!c);
 
-      // 중복 제거하면서 순서 유지
       const uniqueCategories = [...new Set(originalCategories)];
 
+      // 해당 타임에 원래 어떤 지망을 선택했는지 추적
+      const originalChoiceForTime = choices[timeNum - 1]?.mentorId;
+      const originalChoiceName = originalChoiceForTime ? mentorMap.get(originalChoiceForTime)?.name : undefined;
+
       let assigned = false;
+
+      // 먼저: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도
+      for (const { mentorId } of choices) {
+        if (assignedMentorIds.has(mentorId)) continue;
+        const mentor = mentorMap.get(mentorId);
+        if (!mentor) continue;
+        const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
+        if (!mentorSlot) continue;
+
+        const result = tryAssignToMentorAtTime(
+          applicant.id, mentor, mentorSlot, timeNum, true, undefined
+        );
+        if (result) {
+          setAssignmentSlot(assignment, timeNum, result.slot);
+          assignedMentorIds.add(mentorId);
+          assigned = true;
+          break;
+        }
+      }
+
+      if (assigned) continue;
+
+      // 같은 카테고리 대체 멘토
       for (const category of uniqueCategories) {
         if (assigned) break;
 
         const sameCategoryMentors = categoryMentorsMap.get(category) || [];
-        // 원래 선택하지 않은 멘토 중에서 찾기
         const alternativeMentors = sameCategoryMentors.filter(
-          m => !originalChoices.includes(m.id)
+          m => !assignedMentorIds.has(m.id)
         );
 
         for (const altMentor of alternativeMentors) {
@@ -113,11 +147,12 @@ export function runAutoAssignment(
             altSlot,
             timeNum,
             false,
-            mentorMap.get(originalChoices[timeNum - 1])?.name
+            originalChoiceName
           );
 
           if (result) {
             setAssignmentSlot(assignment, timeNum, result.slot);
+            assignedMentorIds.add(altMentor.id);
             assigned = true;
             break;
           }
@@ -127,6 +162,7 @@ export function runAutoAssignment(
       // 같은 카테고리에서도 못 찾으면, 아무 멘토나 배정
       if (!assigned) {
         for (const mentor of mentors) {
+          if (assignedMentorIds.has(mentor.id)) continue;
           const slot = mentorSlots.find(s => s.mentorId === mentor.id);
           if (!slot) continue;
 
@@ -136,11 +172,12 @@ export function runAutoAssignment(
             slot,
             timeNum,
             false,
-            mentorMap.get(originalChoices[timeNum - 1])?.name
+            originalChoiceName
           );
 
           if (result) {
             setAssignmentSlot(assignment, timeNum, result.slot);
+            assignedMentorIds.add(mentor.id);
             break;
           }
         }
@@ -161,7 +198,7 @@ function tryAssignToMentor(
   excludeTimes: Set<number>,
   isOriginalChoice: boolean
 ): { timeNum: number; slot: AssignmentSlot } | null {
-  const times = [1, 2, 3].filter(t => !excludeTimes.has(t));
+  const times = Array.from({ length: NUM_TIMES }, (_, i) => i + 1).filter(t => !excludeTimes.has(t));
 
   for (const timeNum of times) {
     const slotArray = getSlotArray(mentorSlot, timeNum);
@@ -216,16 +253,8 @@ function tryAssignToMentorAtTime(
 
 // 타임 번호에 해당하는 슬롯 배열 가져오기
 function getSlotArray(mentorSlot: MentorSlot, timeNum: number): string[] {
-  switch (timeNum) {
-    case 1:
-      return mentorSlot.time1;
-    case 2:
-      return mentorSlot.time2;
-    case 3:
-      return mentorSlot.time3;
-    default:
-      return [];
-  }
+  const key = `time${timeNum}` as keyof MentorSlot;
+  return mentorSlot[key] as string[];
 }
 
 // 배정 결과에 슬롯 설정
@@ -234,15 +263,6 @@ function setAssignmentSlot(
   timeNum: number,
   slot: AssignmentSlot
 ): void {
-  switch (timeNum) {
-    case 1:
-      assignment.time1 = slot;
-      break;
-    case 2:
-      assignment.time2 = slot;
-      break;
-    case 3:
-      assignment.time3 = slot;
-      break;
-  }
+  const key = `time${timeNum}` as keyof Assignment;
+  (assignment as unknown as Record<string, unknown>)[key] = slot;
 }

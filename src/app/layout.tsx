@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
+import { I18nProvider } from '@/lib/i18n';
 
 export const metadata: Metadata = {
   title: '2026 직업박람회 | 내수동교회',
@@ -24,7 +25,9 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
       </head>
       <body className="antialiased">
-        {children}
+        <I18nProvider>
+          {children}
+        </I18nProvider>
       </body>
     </html>
   );

@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import { Mentor } from '@/types';
 import { getCategoryColor, getCategoryIcon, getShortCategoryLabel } from '@/components/MentorCard';
+import { useI18n } from '@/lib/i18n';
 
 interface MentorModalProps {
   mentor: Mentor;
@@ -10,6 +11,7 @@ interface MentorModalProps {
 }
 
 export default function MentorModal({ mentor, onClose }: MentorModalProps) {
+  const { t } = useI18n();
   useEffect(() => {
     const scrollY = window.scrollY;
     document.body.style.position = 'fixed';
@@ -65,48 +67,56 @@ export default function MentorModal({ mentor, onClose }: MentorModalProps) {
           {/* 직업 정보 */}
           <div className="bg-gradient-to-r from-primary-50 to-warm-100 rounded-xl p-4">
             <div className="flex items-center justify-between flex-wrap gap-1">
-              <p className="text-lg font-bold text-primary-700">{mentor.jobTitle || mentor.job}</p>
+              <p className="text-lg font-bold text-primary-700">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
               <span className={`category-badge ${getCategoryColor(mentor.category)}`}>
                 {getShortCategoryLabel(mentor.category)}
               </span>
             </div>
             {mentor.field && mentor.jobTitle && mentor.field !== mentor.jobTitle && (
-              <p className="text-sm text-gray-600">{mentor.field} 분야</p>
+              <p className="text-sm text-gray-600">{mentor.field}{t('modal.field')}</p>
+            )}
+            {mentor.major && (
+              <p className="text-sm text-gray-600">{t('modal.major')}{mentor.major}</p>
             )}
           </div>
 
-          {/* 경력 */}
-          {mentor.experience && (
-            <InfoRow icon="📋" label="경력" value={mentor.experience} />
-          )}
-
-          {/* 부르심의 영역 */}
-          {mentor.category && (
-            <InfoRow icon="🌟" label="부르심의 영역" value={mentor.category} />
-          )}
-
-          {/* 멘토링 방식 */}
-          {mentor.mentoringType && (
-            <InfoRow icon="🤝" label="멘토링 방식" value={mentor.mentoringType} />
-          )}
-
-          {/* 성경 구절 / 하나님 말씀 */}
-          {mentor.bibleVerse && (
+          {/* 한줄 소개 */}
+          {mentor.oneLiner && (
             <div className="bg-warm-100 rounded-xl p-4">
-              <p className="text-sm font-medium text-gray-500 mb-2">📖 직업과 관련된 말씀</p>
-              <p className="text-gray-700 leading-relaxed italic">
-                &ldquo;{mentor.bibleVerse}&rdquo;
-              </p>
+              <p className="text-sm font-medium text-gray-500 mb-2">{t('modal.oneLiner')}</p>
+              <p className="text-gray-700 leading-relaxed">{mentor.oneLiner}</p>
             </div>
           )}
 
-          {/* 학생들에게 한마디 */}
-          {mentor.advice && (
+          {/* 키워드 */}
+          {mentor.keywords && (
+            <div className="flex flex-wrap gap-2">
+              {mentor.keywords.split(/[,#]/).filter(k => k.trim()).map((keyword, idx) => (
+                <span key={idx} className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
+                  #{keyword.trim()}
+                </span>
+              ))}
+            </div>
+          )}
+
+          {/* 경력 */}
+          {mentor.experience && (
+            <InfoRow icon="📋" label={t('modal.experience')} value={mentor.experience} />
+          )}
+
+          {/* 멘토링 주제 */}
+          {mentor.topics && (
+            <div className="bg-green-50 rounded-xl p-4">
+              <p className="text-sm font-medium text-gray-500 mb-2">{t('modal.topics')}</p>
+              <p className="text-gray-700 leading-relaxed">{mentor.topics}</p>
+            </div>
+          )}
+
+          {/* 커리어/Calling 여정 */}
+          {mentor.careerCalling && (
             <div className="bg-blue-50 rounded-xl p-4">
-              <p className="text-sm font-medium text-gray-500 mb-2">💬 학생들에게 한마디</p>
-              <p className="text-gray-700 leading-relaxed">
-                {mentor.advice}
-              </p>
+              <p className="text-sm font-medium text-gray-500 mb-2">{t('modal.careerJourney')}</p>
+              <p className="text-gray-700 leading-relaxed">{mentor.careerCalling}</p>
             </div>
           )}
         </div>
@@ -117,7 +127,7 @@ export default function MentorModal({ mentor, onClose }: MentorModalProps) {
             onClick={onClose}
             className="btn-secondary w-full"
           >
-            닫기
+            {t('modal.close')}
           </button>
         </div>
       </div>

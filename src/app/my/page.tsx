@@ -3,8 +3,10 @@
 import { useState } from 'react';
 import Header from '@/components/Header';
 import { Assignment, AssignmentSlot } from '@/types';
+import { useI18n } from '@/lib/i18n';
 
 export default function MyPage() {
+  const { t } = useI18n();
   const [name, setName] = useState('');
   const [phone4, setPhone4] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -14,11 +16,11 @@ export default function MyPage() {
 
   const handleSearch = async () => {
     if (!name || !phone4) {
-      setError('이름과 전화번호 뒷자리를 입력해주세요.');
+      setError(t('my.errorBoth'));
       return;
     }
     if (phone4.length !== 4) {
-      setError('전화번호 뒷자리 4자리를 입력해주세요.');
+      setError(t('my.errorPhone'));
       return;
     }
 
@@ -34,10 +36,10 @@ export default function MyPage() {
         setAssignment(result.data);
       } else {
         setAssignment(null);
-        setError(result.error || '배정 정보를 찾을 수 없습니다.');
+        setError(result.error || t('my.errorNoData'));
       }
     } catch {
-      setError('조회 중 오류가 발생했습니다.');
+      setError(t('my.errorGeneral'));
     } finally {
       setIsLoading(false);
     }
@@ -57,9 +59,9 @@ export default function MyPage() {
       return (
         <div className="bg-gray-100 rounded-2xl p-5 text-center">
           <div className={`time-badge ${colorClass} mb-3 mx-auto`}>
-            {timeNum}타임
+            {timeNum}{t('my.timeSlot')}
           </div>
-          <p className="text-gray-400">배정되지 않음</p>
+          <p className="text-gray-400">{t('my.notAssigned')}</p>
         </div>
       );
     }
@@ -70,15 +72,15 @@ export default function MyPage() {
       }`}>
         <div className="flex items-center justify-between mb-3">
           <span className={`time-badge ${colorClass}`}>
-            {timeNum}타임
+            {timeNum}{t('my.timeSlot')}
           </span>
           {slot.isOriginalChoice ? (
             <span className="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
-              희망 멘토
+              {t('my.preferred')}
             </span>
           ) : (
             <span className="text-xs bg-orange-100 text-orange-700 px-2 py-1 rounded-full">
-              대체 배정
+              {t('my.alternative')}
             </span>
           )}
         </div>
@@ -97,7 +99,7 @@ export default function MyPage() {
 
           {!slot.isOriginalChoice && slot.originalChoice && (
             <p className="text-xs text-gray-500 mt-3">
-              원래 선택: {slot.originalChoice}
+              {t('my.originalChoice')}{slot.originalChoice}
             </p>
           )}
         </div>
@@ -112,9 +114,9 @@ export default function MyPage() {
       <main className="content-container">
         {/* 페이지 제목 */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">내 배정 확인</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('my.title')}</h1>
           <p className="text-gray-600">
-            신청 시 입력한 정보로 배정 결과를 확인하세요
+            {t('my.subtitle')}
           </p>
         </div>
 
@@ -122,7 +124,7 @@ export default function MyPage() {
         <div className="card max-w-md mx-auto mb-8">
           <div className="space-y-4">
             <div>
-              <label className="label">이름</label>
+              <label className="label">{t('apply.name')}</label>
               <input
                 type="text"
                 value={name}
@@ -133,7 +135,7 @@ export default function MyPage() {
             </div>
 
             <div>
-              <label className="label">휴대폰 번호 뒷자리 (4자리)</label>
+              <label className="label">{t('apply.phone4')}</label>
               <input
                 type="text"
                 value={phone4}
@@ -155,7 +157,7 @@ export default function MyPage() {
               disabled={isLoading}
               className="btn-primary w-full"
             >
-              {isLoading ? '조회 중...' : '조회하기'}
+              {isLoading ? t('my.searching') : t('my.search')}
             </button>
           </div>
         </div>
@@ -168,47 +170,48 @@ export default function MyPage() {
                 {/* 안내 메시지 */}
                 <div className="bg-primary-50 rounded-2xl p-5 text-center">
                   <p className="text-lg font-medium text-primary-700 mb-1">
-                    {assignment.applicantName}님의 배정 결과입니다
+                    {assignment.applicantName}{t('my.resultFor')}
                   </p>
                   <p className="text-sm text-primary-600">
-                    행사 당일 아래 장소로 이동해주세요!
+                    {t('my.goToVenue')}
                   </p>
                 </div>
 
                 {/* 타임별 배정 */}
                 <div className="grid gap-4">
-                  <TimeSlotCard
-                    timeNum={1}
-                    slot={assignment.time1}
-                    colorClass="time-badge-1"
-                  />
-                  <TimeSlotCard
-                    timeNum={2}
-                    slot={assignment.time2}
-                    colorClass="time-badge-2"
-                  />
-                  <TimeSlotCard
-                    timeNum={3}
-                    slot={assignment.time3}
-                    colorClass="time-badge-3"
-                  />
+                  {Array.from({ length: 6 }, (_, i) => {
+                    const timeNum = i + 1;
+                    const slot = (assignment as unknown as Record<string, unknown>)[`time${timeNum}`] as AssignmentSlot | null;
+                    const badgeColors = [
+                      'time-badge-1', 'time-badge-2', 'time-badge-3',
+                      'time-badge-1', 'time-badge-2', 'time-badge-3',
+                    ];
+                    return (
+                      <TimeSlotCard
+                        key={timeNum}
+                        timeNum={timeNum}
+                        slot={slot}
+                        colorClass={badgeColors[i]}
+                      />
+                    );
+                  })}
                 </div>
 
                 {/* 안내 사항 */}
                 <div className="bg-warm-100 rounded-2xl p-5">
-                  <h3 className="font-bold text-gray-800 mb-3">유의사항</h3>
+                  <h3 className="font-bold text-gray-800 mb-3">{t('my.notes')}</h3>
                   <ul className="text-sm text-gray-600 space-y-2">
                     <li className="flex items-start gap-2">
                       <span className="text-primary-500">•</span>
-                      <span>각 타임 시작 5분 전까지 배정된 장소로 이동해주세요.</span>
+                      <span>{t('my.note1')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary-500">•</span>
-                      <span>대체 배정된 경우 원래 선택한 멘토와 다를 수 있습니다.</span>
+                      <span>{t('my.note2')}</span>
                     </li>
                     <li className="flex items-start gap-2">
                       <span className="text-primary-500">•</span>
-                      <span>문의사항은 안내 데스크로 연락해주세요.</span>
+                      <span>{t('my.note3')}</span>
                     </li>
                   </ul>
                 </div>
@@ -218,9 +221,9 @@ export default function MyPage() {
                 <div className="w-16 h-16 bg-warm-200 rounded-full flex items-center justify-center mx-auto mb-4">
                   <span className="text-2xl">😢</span>
                 </div>
-                <p className="text-gray-600 mb-2">배정 정보를 찾을 수 없습니다.</p>
+                <p className="text-gray-600 mb-2">{t('my.notFound')}</p>
                 <p className="text-sm text-gray-500">
-                  신청 시 입력한 이름과 전화번호를 다시 확인해주세요.
+                  {t('my.notFoundDesc')}
                 </p>
               </div>
             )}
@@ -230,7 +233,7 @@ export default function MyPage() {
         {/* 아직 조회하지 않은 경우 */}
         {!searched && (
           <div className="text-center py-8 text-gray-500">
-            <p>위 정보를 입력하고 조회 버튼을 눌러주세요.</p>
+            <p>{t('my.promptSearch')}</p>
           </div>
         )}
       </main>

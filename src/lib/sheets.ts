@@ -2,7 +2,9 @@ import { Mentor } from '@/types';
 
 const SHEET_ID = '1ToJhCD6UGT74vpUq-b2yLRYbuWVMuF4vHWuGx1Fbjf4';
 const GID = '537171012';
+const GID2 = '2098157141';
 const CSV_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID}`;
+const CSV_URL2 = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/export?format=csv&gid=${GID2}`;
 
 // CSV 파싱 (따옴표 + 줄바꿈 처리)
 function parseCSV(csv: string): string[][] {
@@ -69,6 +71,48 @@ let cachedMentors: Mentor[] | null = null;
 let cacheTime = 0;
 const CACHE_DURATION = 60 * 1000; // 1분 캐시
 
+// Sheet 2에서 추가 멘토 정보를 가져옴
+interface Sheet2Data {
+  jobPosition: string;
+  major: string;
+  oneLiner: string;
+  careerCalling: string;
+  topics: string;
+  keywords: string;
+}
+
+async function fetchSheet2Data(): Promise<Map<string, Sheet2Data>> {
+  const map = new Map<string, Sheet2Data>();
+  try {
+    const response = await fetch(CSV_URL2, { next: { revalidate: 60 } });
+    if (!response.ok) return map;
+
+    const csvText = await response.text();
+    const rows = parseCSV(csvText);
+    if (rows.length < 2) return map;
+
+    // 컬럼: 0:타임스탬프, 1:이름, 2:직무/회사, 3:전공, 4:한문장소개, 5:커리어여정, 6:이야기주제, 7:키워드, 8:티셔츠사이즈
+    for (let i = 1; i < rows.length; i++) {
+      const row = rows[i];
+      if (!row || row.length < 2) continue;
+      const name = (row[1] || '').trim();
+      if (!name) continue;
+
+      map.set(name, {
+        jobPosition: (row[2] || '').trim(),
+        major: (row[3] || '').trim(),
+        oneLiner: (row[4] || '').trim(),
+        careerCalling: (row[5] || '').trim(),
+        topics: (row[6] || '').trim(),
+        keywords: (row[7] || '').trim(),
+      });
+    }
+  } catch (error) {
+    console.error('Sheet 2 데이터 로드 오류:', error);
+  }
+  return map;
+}
+
 export async function fetchMentorsFromSheet(): Promise<Mentor[]> {
   if (cachedMentors && Date.now() - cacheTime < CACHE_DURATION) {
     return cachedMentors;
@@ -95,6 +139,9 @@ export async function fetchMentorsFromSheet(): Promise<Mentor[]> {
     // 첫 행은 헤더 → 스킵
     const mentors: Mentor[] = [];
 
+    // Sheet 2 데이터 병렬로 가져오기
+    const sheet2Map = await fetchSheet2Data();
+
     for (let i = 1; i < rows.length; i++) {
       const row = rows[i];
       if (!row || row.length < 5) continue;
@@ -110,6 +157,9 @@ export async function fetchMentorsFromSheet(): Promise<Mentor[]> {
       const bibleVerse = (row[9] || '').trim();
       const advice = (row[10] || '').trim();
 
+      // Sheet 2에서 이름이 같은 멘토의 추가 데이터 매칭
+      const extra = sheet2Map.get(name);
+
       mentors.push({
         id: `mentor-${i}`,
         name,
@@ -123,6 +173,12 @@ export async function fetchMentorsFromSheet(): Promise<Mentor[]> {
         advice: advice || undefined,
         location: `장소${i}`,
         maxCapacity: 3,
+        jobPosition: extra?.jobPosition || undefined,
+        major: extra?.major || undefined,
+        oneLiner: extra?.oneLiner || undefined,
+        careerCalling: extra?.careerCalling || undefined,
+        keywords: extra?.keywords || undefined,
+        topics: extra?.topics || undefined,
       });
     }
 

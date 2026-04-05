@@ -1,4 +1,7 @@
+'use client';
+
 import { Mentor } from '@/types';
+import { useI18n } from '@/lib/i18n';
 
 interface MentorCardProps {
   mentor: Mentor;
@@ -68,6 +71,7 @@ export default function MentorCard({
   showSelectButton,
   disabled,
 }: MentorCardProps) {
+  const { t } = useI18n();
   return (
     <div
       className={`mentor-card cursor-pointer ${
@@ -82,7 +86,7 @@ export default function MentorCard({
         <div className="flex items-center gap-2 mb-1">
           <span className="text-xl shrink-0">{getCategoryIcon(mentor.category)}</span>
           <h3 className="text-lg font-bold text-gray-800 whitespace-nowrap">{mentor.name}</h3>
-          <p className="text-primary-600 font-medium text-sm truncate ml-1">{mentor.jobTitle || mentor.job}</p>
+          <p className="text-primary-600 font-medium text-sm truncate ml-1">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
         </div>
         <span className={`category-badge inline-block max-w-full truncate ${getCategoryColor(mentor.category)}`}>
           {getShortCategoryLabel(mentor.category)}
@@ -92,7 +96,7 @@ export default function MentorCard({
       {/* 경력 */}
       {mentor.experience && (
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-          <span className="text-gray-400">경력</span>
+          <span className="text-gray-400">{t('card.experience')}</span>
           <span>{mentor.experience}</span>
         </div>
       )}
@@ -100,7 +104,7 @@ export default function MentorCard({
       {/* 멘토링 방식 */}
       {mentor.mentoringType && (
         <div className="flex items-start gap-2 text-sm text-gray-600 mb-3">
-          <span className="text-gray-400 shrink-0">멘토링</span>
+          <span className="text-gray-400 shrink-0">{t('card.mentoring')}</span>
           <span className="line-clamp-1">{mentor.mentoringType}</span>
         </div>
       )}
@@ -115,7 +119,7 @@ export default function MentorCard({
             }}
             className="py-2 px-3 rounded-xl text-sm font-medium bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors shrink-0"
           >
-            상세
+            {t('card.detail')}
           </button>
         )}
 
@@ -134,7 +138,7 @@ export default function MentorCard({
                 : 'bg-warm-200 text-primary-700 hover:bg-warm-300'
             }`}
           >
-            {selected ? '✓ 선택됨' : '선택하기'}
+            {selected ? t('card.selected') : t('card.select')}
           </button>
         )}
 
@@ -146,7 +150,7 @@ export default function MentorCard({
             }}
             className="flex-1 py-2 rounded-xl text-sm font-medium bg-warm-200 text-primary-700 hover:bg-warm-300 transition-colors"
           >
-            자세히 보기
+            {t('card.viewMore')}
           </button>
         )}
       </div>

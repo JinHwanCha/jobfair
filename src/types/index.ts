@@ -12,6 +12,13 @@ export interface Mentor {
   advice?: string;       // 학생들에게 조언
   location?: string;
   maxCapacity: number;   // 타임당 최대 수용 인원 (기본 3명)
+  // Sheet 2 추가 데이터
+  jobPosition?: string;  // 현재 직무 / 회사
+  major?: string;        // 전공
+  oneLiner?: string;     // 나를 한 문장으로 표현한다면?
+  careerCalling?: string; // 나의 커리어 또는 Calling 여정
+  keywords?: string;     // 나를 설명하는 키워드
+  topics?: string;       // 멘토링 주제 (이야기 나눌 주제)
 }
 
 // 신청자 타입 정의
@@ -23,6 +30,15 @@ export interface Applicant {
   choice1: string; // 1지망 멘토 ID
   choice2: string; // 2지망 멘토 ID
   choice3: string; // 3지망 멘토 ID
+  choice4: string; // 4지망 멘토 ID
+  choice5: string; // 5지망 멘토 ID
+  choice6: string; // 6지망 멘토 ID
+  message1?: string; // 1지망 멘토에게 하고싶은 말
+  message2?: string; // 2지망 멘토에게 하고싶은 말
+  message3?: string; // 3지망 멘토에게 하고싶은 말
+  message4?: string; // 4지망 멘토에게 하고싶은 말
+  message5?: string; // 5지망 멘토에게 하고싶은 말
+  message6?: string; // 6지망 멘토에게 하고싶은 말
   agreedToTerms: boolean;
   createdAt: string;
   updatedAt: string;
@@ -33,9 +49,12 @@ export interface Assignment {
   applicantId: string;
   applicantName: string;
   phone4: string;
-  time1: AssignmentSlot | null; // 1타임 배정
-  time2: AssignmentSlot | null; // 2타임 배정
-  time3: AssignmentSlot | null; // 3타임 배정
+  time1: AssignmentSlot | null;
+  time2: AssignmentSlot | null;
+  time3: AssignmentSlot | null;
+  time4: AssignmentSlot | null;
+  time5: AssignmentSlot | null;
+  time6: AssignmentSlot | null;
 }
 
 export interface AssignmentSlot {
@@ -50,9 +69,12 @@ export interface AssignmentSlot {
 // 멘토별 타임 슬롯 현황
 export interface MentorSlot {
   mentorId: string;
-  time1: string[]; // 배정된 신청자 ID 목록
+  time1: string[];
   time2: string[];
   time3: string[];
+  time4: string[];
+  time5: string[];
+  time6: string[];
 }
 
 // API 응답 타입
@@ -80,6 +102,15 @@ export interface ApplyFormData {
   choice1: string;
   choice2: string;
   choice3: string;
+  choice4: string;
+  choice5: string;
+  choice6: string;
+  message1: string;
+  message2: string;
+  message3: string;
+  message4: string;
+  message5: string;
+  message6: string;
   agreedToTerms: boolean;
 }
 

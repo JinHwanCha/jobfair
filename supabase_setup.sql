@@ -10,6 +10,15 @@ CREATE TABLE IF NOT EXISTS applicants (
   choice1 TEXT NOT NULL,
   choice2 TEXT NOT NULL,
   choice3 TEXT NOT NULL,
+  choice4 TEXT NOT NULL DEFAULT '',
+  choice5 TEXT NOT NULL DEFAULT '',
+  choice6 TEXT NOT NULL DEFAULT '',
+  message1 TEXT DEFAULT '',
+  message2 TEXT DEFAULT '',
+  message3 TEXT DEFAULT '',
+  message4 TEXT DEFAULT '',
+  message5 TEXT DEFAULT '',
+  message6 TEXT DEFAULT '',
   agreed_to_terms BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()
@@ -22,7 +31,10 @@ CREATE TABLE IF NOT EXISTS assignments (
   phone4 TEXT NOT NULL,
   time1 JSONB,
   time2 JSONB,
-  time3 JSONB
+  time3 JSONB,
+  time4 JSONB,
+  time5 JSONB,
+  time6 JSONB
 );
 
 -- 멘토 슬롯 테이블
@@ -30,7 +42,10 @@ CREATE TABLE IF NOT EXISTS mentor_slots (
   mentor_id TEXT PRIMARY KEY,
   time1 JSONB DEFAULT '[]'::JSONB,
   time2 JSONB DEFAULT '[]'::JSONB,
-  time3 JSONB DEFAULT '[]'::JSONB
+  time3 JSONB DEFAULT '[]'::JSONB,
+  time4 JSONB DEFAULT '[]'::JSONB,
+  time5 JSONB DEFAULT '[]'::JSONB,
+  time6 JSONB DEFAULT '[]'::JSONB
 );
 
 -- 인덱스
@@ -46,3 +61,24 @@ ALTER TABLE mentor_slots ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Service role full access" ON applicants FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role full access" ON assignments FOR ALL USING (true) WITH CHECK (true);
 CREATE POLICY "Service role full access" ON mentor_slots FOR ALL USING (true) WITH CHECK (true);
+
+-- ============================================
+-- 기존 테이블 마이그레이션 (이미 테이블이 있는 경우)
+-- ============================================
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS choice4 TEXT NOT NULL DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS choice5 TEXT NOT NULL DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS choice6 TEXT NOT NULL DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS message1 TEXT DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS message2 TEXT DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS message3 TEXT DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS message4 TEXT DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS message5 TEXT DEFAULT '';
+ALTER TABLE applicants ADD COLUMN IF NOT EXISTS message6 TEXT DEFAULT '';
+
+ALTER TABLE assignments ADD COLUMN IF NOT EXISTS time4 JSONB;
+ALTER TABLE assignments ADD COLUMN IF NOT EXISTS time5 JSONB;
+ALTER TABLE assignments ADD COLUMN IF NOT EXISTS time6 JSONB;
+
+ALTER TABLE mentor_slots ADD COLUMN IF NOT EXISTS time4 JSONB DEFAULT '[]'::JSONB;
+ALTER TABLE mentor_slots ADD COLUMN IF NOT EXISTS time5 JSONB DEFAULT '[]'::JSONB;
+ALTER TABLE mentor_slots ADD COLUMN IF NOT EXISTS time6 JSONB DEFAULT '[]'::JSONB;

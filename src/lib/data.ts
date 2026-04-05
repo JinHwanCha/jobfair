@@ -34,6 +34,15 @@ export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' 
         choice1: input.choice1,
         choice2: input.choice2,
         choice3: input.choice3,
+        choice4: input.choice4,
+        choice5: input.choice5,
+        choice6: input.choice6,
+        message1: input.message1 || '',
+        message2: input.message2 || '',
+        message3: input.message3 || '',
+        message4: input.message4 || '',
+        message5: input.message5 || '',
+        message6: input.message6 || '',
         agreed_to_terms: input.agreedToTerms,
         birth_date: input.birthDate,
         updated_at: new Date().toISOString(),
@@ -57,6 +66,15 @@ export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' 
         choice1: input.choice1,
         choice2: input.choice2,
         choice3: input.choice3,
+        choice4: input.choice4,
+        choice5: input.choice5,
+        choice6: input.choice6,
+        message1: input.message1 || '',
+        message2: input.message2 || '',
+        message3: input.message3 || '',
+        message4: input.message4 || '',
+        message5: input.message5 || '',
+        message6: input.message6 || '',
         agreed_to_terms: input.agreedToTerms,
         created_at: now,
         updated_at: now,
@@ -104,6 +122,9 @@ export async function setAssignments(assignments: Assignment[]): Promise<void> {
     time1: a.time1,
     time2: a.time2,
     time3: a.time3,
+    time4: a.time4,
+    time5: a.time5,
+    time6: a.time6,
   }));
 
   const { error } = await supabase.from('assignments').insert(rows);
@@ -121,6 +142,9 @@ export async function setMentorSlots(slots: MentorSlot[]): Promise<void> {
     time1: s.time1,
     time2: s.time2,
     time3: s.time3,
+    time4: s.time4,
+    time5: s.time5,
+    time6: s.time6,
   }));
 
   const { error } = await supabase.from('mentor_slots').insert(rows);
@@ -139,6 +163,9 @@ export async function getMentorSlots(): Promise<MentorSlot[]> {
     time1: row.time1 || [],
     time2: row.time2 || [],
     time3: row.time3 || [],
+    time4: row.time4 || [],
+    time5: row.time5 || [],
+    time6: row.time6 || [],
   }));
 }
 
@@ -157,27 +184,23 @@ export async function getMyAssignment(name: string, phone4: string): Promise<Ass
 }
 
 // 멘토별 신청 수 집계
-export async function getMentorApplicationCounts(mentors: Mentor[]): Promise<Record<string, { choice1: number; choice2: number; choice3: number; total: number }>> {
-  const counts: Record<string, { choice1: number; choice2: number; choice3: number; total: number }> = {};
+export async function getMentorApplicationCounts(mentors: Mentor[]): Promise<Record<string, { choice1: number; choice2: number; choice3: number; choice4: number; choice5: number; choice6: number; total: number }>> {
+  const counts: Record<string, { choice1: number; choice2: number; choice3: number; choice4: number; choice5: number; choice6: number; total: number }> = {};
 
   mentors.forEach(mentor => {
-    counts[mentor.id] = { choice1: 0, choice2: 0, choice3: 0, total: 0 };
+    counts[mentor.id] = { choice1: 0, choice2: 0, choice3: 0, choice4: 0, choice5: 0, choice6: 0, total: 0 };
   });
 
   const applicants = await getAllApplicants();
 
   applicants.forEach(applicant => {
-    if (counts[applicant.choice1]) {
-      counts[applicant.choice1].choice1++;
-      counts[applicant.choice1].total++;
-    }
-    if (counts[applicant.choice2]) {
-      counts[applicant.choice2].choice2++;
-      counts[applicant.choice2].total++;
-    }
-    if (counts[applicant.choice3]) {
-      counts[applicant.choice3].choice3++;
-      counts[applicant.choice3].total++;
+    for (let i = 1; i <= 6; i++) {
+      const key = `choice${i}` as keyof typeof applicant;
+      const choiceId = applicant[key] as string;
+      if (choiceId && counts[choiceId]) {
+        (counts[choiceId] as Record<string, number>)[`choice${i}`]++;
+        counts[choiceId].total++;
+      }
     }
   });
 
@@ -210,6 +233,15 @@ export async function importData(data: { applicants: Applicant[]; assignments: A
       choice1: a.choice1,
       choice2: a.choice2,
       choice3: a.choice3,
+      choice4: a.choice4,
+      choice5: a.choice5,
+      choice6: a.choice6,
+      message1: a.message1 || '',
+      message2: a.message2 || '',
+      message3: a.message3 || '',
+      message4: a.message4 || '',
+      message5: a.message5 || '',
+      message6: a.message6 || '',
       agreed_to_terms: a.agreedToTerms,
       created_at: a.createdAt,
       updated_at: a.updatedAt,
@@ -249,6 +281,15 @@ function dbToApplicant(row: any): Applicant {
     choice1: row.choice1,
     choice2: row.choice2,
     choice3: row.choice3,
+    choice4: row.choice4 || '',
+    choice5: row.choice5 || '',
+    choice6: row.choice6 || '',
+    message1: row.message1 || '',
+    message2: row.message2 || '',
+    message3: row.message3 || '',
+    message4: row.message4 || '',
+    message5: row.message5 || '',
+    message6: row.message6 || '',
     agreedToTerms: row.agreed_to_terms,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -264,5 +305,8 @@ function dbToAssignment(row: any): Assignment {
     time1: row.time1 || null,
     time2: row.time2 || null,
     time3: row.time3 || null,
+    time4: row.time4 || null,
+    time5: row.time5 || null,
+    time6: row.time6 || null,
   };
 }

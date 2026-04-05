@@ -22,10 +22,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!body.choice1 || !body.choice2 || !body.choice3) {
+    if (!body.choice1 || !body.choice2 || !body.choice3 || !body.choice4 || !body.choice5 || !body.choice6) {
       return NextResponse.json({
         success: false,
-        error: '1지망, 2지망, 3지망 모두 선택해야 합니다.',
+        error: '1지망부터 6지망까지 모두 선택해야 합니다.',
       });
     }
 
@@ -44,6 +44,15 @@ export async function POST(request: NextRequest) {
       choice1: body.choice1,
       choice2: body.choice2,
       choice3: body.choice3,
+      choice4: body.choice4,
+      choice5: body.choice5,
+      choice6: body.choice6,
+      message1: body.message1 || '',
+      message2: body.message2 || '',
+      message3: body.message3 || '',
+      message4: body.message4 || '',
+      message5: body.message5 || '',
+      message6: body.message6 || '',
       agreedToTerms: body.agreedToTerms,
     });
 

@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
 import { Mentor } from '@/types';
+import { useI18n } from '@/lib/i18n';
 
 // 긴 카테고리 문자열에서 영어 이름만 추출 (예: "Building – 기술과..." → "Building")
 function extractShortCategories(category: string): string[] {
@@ -21,9 +22,10 @@ function extractShortCategories(category: string): string[] {
 }
 
 export default function MentorsPage() {
+  const { t } = useI18n();
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedCategory, setSelectedCategory] = useState('전체');
+  const [selectedCategory, setSelectedCategory] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
 
@@ -43,14 +45,14 @@ export default function MentorsPage() {
     mentors.forEach(m => {
       extractShortCategories(m.category).forEach(c => cats.add(c));
     });
-    return ['전체', ...Array.from(cats).sort()];
+    return [t('mentors.all'), ...Array.from(cats).sort()];
   }, [mentors]);
 
   // 필터링된 멘토 목록
   const filteredMentors = mentors.filter((mentor) => {
     const mentorCats = extractShortCategories(mentor.category);
     const categoryMatch =
-      selectedCategory === '전체' || mentorCats.includes(selectedCategory);
+      !selectedCategory || selectedCategory === t('mentors.all') || mentorCats.includes(selectedCategory);
     const q = searchQuery.toLowerCase();
     const searchMatch =
       searchQuery === '' ||
@@ -62,7 +64,11 @@ export default function MentorsPage() {
       mentor.experience.toLowerCase().includes(q) ||
       mentor.mentoringType.toLowerCase().includes(q) ||
       (mentor.advice && mentor.advice.toLowerCase().includes(q)) ||
-      (mentor.bibleVerse && mentor.bibleVerse.toLowerCase().includes(q));
+      (mentor.bibleVerse && mentor.bibleVerse.toLowerCase().includes(q)) ||
+      (mentor.jobPosition && mentor.jobPosition.toLowerCase().includes(q)) ||
+      (mentor.major && mentor.major.toLowerCase().includes(q)) ||
+      (mentor.oneLiner && mentor.oneLiner.toLowerCase().includes(q)) ||
+      (mentor.keywords && mentor.keywords.toLowerCase().includes(q));
     return categoryMatch && searchMatch;
   });
 
@@ -73,9 +79,9 @@ export default function MentorsPage() {
       <main className="content-container">
         {/* 페이지 제목 */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">멘토 소개</h1>
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('mentors.title')}</h1>
           <p className="text-gray-600">
-            {isLoading ? '멘토 정보를 불러오는 중...' : `다양한 분야의 ${mentors.length}명의 멘토를 만나보세요`}
+            {isLoading ? t('mentors.loading') : `${mentors.length} ${t('mentors.title')}`}
           </p>
         </div>
 
@@ -85,7 +91,7 @@ export default function MentorsPage() {
           <div className="relative">
             <input
               type="text"
-              placeholder="멘토 이름, 직업으로 검색..."
+              placeholder={t('mentors.searchPlaceholder')}
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="input-field pl-12"
@@ -127,7 +133,7 @@ export default function MentorsPage() {
         {isLoading ? (
           <div className="text-center py-16">
             <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-            <p className="text-gray-600">멘토 정보를 불러오는 중...</p>
+            <p className="text-gray-600">{t('mentors.loading')}</p>
           </div>
         ) : filteredMentors.length > 0 ? (
           <div className="grid sm:grid-cols-2 gap-4">
@@ -144,20 +150,20 @@ export default function MentorsPage() {
             <div className="w-16 h-16 bg-warm-200 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🔍</span>
             </div>
-            <p className="text-gray-600">검색 결과가 없습니다.</p>
+            <p className="text-gray-600">{t('mentors.noResults')}</p>
           </div>
         )}
 
         {/* 신청 유도 */}
         <div className="mt-12 text-center bg-gradient-to-r from-primary-100 to-warm-200 rounded-2xl p-8">
           <h2 className="text-xl font-bold text-gray-800 mb-2">
-            관심있는 멘토를 찾으셨나요?
+            {t('mentors.interested')}
           </h2>
           <p className="text-gray-600 mb-6">
-            지금 바로 신청하고 멘토와의 특별한 만남을 준비하세요!
+            {t('mentors.interestedDesc')}
           </p>
           <Link href="/apply" className="btn-primary inline-block">
-            신청하러 가기
+            {t('mentors.goApply')}
           </Link>
         </div>
       </main>
