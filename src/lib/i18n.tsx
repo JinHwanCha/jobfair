@@ -145,6 +145,21 @@ const translations = {
   'modal.major': { ko: '전공: ', en: 'Major: ', zh: '专业：' },
   'modal.field': { ko: ' 분야', en: ' field', zh: '领域' },
   'modal.close': { ko: '닫기', en: 'Close', zh: '关闭' },
+
+  // ── Mentor Page ──
+  'nav.mentor': { ko: '멘토 확인', en: 'Mentor', zh: '导师确认' },
+  'mentor.title': { ko: '멘토 전용 페이지', en: 'Mentor Dashboard', zh: '导师专属页面' },
+  'mentor.subtitle': { ko: '본인의 이름과 전화번호 뒷자리로 배정된 멘티를 확인하세요', en: 'View your assigned mentees with your name and phone number', zh: '使用您的姓名和电话号码后4位查看分配的学员' },
+  'mentor.phone4Label': { ko: '전화번호 뒷자리 (4자리)', en: 'Last 4 digits of phone', zh: '电话号码后4位' },
+  'mentor.login': { ko: '확인하기', en: 'View', zh: '查看' },
+  'mentor.loading': { ko: '조회 중...', en: 'Loading...', zh: '查询中...' },
+  'mentor.mentorSuffix': { ko: '멘토님의 배정 현황', en: "'s Assignment Status", zh: '导师的分配情况' },
+  'mentor.noMentees': { ko: '배정된 멘티가 없습니다', en: 'No mentees assigned', zh: '没有分配的学员' },
+  'mentor.errorBoth': { ko: '이름과 전화번호 뒷자리 4자리를 입력해주세요.', en: 'Please enter your name and last 4 digits of phone.', zh: '请输入姓名和电话号码后4位。' },
+  'mentor.errorGeneral': { ko: '조회 중 오류가 발생했습니다.', en: 'An error occurred.', zh: '查询中发生错误。' },
+  'mentor.note1': { ko: '이 페이지는 멘토 본인만 확인할 수 있습니다.', en: 'This page is only accessible to the mentor.', zh: '此页面仅供导师本人查看。' },
+  'mentor.note2': { ko: '멘티의 메시지는 신청 시 작성한 내용입니다.', en: 'Mentee messages were written during application.', zh: '学员的留言是申请时填写的内容。' },
+  'mentor.prompt': { ko: '이름과 전화번호 뒷자리를 입력하고 확인 버튼을 눌러주세요.', en: 'Enter your name and last 4 digits of phone, then press View.', zh: '请输入姓名和电话号码后4位，然后点击查看。' },
 } as const;
 
 type TranslationKey = keyof typeof translations;

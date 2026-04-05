@@ -19,6 +19,7 @@ export interface Mentor {
   careerCalling?: string; // 나의 커리어 또는 Calling 여정
   keywords?: string;     // 나를 설명하는 키워드
   topics?: string;       // 멘토링 주제 (이야기 나눌 주제)
+  phone4?: string;       // 전화번호 뒷자리 4자리 (멘토 인증용)
 }
 
 // 신청자 타입 정의

@@ -19,6 +19,7 @@ export default function Header() {
     { href: '/mentors', label: t('nav.mentors') },
     { href: '/apply', label: t('nav.apply') },
     { href: '/my', label: t('nav.my') },
+    { href: '/mentor', label: t('nav.mentor') },
   ];
 
   return (
@@ -34,7 +35,7 @@ export default function Header() {
           </Link>
 
           {/* 네비게이션 + 언어 */}
-          <div className="flex items-center gap-0.5 sm:gap-2 overflow-x-auto">
+          <div className="flex items-center gap-0.5 sm:gap-2 overflow-x-auto scrollbar-thin">
             <nav className="flex items-center gap-0.5 sm:gap-1">
               {navItems.map((item) => (
                 <Link

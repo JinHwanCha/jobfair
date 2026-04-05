@@ -149,6 +149,10 @@ export async function fetchMentorsFromSheet(): Promise<Mentor[]> {
       const name = (row[2] || '').trim();
       if (!name) continue;
 
+      // 전화번호 뒷자리 4자리 추출
+      const phoneRaw = (row[3] || '').replace(/[^0-9]/g, '');
+      const mentorPhone4 = phoneRaw.length >= 4 ? phoneRaw.slice(-4) : '';
+
       const jobRaw = (row[4] || '').trim();
       const { field, jobTitle } = parseJobField(jobRaw);
       const experience = (row[5] || '').trim();
@@ -179,6 +183,7 @@ export async function fetchMentorsFromSheet(): Promise<Mentor[]> {
         careerCalling: extra?.careerCalling || undefined,
         keywords: extra?.keywords || undefined,
         topics: extra?.topics || undefined,
+        phone4: mentorPhone4 || undefined,
       });
     }
 
