@@ -9,23 +9,39 @@ export async function getMentors(): Promise<Mentor[]> {
   return [];
 }
 
-// 신청자 조회 (이름 + 전화번호 뒷자리로)
-export async function findApplicant(name: string, phone4: string): Promise<Applicant | undefined> {
-  const { data } = await supabase
+// 신청자 조회 (이름 + 전화번호 뒷자리 + 생년월일로)
+export async function findApplicant(name: string, phone4: string, birthDate?: string): Promise<Applicant | undefined> {
+  let query = supabase
     .from('applicants')
     .select('*')
     .eq('name', name)
-    .eq('phone4', phone4)
-    .limit(1)
-    .single();
+    .eq('phone4', phone4);
+
+  if (birthDate) {
+    query = query.eq('birth_date', birthDate);
+  }
+
+  const { data } = await query.limit(1).single();
 
   if (!data) return undefined;
   return dbToApplicant(data);
 }
 
+// 이름 + 전화번호로 신청자 목록 조회 (생년월일 선택용)
+export async function findApplicants(name: string, phone4: string): Promise<Applicant[]> {
+  const { data } = await supabase
+    .from('applicants')
+    .select('*')
+    .eq('name', name)
+    .eq('phone4', phone4);
+
+  if (!data) return [];
+  return data.map(dbToApplicant);
+}
+
 // 신청자 추가/수정
 export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' | 'updatedAt'>): Promise<Applicant> {
-  const existing = await findApplicant(input.name, input.phone4);
+  const existing = await findApplicant(input.name, input.phone4, input.birthDate);
 
   if (existing) {
     const { data, error } = await supabase
@@ -170,7 +186,21 @@ export async function getMentorSlots(): Promise<MentorSlot[]> {
 }
 
 // 배정 결과 조회 (개인)
-export async function getMyAssignment(name: string, phone4: string): Promise<Assignment | undefined> {
+export async function getMyAssignment(name: string, phone4: string, birthDate?: string): Promise<Assignment | undefined> {
+  if (birthDate) {
+    // birthDate가 주어지면 신청자 조회 후 applicantId로 배정 검색
+    const applicant = await findApplicant(name, phone4, birthDate);
+    if (!applicant) return undefined;
+    const { data } = await supabase
+      .from('assignments')
+      .select('*')
+      .eq('applicant_id', applicant.id)
+      .limit(1)
+      .single();
+    if (!data) return undefined;
+    return dbToAssignment(data);
+  }
+
   const { data } = await supabase
     .from('assignments')
     .select('*')

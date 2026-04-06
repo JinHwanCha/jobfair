@@ -13,8 +13,10 @@ export default function MyPage() {
   const [error, setError] = useState('');
   const [assignment, setAssignment] = useState<Assignment | null>(null);
   const [searched, setSearched] = useState(false);
+  const [birthDates, setBirthDates] = useState<string[]>([]);
+  const [needBirthDate, setNeedBirthDate] = useState(false);
 
-  const handleSearch = async () => {
+  const handleSearch = async (selectedBirthDate?: string) => {
     if (!name || !phone4) {
       setError(t('my.errorBoth'));
       return;
@@ -29,13 +31,25 @@ export default function MyPage() {
     setSearched(true);
 
     try {
-      const response = await fetch(`/api/my?name=${encodeURIComponent(name)}&phone4=${phone4}`);
+      let url = `/api/my?name=${encodeURIComponent(name)}&phone4=${phone4}`;
+      if (selectedBirthDate) {
+        url += `&birthDate=${selectedBirthDate}`;
+      }
+      const response = await fetch(url);
       const result = await response.json();
 
       if (result.success && result.data) {
         setAssignment(result.data);
+        setNeedBirthDate(false);
+        setBirthDates([]);
+      } else if (result.needBirthDate) {
+        setNeedBirthDate(true);
+        setBirthDates(result.birthDates || []);
+        setAssignment(null);
+        setError('');
       } else {
         setAssignment(null);
+        setNeedBirthDate(false);
         setError(result.error || t('my.errorNoData'));
       }
     } catch {
@@ -43,6 +57,10 @@ export default function MyPage() {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleBirthDateSelect = (bd: string) => {
+    handleSearch(bd);
   };
 
   // 타임 슬롯 카드 컴포넌트
@@ -153,7 +171,7 @@ export default function MyPage() {
             )}
 
             <button
-              onClick={handleSearch}
+              onClick={() => handleSearch()}
               disabled={isLoading}
               className="btn-primary w-full"
             >
@@ -162,8 +180,27 @@ export default function MyPage() {
           </div>
         </div>
 
+        {/* 생년월일 선택 */}
+        {needBirthDate && !isLoading && (
+          <div className="card max-w-md mx-auto mb-8">
+            <h3 className="font-bold text-gray-800 mb-2">생년월일을 선택해주세요</h3>
+            <p className="text-sm text-gray-500 mb-4">동일한 이름과 전화번호로 여러 건의 신청이 있습니다.</p>
+            <div className="space-y-2">
+              {birthDates.map((bd) => (
+                <button
+                  key={bd}
+                  onClick={() => handleBirthDateSelect(bd)}
+                  className="w-full py-3 px-4 rounded-xl border-2 border-gray-200 hover:border-primary-500 hover:bg-primary-50 text-left font-medium text-gray-700 transition-colors"
+                >
+                  {bd.slice(0, 2)}년 {bd.slice(2, 4)}월 {bd.slice(4, 6)}일생
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* 배정 결과 */}
-        {searched && !isLoading && (
+        {searched && !isLoading && !needBirthDate && (
           <>
             {assignment ? (
               <div className="space-y-6">
