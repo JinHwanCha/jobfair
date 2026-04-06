@@ -6,9 +6,9 @@ import { usePathname } from 'next/navigation';
 import { useI18n, Lang } from '@/lib/i18n';
 
 const LANG_LABELS: { value: Lang; label: string }[] = [
-  { value: 'ko', label: 'KO' },
-  { value: 'en', label: 'EN' },
-  { value: 'zh', label: '中' },
+  { value: 'ko', label: '한국어' },
+  { value: 'en', label: 'English' },
+  { value: 'zh', label: '中文' },
 ];
 
 export default function Header() {
