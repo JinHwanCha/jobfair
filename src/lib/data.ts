@@ -1,4 +1,4 @@
-import { Mentor, Applicant, Assignment, MentorSlot } from '@/types';
+import { Mentor, Applicant, Assignment, MentorSlot, ForeignLanguageGroup } from '@/types';
 import { fetchMentorsFromSheet } from '@/lib/sheets';
 import { supabase } from '@/lib/supabase';
 
@@ -59,6 +59,8 @@ export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' 
         message4: input.message4 || '',
         message5: input.message5 || '',
         message6: input.message6 || '',
+        is_foreigner: input.isForeigner || false,
+        language_group: input.languageGroup || '',
         agreed_to_terms: input.agreedToTerms,
         birth_date: input.birthDate,
         updated_at: new Date().toISOString(),
@@ -91,6 +93,8 @@ export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' 
         message4: input.message4 || '',
         message5: input.message5 || '',
         message6: input.message6 || '',
+        is_foreigner: input.isForeigner || false,
+        language_group: input.languageGroup || '',
         agreed_to_terms: input.agreedToTerms,
         created_at: now,
         updated_at: now,
@@ -272,6 +276,8 @@ export async function importData(data: { applicants: Applicant[]; assignments: A
       message4: a.message4 || '',
       message5: a.message5 || '',
       message6: a.message6 || '',
+      is_foreigner: a.isForeigner || false,
+      language_group: a.languageGroup || '',
       agreed_to_terms: a.agreedToTerms,
       created_at: a.createdAt,
       updated_at: a.updatedAt,
@@ -320,6 +326,8 @@ function dbToApplicant(row: any): Applicant {
     message4: row.message4 || '',
     message5: row.message5 || '',
     message6: row.message6 || '',
+    isForeigner: row.is_foreigner || false,
+    languageGroup: (row.language_group as ForeignLanguageGroup) || undefined,
     agreedToTerms: row.agreed_to_terms,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

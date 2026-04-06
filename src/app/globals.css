@@ -6,7 +6,7 @@
 
 :root {
   --foreground-rgb: 51, 51, 51;
-  --background-rgb: 253, 250, 247;
+  --background-rgb: 240, 250, 251;
 }
 
 html, body {
@@ -84,23 +84,23 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f3e6d4;
+  background: #c4e9ef;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d4a373;
+  background: #4aacbf;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b9430a;
+  background: #0b7361;
 }
 
 /* 헤더 얇은 스크롤바 */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #d4a373 transparent;
+  scrollbar-color: #4aacbf transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -112,13 +112,13 @@ body {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #d4a373;
+  background: #4aacbf;
   border-radius: 2px;
 }
 
 /* 선택 스타일 */
 ::selection {
-  background: #fad5a8;
+  background: #8ef0d7;
   color: #333;
 }
 

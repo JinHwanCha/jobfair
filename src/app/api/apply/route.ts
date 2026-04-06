@@ -41,6 +41,8 @@ export async function POST(request: NextRequest) {
       name: body.name,
       birthDate: body.birthDate,
       phone4: body.phone4,
+      isForeigner: body.isForeigner || false,
+      languageGroup: body.languageGroup || undefined,
       choice1: body.choice1,
       choice2: body.choice2,
       choice3: body.choice3,

@@ -45,6 +45,8 @@ export default function ApplyPage() {
     name: '',
     birthDate: '',
     phone4: '',
+    isForeigner: false,
+    languageGroup: '',
     choice1: '', choice2: '', choice3: '',
     choice4: '', choice5: '', choice6: '',
     message1: '', message2: '', message3: '',
@@ -90,6 +92,10 @@ export default function ApplyPage() {
     }
     if (step === 1 && formData.phone4.length !== 4) {
       alert(t('apply.alertPhone4'));
+      return;
+    }
+    if (step === 1 && formData.isForeigner && !formData.languageGroup) {
+      alert(t('apply.languageGroup'));
       return;
     }
     setStep(step + 1);
@@ -217,6 +223,56 @@ export default function ApplyPage() {
                 <label className="label">{t('apply.phone4')}</label>
                 <input type="text" name="phone4" value={formData.phone4} onChange={handleInputChange}
                   placeholder="1234" maxLength={4} className="input-field" />
+              </div>
+
+              {/* 외국인 여부 */}
+              <div className="border-t border-gray-200 pt-4 mt-2">
+                <label className="label">{t('apply.foreigner')}</label>
+                <label className="flex items-center gap-3 cursor-pointer mb-3">
+                  <input
+                    type="checkbox"
+                    name="isForeigner"
+                    checked={formData.isForeigner}
+                    onChange={(e) => {
+                      const checked = e.target.checked;
+                      setFormData({
+                        ...formData,
+                        isForeigner: checked,
+                        languageGroup: checked ? formData.languageGroup : '',
+                      });
+                    }}
+                    className="w-5 h-5 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
+                  />
+                  <span className="text-sm text-gray-700">{t('apply.isForeigner')}</span>
+                </label>
+
+                {formData.isForeigner && (
+                  <div className="ml-8 space-y-2">
+                    <p className="text-sm font-medium text-gray-700 mb-2">{t('apply.languageGroup')}</p>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="languageGroup"
+                        value="english"
+                        checked={formData.languageGroup === 'english'}
+                        onChange={() => setFormData({ ...formData, languageGroup: 'english' })}
+                        className="w-4 h-4 text-primary-500 focus:ring-primary-500"
+                      />
+                      <span className="text-sm text-gray-700">{t('apply.english')}</span>
+                    </label>
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="radio"
+                        name="languageGroup"
+                        value="chinese"
+                        checked={formData.languageGroup === 'chinese'}
+                        onChange={() => setFormData({ ...formData, languageGroup: 'chinese' })}
+                        className="w-4 h-4 text-primary-500 focus:ring-primary-500"
+                      />
+                      <span className="text-sm text-gray-700">{t('apply.chinese')}</span>
+                    </label>
+                  </div>
+                )}
               </div>
             </div>
             <button onClick={nextStep} className="btn-primary w-full mt-6">{t('apply.next')}</button>
@@ -390,6 +446,14 @@ export default function ApplyPage() {
                   <span className="text-gray-500">{t('apply.phone4').split(' (')[0]}</span>
                   <span className="font-medium">{formData.phone4}</span>
                 </div>
+                {formData.isForeigner && (
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">{t('apply.foreigner').split(' (')[0]}</span>
+                    <span className="font-medium">
+                      {formData.languageGroup === 'english' ? t('apply.english') : t('apply.chinese')}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
 

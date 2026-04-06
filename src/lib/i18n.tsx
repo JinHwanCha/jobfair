@@ -98,6 +98,11 @@ const translations = {
   'apply.alertConsent': { ko: '개인정보 수집 및 이용에 동의해주세요.', en: 'Please agree to the personal info collection terms.', zh: '请同意收集和使用个人信息条款。' },
   'apply.alertDuplicate': { ko: '이미 선택한 멘토입니다. 다른 멘토를 선택해주세요.', en: 'Already selected. Please choose a different mentor.', zh: '已选择该导师。请选择其他导师。' },
   'apply.alertAllFilled': { ko: '6개 모두 선택되었습니다. 기존 선택을 해제하고 다시 선택해주세요.', en: 'All 6 choices are filled. Remove one to select a new mentor.', zh: '6个志愿已全部选择。请取消一个后重新选择。' },
+  'apply.foreigner': { ko: '외국인 여부 (선택)', en: 'Foreigner (Optional)', zh: '外国人（可选）' },
+  'apply.isForeigner': { ko: '외국인입니다', en: 'I am a foreigner', zh: '我是外国人' },
+  'apply.languageGroup': { ko: '언어권 선택', en: 'Language Group', zh: '语言圈选择' },
+  'apply.english': { ko: '영어권', en: 'English', zh: '英语圈' },
+  'apply.chinese': { ko: '중화권', en: 'Chinese', zh: '中文圈' },
   'apply.errorDefault': { ko: '신청 중 오류가 발생했습니다.', en: 'An error occurred during submission.', zh: '提交过程中发生错误。' },
   'apply.errorNetwork': { ko: '네트워크 오류가 발생했습니다. 다시 시도해주세요.', en: 'Network error. Please try again.', zh: '网络错误。请重试。' },
 

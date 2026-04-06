@@ -23,11 +23,16 @@ export interface Mentor {
 }
 
 // 신청자 타입 정의
+// 외국인 언어권 타입
+export type ForeignLanguageGroup = 'english' | 'chinese';
+
 export interface Applicant {
   id: string;
   name: string;
   birthDate: string; // YYMMDD 형식
   phone4: string; // 전화번호 뒷자리 4자리
+  isForeigner: boolean; // 외국인 여부
+  languageGroup?: ForeignLanguageGroup; // 언어권 (영어권/중화권)
   choice1: string; // 1지망 멘토 ID
   choice2: string; // 2지망 멘토 ID
   choice3: string; // 3지망 멘토 ID
@@ -100,6 +105,8 @@ export interface ApplyFormData {
   name: string;
   birthDate: string;
   phone4: string;
+  isForeigner: boolean;
+  languageGroup: ForeignLanguageGroup | '';
   choice1: string;
   choice2: string;
   choice3: string;

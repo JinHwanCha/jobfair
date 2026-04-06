@@ -171,7 +171,7 @@ export default function HomePage() {
       </section>
 
       {/* CTA 섹션 */}
-      <section className="py-12 sm:py-16 bg-gradient-to-br from-warm-200 to-warm-300">
+      <section className="py-12 sm:py-16 bg-gradient-to-br from-warm-200 to-primary-100">
         <div className="max-w-4xl mx-auto px-4 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
             {t('home.ctaTitle')}
