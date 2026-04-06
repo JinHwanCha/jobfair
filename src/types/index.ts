@@ -71,6 +71,7 @@ export interface AssignmentSlot {
   isOriginalChoice: boolean; // 희망했던 멘토인지 여부
   originalChoice?: string; // 원래 희망했던 멘토명 (다른 경우)
   originalMessage?: string; // 원래 멘토에게 하고싶었던 말 (대체 배정 시)
+  message?: string; // 해당 멘토에게 하고싶은 말 (원래 지망 시)
 }
 
 // 멘토별 타임 슬롯 현황

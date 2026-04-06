@@ -110,12 +110,14 @@ function assignSingleApplicant(
   // 각 타임에 배정될 슬롯 추적
   const assignedTimes = new Set<number>();
 
-  for (const { mentorId } of choices) {
+  for (const { choiceNum, mentorId } of choices) {
     const mentor = mentorMap.get(mentorId);
     if (!mentor) continue;
 
     const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
     if (!mentorSlot) continue;
+
+    const choiceMessage = (applicant as unknown as Record<string, unknown>)[`message${choiceNum}`] as string | undefined;
 
     const result = tryAssignToMentor(
       applicant.id,
@@ -123,6 +125,7 @@ function assignSingleApplicant(
       mentorSlot,
       assignedTimes,
       true,
+      choiceMessage,
       langGroup,
       slotLangMap
     );
@@ -284,6 +287,7 @@ function tryAssignToMentor(
   mentorSlot: MentorSlot,
   excludeTimes: Set<number>,
   isOriginalChoice: boolean,
+  message: string | undefined,
   langGroup: LangGroup,
   slotLangMap: SlotLangMap
 ): { timeNum: number; slot: AssignmentSlot } | null {
@@ -307,6 +311,7 @@ function tryAssignToMentor(
           mentorJob: mentor.job,
           location: mentor.location || `장소${mentor.id}`,
           isOriginalChoice,
+          message: message || undefined,
         },
       };
     }

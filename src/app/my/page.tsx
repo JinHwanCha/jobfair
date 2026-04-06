@@ -157,6 +157,12 @@ export default function MyPage() {
               <p className="text-xs text-gray-600 italic">&ldquo;{slot.originalMessage}&rdquo;</p>
             </div>
           )}
+          {slot.isOriginalChoice && slot.message && (
+            <div className="mt-3 bg-primary-50 rounded-lg px-3 py-2 text-left">
+              <p className="text-[10px] text-primary-400 mb-0.5">{t('my.myMessage')}</p>
+              <p className="text-xs text-primary-700 italic">&ldquo;{slot.message}&rdquo;</p>
+            </div>
+          )}
         </div>
       </div>
     );
