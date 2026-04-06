@@ -249,7 +249,12 @@ export default function AdminPage() {
                       );
                     })}
                   </div>
-                  <p className="text-xs text-gray-400 mt-2">{new Date(applicant.createdAt).toLocaleString('ko-KR')}</p>
+                  <p className="text-xs text-gray-400 mt-2">
+                    신청: {new Date(applicant.createdAt).toLocaleString('ko-KR')}
+                    {applicant.updatedAt !== applicant.createdAt && (
+                      <span className="ml-2 text-orange-500">수정: {new Date(applicant.updatedAt).toLocaleString('ko-KR')}</span>
+                    )}
+                  </p>
                 </div>
               ))}
               {applicants.length === 0 && (
@@ -269,6 +274,7 @@ export default function AdminPage() {
                         <th key={i} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">{i + 1}지망</th>
                       ))}
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">수정일</th>
                       <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase">삭제</th>
                     </tr>
                   </thead>
@@ -288,6 +294,13 @@ export default function AdminPage() {
                         })}
                         <td className="px-3 py-3 text-sm text-gray-500 whitespace-nowrap">
                           {new Date(applicant.createdAt).toLocaleString('ko-KR')}
+                        </td>
+                        <td className="px-3 py-3 text-sm whitespace-nowrap">
+                          {applicant.updatedAt !== applicant.createdAt ? (
+                            <span className="text-orange-500">{new Date(applicant.updatedAt).toLocaleString('ko-KR')}</span>
+                          ) : (
+                            <span className="text-gray-400">-</span>
+                          )}
                         </td>
                         <td className="px-3 py-3 text-center">
                           <button onClick={() => deleteApplicant(applicant.id, applicant.name)}
