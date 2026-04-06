@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Header from '@/components/Header';
 import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
+import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
 import { ApplyFormData, Mentor } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
@@ -23,6 +24,7 @@ type MessageKey = 'message1' | 'message2' | 'message3' | 'message4' | 'message5'
 export default function ApplyPage() {
   const router = useRouter();
   const { t } = useI18n();
+  const isOpen = useIsOpen();
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [isLoadingMentors, setIsLoadingMentors] = useState(true);
   const [step, setStep] = useState(1);
@@ -166,6 +168,31 @@ export default function ApplyPage() {
                 {t('apply.goHome')}
               </button>
             </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // 신청 오픈 전 안내 화면
+  if (isOpen === false) {
+    return (
+      <div className="page-container">
+        <Header />
+        <main className="content-container">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('apply.title')}</h1>
+            <p className="text-gray-600">{t('apply.subtitle')}</p>
+          </div>
+          <div className="card max-w-lg mx-auto py-10 px-4 text-center">
+            <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">⏰</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-6">{t('apply.notYetOpen')}</h2>
+            <CountdownTimer />
+            <button onClick={() => router.push('/')} className="btn-secondary mt-8">
+              {t('apply.goHome')}
+            </button>
           </div>
         </main>
       </div>

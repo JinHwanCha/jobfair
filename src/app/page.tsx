@@ -4,11 +4,13 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import MentorPreview from '@/components/MentorPreview';
+import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
 import { Mentor } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
 export default function HomePage() {
   const { t } = useI18n();
+  const isOpen = useIsOpen();
   const [mentors, setMentors] = useState<Mentor[]>([]);
 
   useEffect(() => {
@@ -62,6 +64,16 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* 카운트다운 띠 배너 */}
+      {isOpen === false && (
+        <section className="bg-primary-600">
+          <div className="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
+            <span className="text-white font-semibold text-sm sm:text-base">{t('countdown.bannerLabel')}</span>
+            <CountdownTimer compact />
+          </div>
+        </section>
+      )}
 
       {/* 멘토 미리보기 섹션 */}
       <section className="py-12 sm:py-16">

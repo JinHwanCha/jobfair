@@ -105,6 +105,20 @@ const translations = {
   'apply.chinese': { ko: '중화권', en: 'Chinese', zh: '中文圈' },
   'apply.errorDefault': { ko: '신청 중 오류가 발생했습니다.', en: 'An error occurred during submission.', zh: '提交过程中发生错误。' },
   'apply.errorNetwork': { ko: '네트워크 오류가 발생했습니다. 다시 시도해주세요.', en: 'Network error. Please try again.', zh: '网络错误。请重试。' },
+  'apply.notYetOpen': { ko: '아직 신청 시간 전입니다', en: 'Applications are not open yet', zh: '申请时间尚未开始' },
+
+  // ── Countdown ──
+  'countdown.until': { ko: '신청 오픈까지', en: 'Until Applications Open', zh: '距离申请开放' },
+  'countdown.days': { ko: '일', en: 'Days', zh: '天' },
+  'countdown.hours': { ko: '시간', en: 'Hours', zh: '小时' },
+  'countdown.minutes': { ko: '분', en: 'Min', zh: '分' },
+  'countdown.seconds': { ko: '초', en: 'Sec', zh: '秒' },
+  'countdown.d': { ko: '일', en: 'd', zh: '天' },
+  'countdown.h': { ko: '시간', en: 'h', zh: '时' },
+  'countdown.m': { ko: '분', en: 'm', zh: '分' },
+  'countdown.s': { ko: '초', en: 's', zh: '秒' },
+  'countdown.openDate': { ko: '2026년 4월 19일 (일) 오후 6:00 오픈', en: 'Opens Apr 19, 2026 (Sun) 6:00 PM KST', zh: '2026年4月19日（周日）下午6:00开放' },
+  'countdown.bannerLabel': { ko: '🔔 신청 시작까지', en: '🔔 Applications open in', zh: '🔔 距离申请开放' },
 
   // ── My Page ──
   'my.title': { ko: '내 배정 확인', en: 'My Assign', zh: '我的分配确认' },
