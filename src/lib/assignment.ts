@@ -156,8 +156,11 @@ function assignSingleApplicant(
     const uniqueCategories = [...new Set(originalCategories)];
 
     // 해당 타임에 원래 어떤 지망을 선택했는지 추적
-    const originalChoiceForTime = choices[timeNum - 1]?.mentorId;
-    const originalChoiceName = originalChoiceForTime ? mentorMap.get(originalChoiceForTime)?.name : undefined;
+    const originalChoiceForTime = choices[timeNum - 1];
+    const originalChoiceName = originalChoiceForTime ? mentorMap.get(originalChoiceForTime.mentorId)?.name : undefined;
+    const originalMessage = originalChoiceForTime
+      ? ((applicant as unknown as Record<string, unknown>)[`message${originalChoiceForTime.choiceNum}`] as string | undefined)
+      : undefined;
 
     let assigned = false;
 
@@ -170,7 +173,7 @@ function assignSingleApplicant(
       if (!mentorSlot) continue;
 
       const result = tryAssignToMentorAtTime(
-        applicant.id, mentor, mentorSlot, timeNum, true, undefined, langGroup, slotLangMap
+        applicant.id, mentor, mentorSlot, timeNum, true, undefined, undefined, langGroup, slotLangMap
       );
       if (result) {
         setAssignmentSlot(assignment, timeNum, result.slot);
@@ -202,6 +205,7 @@ function assignSingleApplicant(
           timeNum,
           false,
           originalChoiceName,
+          originalMessage,
           langGroup,
           slotLangMap
         );
@@ -229,6 +233,7 @@ function assignSingleApplicant(
           timeNum,
           false,
           originalChoiceName,
+          originalMessage,
           langGroup,
           slotLangMap
         );
@@ -318,6 +323,7 @@ function tryAssignToMentorAtTime(
   timeNum: number,
   isOriginalChoice: boolean,
   originalChoiceName: string | undefined,
+  originalMessage: string | undefined,
   langGroup: LangGroup,
   slotLangMap: SlotLangMap
 ): { slot: AssignmentSlot } | null {
@@ -338,6 +344,7 @@ function tryAssignToMentorAtTime(
         location: mentor.location || `장소${mentor.id}`,
         isOriginalChoice,
         originalChoice: isOriginalChoice ? undefined : originalChoiceName,
+        originalMessage: isOriginalChoice ? undefined : originalMessage,
       },
     };
   }

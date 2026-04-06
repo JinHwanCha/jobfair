@@ -132,6 +132,7 @@ const translations = {
   'my.alternative': { ko: '대체 배정', en: 'Alternative', zh: '替代分配' },
   'my.notAssigned': { ko: '배정되지 않음', en: 'Not assigned', zh: '未分配' },
   'my.originalChoice': { ko: '원래 선택: ', en: 'Original choice: ', zh: '原选择：' },
+  'my.originalMessage': { ko: '하고 싶었던 말', en: 'Your message', zh: '想说的话' },
   'my.notes': { ko: '유의사항', en: 'Notes', zh: '注意事项' },
   'my.note1': { ko: '각 타임 시작 5분 전까지 배정된 장소로 이동해주세요.', en: 'Please arrive at your assigned venue 5 min before each time slot.', zh: '请在每个时段开始前5分钟到达分配的地点。' },
   'my.note2': { ko: '대체 배정된 경우 원래 선택한 멘토와 다를 수 있습니다.', en: 'For alternative assignments, the mentor may differ from your original choice.', zh: '替代分配的情况下，导师可能与您的原始选择不同。' },
