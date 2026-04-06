@@ -120,6 +120,18 @@ const translations = {
   'countdown.openDate': { ko: '2026년 4월 19일 (일) 오후 6:00 오픈', en: 'Opens Apr 19, 2026 (Sun) 6:00 PM KST', zh: '2026年4月19日（周日）下午6:00开放' },
   'countdown.bannerLabel': { ko: '🔔 신청 시작까지', en: '🔔 Applications open in', zh: '🔔 距离申请开放' },
 
+  // ── Preview Modal ──
+  'preview.button': { ko: '신청 미리보기', en: 'Preview Steps', zh: '预览申请步骤' },
+  'preview.close': { ko: '확인', en: 'Got it', zh: '确认' },
+  'preview.step1Title': { ko: '기본 정보 입력', en: 'Basic Info', zh: '基本信息' },
+  'preview.step1Desc': { ko: '이름, 생년월일(6자리), 휴대폰 번호 뒷자리(4자리)를 입력합니다.\n\n🌏 외국인은 반드시 외국인 체크 후 영어권/중화권을 선택해주세요!', en: 'Enter your name, date of birth (6 digits), and last 4 digits of your phone number.\n\n🌏 Foreigners must check the foreigner box and select English or Chinese group!', zh: '输入姓名、出生日期（6位数字）和手机号码后4位。\n\n🌏 外国人请务必勾选外国人选项并选择英语圈/中文圈！' },
+  'preview.step2Title': { ko: '멘토 선택', en: 'Select Mentors', zh: '选择导师' },
+  'preview.step2Desc': { ko: '1지망부터 6지망까지 희망하는 멘토를 순서대로 선택합니다. 멘토 카드를 눌러 상세 정보를 확인할 수 있습니다.', en: 'Select your preferred mentors from 1st to 6th choice. Tap a mentor card to see details.', zh: '按顺序选择第1至第6志愿导师。点击导师卡片查看详情。' },
+  'preview.step3Title': { ko: '멘토에게 한마디', en: 'Message to Mentors', zh: '给导师的话' },
+  'preview.step3Desc': { ko: '각 멘토에게 하고 싶은 말이나 궁금한 점을 자유롭게 작성합니다. (선택사항)', en: 'Write a message or question for each selected mentor. (Optional)', zh: '给每位导师写下您的留言或问题。（可选）' },
+  'preview.step4Title': { ko: '신청 정보 확인', en: 'Review & Submit', zh: '确认并提交' },
+  'preview.step4Desc': { ko: '입력한 정보와 선택한 멘토를 최종 확인하고, 개인정보 동의 후 신청을 완료합니다.', en: 'Review your info and selected mentors, agree to the terms, and submit your application.', zh: '确认您的信息和选择的导师，同意条款后提交申请。' },
+
   // ── My Page ──
   'my.title': { ko: '내 배정 확인', en: 'My Assign', zh: '我的分配确认' },
   'my.subtitle': { ko: '신청 시 입력한 정보로 배정 결과를 확인하세요', en: 'Check your assignment with the info you provided', zh: '请使用申请时输入的信息确认分配结果' },

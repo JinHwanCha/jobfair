@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
 import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
+import ApplyPreviewModal from '@/components/ApplyPreviewModal';
 import { ApplyFormData, Mentor } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
@@ -32,6 +33,7 @@ export default function ApplyPage() {
   const [submitError, setSubmitError] = useState('');
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [detailMentor, setDetailMentor] = useState<Mentor | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     fetch('/api/mentors')
@@ -190,10 +192,20 @@ export default function ApplyPage() {
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-6">{t('apply.notYetOpen')}</h2>
             <CountdownTimer />
-            <button onClick={() => router.push('/')} className="btn-secondary mt-8">
-              {t('apply.goHome')}
-            </button>
+            <div className="flex flex-col sm:flex-row gap-3 mt-8">
+              <button
+                onClick={() => setShowPreview(true)}
+                className="btn-primary flex-1 flex items-center justify-center gap-2"
+              >
+                <span>📋</span>
+                {t('preview.button')}
+              </button>
+              <button onClick={() => router.push('/')} className="btn-secondary flex-1">
+                {t('apply.goHome')}
+              </button>
+            </div>
           </div>
+          {showPreview && <ApplyPreviewModal onClose={() => setShowPreview(false)} />}
         </main>
       </div>
     );
