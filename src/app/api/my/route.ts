@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMyAssignment, findApplicant, findApplicants } from '@/lib/data';
+import { getMyAssignment, findApplicant, findApplicants, deleteApplicant } from '@/lib/data';
 
 export const dynamic = 'force-dynamic';
 
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
             applied: true,
           });
         }
-        return NextResponse.json({ success: true, data: assignment });
+        return NextResponse.json({ success: true, data: assignment, birthDate: applicants[0].birthDate });
       }
       // 여러 명 → 생년월일 선택 필요
       return NextResponse.json({
@@ -74,6 +74,41 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       success: false,
       error: '조회 중 오류가 발생했습니다.',
+    });
+  }
+}
+
+export async function DELETE(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { name, phone4, birthDate } = body;
+
+    if (!name || !phone4 || !birthDate) {
+      return NextResponse.json({
+        success: false,
+        error: '본인 확인을 위한 정보가 부족합니다.',
+      });
+    }
+
+    const applicant = await findApplicant(name, phone4, birthDate);
+    if (!applicant) {
+      return NextResponse.json({
+        success: false,
+        error: '신청 정보를 찾을 수 없습니다.',
+      });
+    }
+
+    await deleteApplicant(applicant.id);
+
+    return NextResponse.json({
+      success: true,
+      message: '신청이 취소되었습니다.',
+    });
+  } catch (error) {
+    console.error('신청 취소 오류:', error);
+    return NextResponse.json({
+      success: false,
+      error: '취소 처리 중 오류가 발생했습니다.',
     });
   }
 }

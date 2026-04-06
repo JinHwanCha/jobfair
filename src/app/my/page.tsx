@@ -15,8 +15,10 @@ export default function MyPage() {
   const [searched, setSearched] = useState(false);
   const [birthDates, setBirthDates] = useState<string[]>([]);
   const [needBirthDate, setNeedBirthDate] = useState(false);
+  const [selectedBirthDate, setSelectedBirthDate] = useState<string>('');
+  const [isCancelling, setIsCancelling] = useState(false);
 
-  const handleSearch = async (selectedBirthDate?: string) => {
+  const handleSearch = async (selectedBirthDate2?: string) => {
     if (!name || !phone4) {
       setError(t('my.errorBoth'));
       return;
@@ -32,8 +34,8 @@ export default function MyPage() {
 
     try {
       let url = `/api/my?name=${encodeURIComponent(name)}&phone4=${phone4}`;
-      if (selectedBirthDate) {
-        url += `&birthDate=${selectedBirthDate}`;
+      if (selectedBirthDate2) {
+        url += `&birthDate=${selectedBirthDate2}`;
       }
       const response = await fetch(url);
       const result = await response.json();
@@ -42,6 +44,7 @@ export default function MyPage() {
         setAssignment(result.data);
         setNeedBirthDate(false);
         setBirthDates([]);
+        setSelectedBirthDate(selectedBirthDate2 || result.birthDate || '');
       } else if (result.needBirthDate) {
         setNeedBirthDate(true);
         setBirthDates(result.birthDates || []);
@@ -60,7 +63,35 @@ export default function MyPage() {
   };
 
   const handleBirthDateSelect = (bd: string) => {
+    setSelectedBirthDate(bd);
     handleSearch(bd);
+  };
+
+  const handleCancel = async () => {
+    if (!confirm('정말로 신청을 취소하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) return;
+
+    setIsCancelling(true);
+    try {
+      const response = await fetch('/api/my', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone4, birthDate: selectedBirthDate }),
+      });
+      const result = await response.json();
+
+      if (result.success) {
+        alert('신청이 취소되었습니다.');
+        setAssignment(null);
+        setSearched(false);
+        setSelectedBirthDate('');
+      } else {
+        alert(result.error || '취소 처리 중 오류가 발생했습니다.');
+      }
+    } catch {
+      alert('취소 처리 중 오류가 발생했습니다.');
+    } finally {
+      setIsCancelling(false);
+    }
   };
 
   // 타임 슬롯 카드 컴포넌트
@@ -251,6 +282,17 @@ export default function MyPage() {
                       <span>{t('my.note3')}</span>
                     </li>
                   </ul>
+                </div>
+
+                {/* 신청 취소 */}
+                <div className="text-center">
+                  <button
+                    onClick={handleCancel}
+                    disabled={isCancelling}
+                    className="text-sm text-red-500 hover:text-red-700 underline underline-offset-2 disabled:opacity-50"
+                  >
+                    {isCancelling ? '취소 처리 중...' : '신청 취소하기'}
+                  </button>
                 </div>
               </div>
             ) : (
