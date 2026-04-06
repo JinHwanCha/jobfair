@@ -26,7 +26,6 @@ export default function Header() {
     { href: '/mentors', label: t('nav.mentors') },
     { href: '/apply', label: t('nav.apply') },
     { href: '/my', label: t('nav.my') },
-    { href: '/mentor', label: t('nav.mentor') },
   ];
 
   return (

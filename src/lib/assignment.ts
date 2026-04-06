@@ -25,7 +25,7 @@ export function runAutoAssignment(
 
   // 신청 순서대로 정렬
   const sortedApplicants = [...applicants].sort(
-    (a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
   );
 
   const assignments: Assignment[] = [];
