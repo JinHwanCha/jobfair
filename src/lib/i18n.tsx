@@ -128,6 +128,7 @@ const translations = {
   // ── Mentor Card ──
   'card.experience': { ko: '경력', en: 'Experience', zh: '经验' },
   'card.mentoring': { ko: '멘토링', en: 'Mentoring', zh: '导师指导' },
+  'card.topics': { ko: '주제', en: 'Topics', zh: '主题' },
   'card.detail': { ko: '상세', en: 'Detail', zh: '详情' },
   'card.selected': { ko: '✓ 선택됨', en: '✓ Selected', zh: '✓ 已选择' },
   'card.select': { ko: '선택하기', en: 'Select', zh: '选择' },

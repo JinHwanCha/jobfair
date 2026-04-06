@@ -82,11 +82,11 @@ export default function MentorCard({
       }}
     >
       {/* 상단: 이름 + 카테고리 */}
-      <div className="mb-3">
-        <div className="flex items-center gap-2 mb-1">
+      <div className="mb-3 overflow-hidden">
+        <div className="flex items-center gap-2 mb-1 min-w-0">
           <span className="text-xl shrink-0">{getCategoryIcon(mentor.category)}</span>
-          <h3 className="text-lg font-bold text-gray-800 whitespace-nowrap">{mentor.name}</h3>
-          <p className="text-primary-600 font-medium text-sm truncate ml-1">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
+          <h3 className="text-lg font-bold text-gray-800 shrink-0">{mentor.name}</h3>
+          <p className="text-primary-600 font-medium text-sm truncate min-w-0">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
         </div>
         <span className={`category-badge inline-block max-w-full truncate ${getCategoryColor(mentor.category)}`}>
           {getShortCategoryLabel(mentor.category)}
@@ -96,16 +96,16 @@ export default function MentorCard({
       {/* 경력 */}
       {mentor.experience && (
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-2">
-          <span className="text-gray-400">{t('card.experience')}</span>
+          <span className="text-gray-400 shrink-0">{t('card.experience')}</span>
           <span>{mentor.experience}</span>
         </div>
       )}
 
-      {/* 멘토링 방식 */}
-      {mentor.mentoringType && (
-        <div className="flex items-start gap-2 text-sm text-gray-600 mb-3">
+      {/* 멘토링 주제 */}
+      {mentor.topics && (
+        <div className="flex items-start gap-2 text-sm text-gray-600 mb-3 overflow-hidden">
           <span className="text-gray-400 shrink-0">{t('card.mentoring')}</span>
-          <span className="line-clamp-1">{mentor.mentoringType}</span>
+          <span className="truncate min-w-0">{mentor.topics}</span>
         </div>
       )}
 

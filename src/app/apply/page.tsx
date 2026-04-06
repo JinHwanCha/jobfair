@@ -279,7 +279,7 @@ export default function ApplyPage() {
                   }
 
                   return (
-                    <div key={mentor.id} className="relative">
+                    <div key={mentor.id} className="relative min-w-0">
                       {selectedAs && (
                         <div className={`absolute -top-2 -right-2 w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold z-10 ${CHOICE_COLORS[selectedAs - 1].bg}`}>
                           {selectedAs}
@@ -346,10 +346,10 @@ export default function ApplyPage() {
 
                   return (
                     <div key={num} className={`${color.light} rounded-xl p-4`}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <span className={`w-6 h-6 rounded-full ${color.bg} text-white text-xs font-bold flex items-center justify-center`}>{num}</span>
-                        <span className="font-medium text-gray-800">{mentor.name}</span>
-                        <span className="text-sm text-gray-500">{mentor.jobPosition || mentor.jobTitle || mentor.job}</span>
+                      <div className="flex items-center gap-2 mb-2 min-w-0">
+                        <span className={`w-6 h-6 rounded-full ${color.bg} text-white text-xs font-bold flex items-center justify-center shrink-0`}>{num}</span>
+                        <span className="font-medium text-gray-800 shrink-0">{mentor.name}</span>
+                        <span className="text-sm text-gray-500 truncate">{mentor.jobPosition || mentor.jobTitle || mentor.job}</span>
                       </div>
                       <textarea
                         value={formData[msgKey]}
