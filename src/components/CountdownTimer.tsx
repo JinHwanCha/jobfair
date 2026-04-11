@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 
 // KST 2026-04-19 18:00:00 (테스트용)
-const OPEN_TIME = new Date('2026-04-19T18:00:00+09:00').getTime();
+const OPEN_TIME = new Date('2026-04-10T18:00:00+09:00').getTime();
 
 export function useIsOpen() {
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
