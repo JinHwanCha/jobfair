@@ -21,6 +21,11 @@ CREATE TABLE IF NOT EXISTS applicants (
   message6 TEXT DEFAULT '',
   is_foreigner BOOLEAN DEFAULT FALSE,
   language_group TEXT DEFAULT '',
+  department TEXT DEFAULT '',
+  birth_year TEXT DEFAULT '',
+  current_status TEXT DEFAULT '',
+  desired_field TEXT DEFAULT '',
+  interest_topics JSONB DEFAULT '[]'::JSONB,
   agreed_to_terms BOOLEAN DEFAULT TRUE,
   created_at TIMESTAMPTZ DEFAULT NOW(),
   updated_at TIMESTAMPTZ DEFAULT NOW()

@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
 
       const mentees = assignedIds.map((aid) => {
         const applicant = applicantMap.get(aid);
-        if (!applicant) return { name: aid, message: '' };
+        if (!applicant) return { name: aid, message: '', department: '', birthYear: '', currentStatus: '', desiredField: '', interestTopics: [] };
 
         // Find which choiceN matches this mentor to get the corresponding messageN
         let message = '';
@@ -53,7 +53,15 @@ export async function POST(request: NextRequest) {
           }
         }
 
-        return { name: applicant.name, message };
+        return {
+          name: applicant.name,
+          message,
+          department: applicant.department || '',
+          birthYear: applicant.birthYear || '',
+          currentStatus: applicant.currentStatus || '',
+          desiredField: applicant.desiredField || '',
+          interestTopics: applicant.interestTopics || [],
+        };
       });
 
       timeSlots.push({ time: t, mentees });

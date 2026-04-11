@@ -7,7 +7,7 @@ import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
 import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
 import ApplyPreviewModal from '@/components/ApplyPreviewModal';
-import { ApplyFormData, Mentor } from '@/types';
+import { ApplyFormData, Mentor, MentoringTopic } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
 const CHOICE_COLORS = [
@@ -51,6 +51,11 @@ export default function ApplyPage() {
     phone4: '',
     isForeigner: false,
     languageGroup: '',
+    department: '',
+    birthYear: '',
+    currentStatus: '',
+    desiredField: '',
+    interestTopics: [],
     choice1: '', choice2: '', choice3: '',
     choice4: '', choice5: '', choice6: '',
     message1: '', message2: '', message3: '',
@@ -100,6 +105,14 @@ export default function ApplyPage() {
     }
     if (step === 1 && formData.isForeigner && !formData.languageGroup) {
       alert(t('apply.languageGroup'));
+      return;
+    }
+    if (step === 2 && (!formData.department || !formData.birthYear || !formData.currentStatus || !formData.desiredField)) {
+      alert(t('apply.alertProfile'));
+      return;
+    }
+    if (step === 2 && formData.interestTopics.length === 0) {
+      alert(t('apply.alertInterestTopics'));
       return;
     }
     setStep(step + 1);
@@ -224,7 +237,7 @@ export default function ApplyPage() {
 
         {/* 진행 상태 표시 */}
         <div className="flex items-center justify-center mb-8">
-          {[1, 2, 3, 4].map((num) => (
+          {[1, 2, 3, 4, 5].map((num) => (
             <div key={num} className="flex items-center">
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
@@ -235,7 +248,7 @@ export default function ApplyPage() {
               >
                 {num}
               </div>
-              {num < 4 && (
+              {num < 5 && (
                 <div className={`w-12 h-1 ${step > num ? 'bg-primary-500' : 'bg-warm-200'}`} />
               )}
             </div>
@@ -318,8 +331,79 @@ export default function ApplyPage() {
           </div>
         )}
 
-        {/* Step 2: 멘토 선택 */}
+        {/* Step 2: 멘티 프로필 정보 */}
         {step === 2 && (
+          <div className="card max-w-md mx-auto">
+            <h2 className="text-xl font-bold text-gray-800 mb-6">{t('apply.step2Title')}</h2>
+            <div className="space-y-4">
+              <div>
+                <label className="label">{t('apply.department')}</label>
+                <input type="text" name="department" value={formData.department} onChange={handleInputChange}
+                  placeholder={t('apply.departmentPlaceholder')} className="input-field" />
+              </div>
+              <div>
+                <label className="label">{t('apply.birthYear')}</label>
+                <input type="text" name="birthYear" value={formData.birthYear} onChange={handleInputChange}
+                  placeholder={t('apply.birthYearPlaceholder')} maxLength={4} className="input-field" />
+                <p className="text-xs text-gray-500 mt-1">{t('apply.birthYearHint')}</p>
+              </div>
+              <div>
+                <label className="label">{t('apply.currentStatus')}</label>
+                <select
+                  name="currentStatus"
+                  value={formData.currentStatus}
+                  onChange={(e) => setFormData({ ...formData, currentStatus: e.target.value })}
+                  className="input-field"
+                >
+                  <option value="">{t('apply.currentStatusPlaceholder')}</option>
+                  <option value="1학년">{t('apply.status1')}</option>
+                  <option value="2학년">{t('apply.status2')}</option>
+                  <option value="3학년">{t('apply.status3')}</option>
+                  <option value="4학년">{t('apply.status4')}</option>
+                  <option value="취준생">{t('apply.statusJobSeeker')}</option>
+                  <option value="기타">{t('apply.statusOther')}</option>
+                </select>
+              </div>
+              <div>
+                <label className="label">{t('apply.desiredField')}</label>
+                <input type="text" name="desiredField" value={formData.desiredField} onChange={handleInputChange}
+                  placeholder={t('apply.desiredFieldPlaceholder')} className="input-field" />
+              </div>
+              <div className="border-t border-gray-200 pt-4 mt-2">
+                <label className="label">{t('apply.interestTopics')}</label>
+                <p className="text-xs text-gray-500 mb-3">{t('apply.interestTopicsHint')}</p>
+                <div className="space-y-2">
+                  {(['career', 'employment', 'interview'] as MentoringTopic[]).map((topic) => (
+                    <label key={topic} className="flex items-center gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={formData.interestTopics.includes(topic)}
+                        onChange={(e) => {
+                          const checked = e.target.checked;
+                          setFormData({
+                            ...formData,
+                            interestTopics: checked
+                              ? [...formData.interestTopics, topic]
+                              : formData.interestTopics.filter(t => t !== topic),
+                          });
+                        }}
+                        className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                      />
+                      <span className="text-sm text-gray-700">{t(`apply.topic_${topic}` as Parameters<typeof t>[0])}</span>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            </div>
+            <div className="flex gap-4 mt-6">
+              <button onClick={prevStep} className="btn-secondary flex-1">{t('apply.prev')}</button>
+              <button onClick={nextStep} className="btn-primary flex-1">{t('apply.next')}</button>
+            </div>
+          </div>
+        )}
+
+        {/* Step 3: 멘토 선택 */}
+        {step === 3 && (
           <div>
             <div className="bg-primary-100 rounded-2xl p-4 mb-6">
               <p className="text-gray-800 text-sm font-medium mb-2">
@@ -424,12 +508,12 @@ export default function ApplyPage() {
           </div>
         )}
 
-        {/* Step 3: 멘토에게 메시지 */}
-        {step === 3 && (
+        {/* Step 4: 멘토에게 메시지 */}
+        {step === 4 && (
           <div className="max-w-lg mx-auto">
             <div className="card">
-              <h2 className="text-xl font-bold text-gray-800 mb-2">{t('apply.step3Title')}</h2>
-              <p className="text-sm text-gray-500 mb-6">{t('apply.step3Desc')}</p>
+              <h2 className="text-xl font-bold text-gray-800 mb-2">{t('apply.step4Title')}</h2>
+              <p className="text-sm text-gray-500 mb-6">{t('apply.step4Desc')}</p>
 
               <div className="space-y-4">
                 {Array.from({ length: 6 }, (_, i) => i + 1).map((num) => {
@@ -466,10 +550,10 @@ export default function ApplyPage() {
           </div>
         )}
 
-        {/* Step 4: 확인 및 동의 */}
-        {step === 4 && (
+        {/* Step 5: 확인 및 동의 */}
+        {step === 5 && (
           <div className="card max-w-md mx-auto">
-            <h2 className="text-xl font-bold text-gray-800 mb-6">{t('apply.step4Title')}</h2>
+            <h2 className="text-xl font-bold text-gray-800 mb-6">{t('apply.step5Title')}</h2>
 
             <div className="bg-warm-100 rounded-xl p-4 mb-6">
               <div className="space-y-2 text-sm">
@@ -493,6 +577,30 @@ export default function ApplyPage() {
                     </span>
                   </div>
                 )}
+                <div className="border-t border-gray-200 my-2 pt-2">
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">{t('apply.department')}</span>
+                    <span className="font-medium">{formData.department}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">{t('apply.birthYear')}</span>
+                    <span className="font-medium">{formData.birthYear}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">{t('apply.currentStatus')}</span>
+                    <span className="font-medium">{formData.currentStatus}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">{t('apply.desiredField')}</span>
+                    <span className="font-medium">{formData.desiredField}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-500">{t('apply.interestTopics')}</span>
+                    <span className="font-medium">
+                      {formData.interestTopics.map(topic => t(`apply.topic_${topic}` as Parameters<typeof t>[0])).join(', ')}
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
 

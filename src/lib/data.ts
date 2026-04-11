@@ -1,4 +1,4 @@
-import { Mentor, Applicant, Assignment, MentorSlot, ForeignLanguageGroup } from '@/types';
+import { Mentor, Applicant, Assignment, MentorSlot, ForeignLanguageGroup, MentoringTopic } from '@/types';
 import { fetchMentorsFromSheet } from '@/lib/sheets';
 import { supabase } from '@/lib/supabase';
 
@@ -61,6 +61,11 @@ export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' 
         message6: input.message6 || '',
         is_foreigner: input.isForeigner || false,
         language_group: input.languageGroup || '',
+        department: input.department || '',
+        birth_year: input.birthYear || '',
+        current_status: input.currentStatus || '',
+        desired_field: input.desiredField || '',
+        interest_topics: input.interestTopics || [],
         agreed_to_terms: input.agreedToTerms,
         birth_date: input.birthDate,
         updated_at: new Date().toISOString(),
@@ -95,6 +100,11 @@ export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' 
         message6: input.message6 || '',
         is_foreigner: input.isForeigner || false,
         language_group: input.languageGroup || '',
+        department: input.department || '',
+        birth_year: input.birthYear || '',
+        current_status: input.currentStatus || '',
+        desired_field: input.desiredField || '',
+        interest_topics: input.interestTopics || [],
         agreed_to_terms: input.agreedToTerms,
         created_at: now,
         updated_at: now,
@@ -278,6 +288,11 @@ export async function importData(data: { applicants: Applicant[]; assignments: A
       message6: a.message6 || '',
       is_foreigner: a.isForeigner || false,
       language_group: a.languageGroup || '',
+      department: a.department || '',
+      birth_year: a.birthYear || '',
+      current_status: a.currentStatus || '',
+      desired_field: a.desiredField || '',
+      interest_topics: a.interestTopics || [],
       agreed_to_terms: a.agreedToTerms,
       created_at: a.createdAt,
       updated_at: a.updatedAt,
@@ -328,6 +343,11 @@ function dbToApplicant(row: any): Applicant {
     message6: row.message6 || '',
     isForeigner: row.is_foreigner || false,
     languageGroup: (row.language_group as ForeignLanguageGroup) || undefined,
+    department: row.department || '',
+    birthYear: row.birth_year || '',
+    currentStatus: row.current_status || '',
+    desiredField: row.desired_field || '',
+    interestTopics: (row.interest_topics as MentoringTopic[]) || [],
     agreedToTerms: row.agreed_to_terms,
     createdAt: row.created_at,
     updatedAt: row.updated_at,

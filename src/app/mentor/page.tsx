@@ -6,6 +6,11 @@ import { useI18n } from '@/lib/i18n';
 interface Mentee {
   name: string;
   message: string;
+  department: string;
+  birthYear: string;
+  currentStatus: string;
+  desiredField: string;
+  interestTopics: string[];
 }
 
 interface TimeSlotData {
@@ -135,8 +140,36 @@ export default function MentorPage() {
                             </span>
                             <span className="font-medium text-gray-800">{mentee.name}</span>
                           </div>
+                          {/* 멘티 프로필 정보 */}
+                          <div className="ml-8 flex flex-wrap gap-1.5 mt-1">
+                            {mentee.department && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700">
+                                {mentee.department}
+                              </span>
+                            )}
+                            {mentee.birthYear && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-700">
+                                {mentee.birthYear}{t('mentor.yearBorn')}
+                              </span>
+                            )}
+                            {mentee.currentStatus && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700">
+                                {mentee.currentStatus}
+                              </span>
+                            )}
+                            {mentee.desiredField && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-orange-50 text-orange-700">
+                                {t('mentor.desired')}: {mentee.desiredField}
+                              </span>
+                            )}
+                            {mentee.interestTopics && mentee.interestTopics.length > 0 && (
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-pink-50 text-pink-700">
+                                {mentee.interestTopics.map(topic => t(`apply.topic_${topic}` as Parameters<typeof t>[0])).join(', ')}
+                              </span>
+                            )}
+                          </div>
                           {mentee.message && (
-                            <div className="ml-8 text-sm text-gray-600 bg-white rounded-md px-3 py-2 border border-gray-100">
+                            <div className="ml-8 text-sm text-gray-600 bg-white rounded-md px-3 py-2 border border-gray-100 mt-1">
                               💬 {mentee.message}
                             </div>
                           )}

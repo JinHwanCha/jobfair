@@ -1,4 +1,4 @@
-import { Mentor, Applicant, Assignment, AssignmentSlot, MentorSlot } from '@/types';
+import { Mentor, Applicant, Assignment, AssignmentSlot, MentorSlot, MentoringTopic } from '@/types';
 
 const NUM_TIMES = 6;
 
@@ -17,6 +17,12 @@ function getApplicantLangGroup(applicant: Applicant): LangGroup {
  */
 type SlotLangMap = Map<string, LangGroup | null>;
 
+/**
+ * 멘토 타임 슬롯별 관심 주제 추적
+ * key: "mentorId:timeNum" → value: MentoringTopic[] (해당 슬롯에 배정된 신청자들의 주요 관심 주제)
+ */
+type SlotTopicMap = Map<string, MentoringTopic[]>;
+
 function slotLangKey(mentorId: string, timeNum: number): string {
   return `${mentorId}:${timeNum}`;
 }
@@ -25,14 +31,14 @@ function slotLangKey(mentorId: string, timeNum: number): string {
  * 자동 멘토 배정 알고리즘
  *
  * 배정 규칙:
- * 1. 전체 신청자를 선착순으로 정렬 (한국인/외국인 구분 없이)
+ * 1. 전체 신청자를 선착순으로 정렬, 관심 주제별로 그룹핑
  * 2. 1지망 → 2지망 → ... → 6지망 순으로 배정 시도
  * 3. 멘토당 타임별 3명 제한 (maxCapacity)
  * 4. 같은 타임 슬롯에는 같은 언어 그룹만 배정 (한국인/영어권/중화권 분리)
  *    - 빈 슬롯은 누구든 먼저 들어가는 사람의 그룹으로 확정
- *    - 영어권이 혼자여도 해당 슬롯은 영어권 전용이 됨
- * 5. 초과 또는 언어 그룹 불일치 시 다음 타임으로 자동 배정
- * 6. 모든 지망 실패 시 동일 카테고리 멘토로 배정
+ * 5. 같은 타임 슬롯에는 관심 주제가 겹치는 신청자를 우선 배치
+ * 6. 초과 또는 언어 그룹 불일치 시 다음 타임으로 자동 배정
+ * 7. 모든 지망 실패 시 동일 카테고리 멘토로 배정
  */
 export function runAutoAssignment(
   applicants: Applicant[],
@@ -47,16 +53,33 @@ export function runAutoAssignment(
 
   // 타임 슬롯별 언어 그룹 추적 초기화 (전부 null = 빈 슬롯)
   const slotLangMap: SlotLangMap = new Map();
+  // 타임 슬롯별 관심 주제 추적 초기화
+  const slotTopicMap: SlotTopicMap = new Map();
   for (const mentor of mentors) {
     for (let t = 1; t <= NUM_TIMES; t++) {
       slotLangMap.set(slotLangKey(mentor.id, t), null);
+      slotTopicMap.set(slotLangKey(mentor.id, t), []);
     }
   }
 
-  // 전체 신청자를 선착순으로 정렬 (한국인/외국인 구분 없이)
+  // 전체 신청자를 선착순으로 정렬 후 관심 주제별 그룹핑
   const sortedApplicants = [...applicants].sort(
     (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
   );
+
+  // 관심 주제별로 그룹핑 (같은 주제 신청자들이 연속 배정되도록)
+  const topicGroups: Map<string, Applicant[]> = new Map();
+  for (const applicant of sortedApplicants) {
+    const topicKey = (applicant.interestTopics || []).slice().sort().join(',') || 'none';
+    const group = topicGroups.get(topicKey) || [];
+    group.push(applicant);
+    topicGroups.set(topicKey, group);
+  }
+  // 그룹 내에서 선착순 유지하면서 그룹별로 묶어서 배정
+  const groupedApplicants: Applicant[] = [];
+  for (const group of topicGroups.values()) {
+    groupedApplicants.push(...group);
+  }
 
   const assignments: Assignment[] = [];
   const mentorMap = new Map(mentors.map(m => [m.id, m]));
@@ -67,11 +90,11 @@ export function runAutoAssignment(
     categoryMentorsMap.set(mentor.category, [...existing, mentor]);
   });
 
-  // 전체 신청자를 선착순으로 배정 (언어 그룹별 슬롯 분리)
-  for (const applicant of sortedApplicants) {
+  // 전체 신청자를 관심 주제 그룹별로 배정 (언어 그룹별 슬롯 분리)
+  for (const applicant of groupedApplicants) {
     const langGroup = getApplicantLangGroup(applicant);
     const assignment = assignSingleApplicant(
-      applicant, langGroup, mentors, mentorSlots, slotLangMap, mentorMap, categoryMentorsMap
+      applicant, langGroup, mentors, mentorSlots, slotLangMap, slotTopicMap, mentorMap, categoryMentorsMap
     );
     assignments.push(assignment);
   }
@@ -89,6 +112,7 @@ function assignSingleApplicant(
   mentors: Mentor[],
   mentorSlots: MentorSlot[],
   slotLangMap: SlotLangMap,
+  slotTopicMap: SlotTopicMap,
   mentorMap: Map<string, Mentor>,
   categoryMentorsMap: Map<string, Mentor[]>
 ): Assignment {
@@ -109,6 +133,7 @@ function assignSingleApplicant(
 
   // 각 타임에 배정될 슬롯 추적
   const assignedTimes = new Set<number>();
+  const applicantTopics = applicant.interestTopics || [];
 
   for (const { choiceNum, mentorId } of choices) {
     const mentor = mentorMap.get(mentorId);
@@ -127,7 +152,9 @@ function assignSingleApplicant(
       true,
       choiceMessage,
       langGroup,
-      slotLangMap
+      slotLangMap,
+      applicantTopics,
+      slotTopicMap
     );
 
     if (result) {
@@ -176,7 +203,7 @@ function assignSingleApplicant(
       if (!mentorSlot) continue;
 
       const result = tryAssignToMentorAtTime(
-        applicant.id, mentor, mentorSlot, timeNum, true, undefined, undefined, langGroup, slotLangMap
+        applicant.id, mentor, mentorSlot, timeNum, true, undefined, undefined, langGroup, slotLangMap, applicantTopics, slotTopicMap
       );
       if (result) {
         setAssignmentSlot(assignment, timeNum, result.slot);
@@ -210,7 +237,9 @@ function assignSingleApplicant(
           originalChoiceName,
           originalMessage,
           langGroup,
-          slotLangMap
+          slotLangMap,
+          applicantTopics,
+          slotTopicMap
         );
 
         if (result) {
@@ -238,7 +267,9 @@ function assignSingleApplicant(
           originalChoiceName,
           originalMessage,
           langGroup,
-          slotLangMap
+          slotLangMap,
+          applicantTopics,
+          slotTopicMap
         );
 
         if (result) {
@@ -280,7 +311,36 @@ function markSlotLangGroup(
   slotLangMap.set(slotLangKey(mentorId, timeNum), langGroup);
 }
 
-// 멘토에게 배정 시도 (가능한 타임 자동 선택, 언어 그룹 체크)
+/**
+ * 슬롯에 관심 주제 추가
+ */
+function markSlotTopics(
+  slotTopicMap: SlotTopicMap,
+  mentorId: string,
+  timeNum: number,
+  topics: MentoringTopic[]
+): void {
+  const key = slotLangKey(mentorId, timeNum);
+  const existing = slotTopicMap.get(key) || [];
+  slotTopicMap.set(key, [...existing, ...topics]);
+}
+
+/**
+ * 슬롯의 관심 주제와 신청자 주제 겹침 점수 계산 (높을수록 좋음)
+ */
+function getTopicOverlapScore(
+  slotTopicMap: SlotTopicMap,
+  mentorId: string,
+  timeNum: number,
+  applicantTopics: MentoringTopic[]
+): number {
+  const key = slotLangKey(mentorId, timeNum);
+  const slotTopics = slotTopicMap.get(key) || [];
+  if (slotTopics.length === 0 || applicantTopics.length === 0) return 0;
+  return applicantTopics.filter(t => slotTopics.includes(t)).length;
+}
+
+// 멘토에게 배정 시도 (가능한 타임 자동 선택, 언어 그룹 + 관심 주제 체크)
 function tryAssignToMentor(
   applicantId: string,
   mentor: Mentor,
@@ -289,38 +349,48 @@ function tryAssignToMentor(
   isOriginalChoice: boolean,
   message: string | undefined,
   langGroup: LangGroup,
-  slotLangMap: SlotLangMap
+  slotLangMap: SlotLangMap,
+  applicantTopics: MentoringTopic[],
+  slotTopicMap: SlotTopicMap
 ): { timeNum: number; slot: AssignmentSlot } | null {
   const times = Array.from({ length: NUM_TIMES }, (_, i) => i + 1).filter(t => !excludeTimes.has(t));
 
-  for (const timeNum of times) {
-    // 언어 그룹 호환성 체크
-    if (!isSlotCompatible(slotLangMap, mentor.id, timeNum, langGroup)) continue;
+  // 관심 주제 겹침이 많은 슬롯 우선 정렬
+  const compatibleTimes = times.filter(t => {
+    if (!isSlotCompatible(slotLangMap, mentor.id, t, langGroup)) return false;
+    const slotArray = getSlotArray(mentorSlot, t);
+    return slotArray.length < mentor.maxCapacity;
+  });
 
-    const slotArray = getSlotArray(mentorSlot, timeNum);
-    
-    if (slotArray.length < mentor.maxCapacity) {
-      slotArray.push(applicantId);
-      markSlotLangGroup(slotLangMap, mentor.id, timeNum, langGroup);
-      
-      return {
-        timeNum,
-        slot: {
-          mentorId: mentor.id,
-          mentorName: mentor.name,
-          mentorJob: mentor.job,
-          location: mentor.location || `장소${mentor.id}`,
-          isOriginalChoice,
-          message: message || undefined,
-        },
-      };
-    }
-  }
+  if (compatibleTimes.length === 0) return null;
 
-  return null;
+  // 관심 주제 겹침 점수가 높은 타임 우선 선택
+  compatibleTimes.sort((a, b) => {
+    const scoreA = getTopicOverlapScore(slotTopicMap, mentor.id, a, applicantTopics);
+    const scoreB = getTopicOverlapScore(slotTopicMap, mentor.id, b, applicantTopics);
+    return scoreB - scoreA; // 높은 점수 우선
+  });
+
+  const timeNum = compatibleTimes[0];
+  const slotArray = getSlotArray(mentorSlot, timeNum);
+  slotArray.push(applicantId);
+  markSlotLangGroup(slotLangMap, mentor.id, timeNum, langGroup);
+  markSlotTopics(slotTopicMap, mentor.id, timeNum, applicantTopics);
+  
+  return {
+    timeNum,
+    slot: {
+      mentorId: mentor.id,
+      mentorName: mentor.name,
+      mentorJob: mentor.job,
+      location: mentor.location || `장소${mentor.id}`,
+      isOriginalChoice,
+      message: message || undefined,
+    },
+  };
 }
 
-// 특정 타임에 멘토 배정 시도 (언어 그룹 체크)
+// 특정 타임에 멘토 배정 시도 (언어 그룹 + 관심 주제 체크)
 function tryAssignToMentorAtTime(
   applicantId: string,
   mentor: Mentor,
@@ -330,7 +400,9 @@ function tryAssignToMentorAtTime(
   originalChoiceName: string | undefined,
   originalMessage: string | undefined,
   langGroup: LangGroup,
-  slotLangMap: SlotLangMap
+  slotLangMap: SlotLangMap,
+  applicantTopics: MentoringTopic[],
+  slotTopicMap: SlotTopicMap
 ): { slot: AssignmentSlot } | null {
   // 언어 그룹 호환성 체크
   if (!isSlotCompatible(slotLangMap, mentor.id, timeNum, langGroup)) return null;
@@ -340,6 +412,7 @@ function tryAssignToMentorAtTime(
   if (slotArray.length < mentor.maxCapacity) {
     slotArray.push(applicantId);
     markSlotLangGroup(slotLangMap, mentor.id, timeNum, langGroup);
+    markSlotTopics(slotTopicMap, mentor.id, timeNum, applicantTopics);
 
     return {
       slot: {

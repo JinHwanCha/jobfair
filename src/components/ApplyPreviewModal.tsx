@@ -10,19 +10,24 @@ const STEPS = [
     descKey: 'preview.step1Desc' as const,
   },
   {
-    icon: '👥',
+    icon: '🎓',
     titleKey: 'preview.step2Title' as const,
     descKey: 'preview.step2Desc' as const,
   },
   {
-    icon: '💬',
+    icon: '👥',
     titleKey: 'preview.step3Title' as const,
     descKey: 'preview.step3Desc' as const,
   },
   {
-    icon: '✅',
+    icon: '💬',
     titleKey: 'preview.step4Title' as const,
     descKey: 'preview.step4Desc' as const,
+  },
+  {
+    icon: '✅',
+    titleKey: 'preview.step5Title' as const,
+    descKey: 'preview.step5Desc' as const,
   },
 ];
 
@@ -69,7 +74,7 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
             <span className="w-7 h-7 rounded-full bg-primary-400 text-gray-900 text-xs font-bold flex items-center justify-center">
               {current + 1}
             </span>
-            <span className="text-sm font-medium text-gray-700">STEP {current + 1} / 4</span>
+            <span className="text-sm font-medium text-gray-700">STEP {current + 1} / 5</span>
           </div>
 
           {/* 프리뷰 카드 */}
@@ -86,9 +91,10 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
 
             {/* 스텝별 미니 미리보기 */}
             {current === 0 && <Step1Preview />}
-            {current === 1 && <Step2Preview />}
-            {current === 2 && <Step3Preview />}
-            {current === 3 && <Step4Preview />}
+            {current === 1 && <Step2ProfilePreview />}
+            {current === 2 && <Step3MentorPreview />}
+            {current === 3 && <Step4MessagePreview />}
+            {current === 4 && <Step5ReviewPreview />}
           </div>
         </div>
 
@@ -101,7 +107,7 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
           >
             ←
           </button>
-          {current < 3 ? (
+          {current < 4 ? (
             <button
               onClick={() => setCurrent(current + 1)}
               className="flex-1 py-2.5 rounded-xl text-sm font-medium bg-primary-400 text-gray-900 hover:bg-primary-500 transition-colors"
@@ -153,7 +159,38 @@ function Step1Preview() {
   );
 }
 
-function Step2Preview() {
+function Step2ProfilePreview() {
+  return (
+    <div className="mt-3 space-y-2">
+      <div className="bg-white rounded-lg px-3 py-2 flex items-center gap-2">
+        <span className="text-xs text-gray-400 w-14 shrink-0">학과</span>
+        <div className="flex-1 h-5 bg-gray-100 rounded" />
+      </div>
+      <div className="bg-white rounded-lg px-3 py-2 flex items-center gap-2">
+        <span className="text-xs text-gray-400 w-14 shrink-0">출생년도</span>
+        <div className="flex-1 h-5 bg-gray-100 rounded" />
+      </div>
+      <div className="bg-white rounded-lg px-3 py-2 flex items-center gap-2">
+        <span className="text-xs text-gray-400 w-14 shrink-0">현재상황</span>
+        <div className="flex-1 h-5 bg-gray-100 rounded" />
+      </div>
+      <div className="bg-white rounded-lg px-3 py-2 flex items-center gap-2">
+        <span className="text-xs text-gray-400 w-14 shrink-0">희망직군</span>
+        <div className="flex-1 h-5 bg-gray-100 rounded" />
+      </div>
+      <div className="bg-white rounded-lg px-3 py-1.5">
+        <p className="text-[10px] text-gray-400 mb-1">듣고싶은 내용</p>
+        <div className="flex gap-1.5">
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-pink-100 text-pink-600">진로</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-blue-100 text-blue-600">취업</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-green-100 text-green-600">면접</span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Step3MentorPreview() {
   const colors = ['bg-blue-400', 'bg-green-400', 'bg-purple-400', 'bg-orange-400', 'bg-pink-400', 'bg-teal-400'];
   return (
     <div className="mt-3">
@@ -181,7 +218,7 @@ function Step2Preview() {
   );
 }
 
-function Step3Preview() {
+function Step4MessagePreview() {
   return (
     <div className="mt-3 space-y-2">
       {[
@@ -201,7 +238,7 @@ function Step3Preview() {
   );
 }
 
-function Step4Preview() {
+function Step5ReviewPreview() {
   return (
     <div className="mt-3 space-y-2">
       <div className="bg-white rounded-lg p-2.5 space-y-1.5">

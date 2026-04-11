@@ -33,6 +33,12 @@ export interface Applicant {
   phone4: string; // 전화번호 뒷자리 4자리
   isForeigner: boolean; // 외국인 여부
   languageGroup?: ForeignLanguageGroup; // 언어권 (영어권/중화권)
+  // 멘티 프로필 정보
+  department?: string; // 학과
+  birthYear?: string; // 년생 (예: 00)
+  currentStatus?: string; // 대학교학년 or 현재상황 (예: 3학년, 취준생)
+  desiredField?: string; // 희망직군
+  interestTopics?: MentoringTopic[]; // 멘토에게 듣고싶은 내용 (진로/취업/면접)
   choice1: string; // 1지망 멘토 ID
   choice2: string; // 2지망 멘토 ID
   choice3: string; // 3지망 멘토 ID
@@ -102,6 +108,9 @@ export type Category =
   | '법률/행정'
   | '기타';
 
+// 멘토링 관심 주제 타입
+export type MentoringTopic = 'career' | 'employment' | 'interview';
+
 // 신청 폼 데이터
 export interface ApplyFormData {
   name: string;
@@ -109,6 +118,12 @@ export interface ApplyFormData {
   phone4: string;
   isForeigner: boolean;
   languageGroup: ForeignLanguageGroup | '';
+  // 멘티 프로필
+  department: string;
+  birthYear: string;
+  currentStatus: string;
+  desiredField: string;
+  interestTopics: MentoringTopic[];
   choice1: string;
   choice2: string;
   choice3: string;
