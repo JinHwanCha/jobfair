@@ -229,14 +229,14 @@ export default function ApplyPage() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
                   step >= num
-                    ? 'bg-primary-500 text-white'
+                    ? 'bg-gray-900 text-primary-400'
                     : 'bg-warm-200 text-gray-500'
                 }`}
               >
                 {num}
               </div>
               {num < 4 && (
-                <div className={`w-12 h-1 ${step > num ? 'bg-primary-500' : 'bg-warm-200'}`} />
+                <div className={`w-12 h-1 ${step > num ? 'bg-gray-900' : 'bg-warm-200'}`} />
               )}
             </div>
           ))}
@@ -280,7 +280,7 @@ export default function ApplyPage() {
                         languageGroup: checked ? formData.languageGroup : '',
                       });
                     }}
-                    className="w-5 h-5 rounded border-gray-300 text-primary-500 focus:ring-primary-500"
+                    className="w-5 h-5 rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
                   <span className="text-sm text-gray-700">{t('apply.isForeigner')}</span>
                 </label>
@@ -295,7 +295,7 @@ export default function ApplyPage() {
                         value="english"
                         checked={formData.languageGroup === 'english'}
                         onChange={() => setFormData({ ...formData, languageGroup: 'english' })}
-                        className="w-4 h-4 text-primary-500 focus:ring-primary-500"
+                        className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                       />
                       <span className="text-sm text-gray-700">{t('apply.english')}</span>
                     </label>
@@ -306,7 +306,7 @@ export default function ApplyPage() {
                         value="chinese"
                         checked={formData.languageGroup === 'chinese'}
                         onChange={() => setFormData({ ...formData, languageGroup: 'chinese' })}
-                        className="w-4 h-4 text-primary-500 focus:ring-primary-500"
+                        className="w-4 h-4 text-primary-600 focus:ring-primary-500"
                       />
                       <span className="text-sm text-gray-700">{t('apply.chinese')}</span>
                     </label>
@@ -321,11 +321,11 @@ export default function ApplyPage() {
         {/* Step 2: 멘토 선택 */}
         {step === 2 && (
           <div>
-            <div className="bg-primary-50 rounded-2xl p-4 mb-6">
-              <p className="text-primary-700 text-sm font-medium mb-2">
+            <div className="bg-primary-100 rounded-2xl p-4 mb-6">
+              <p className="text-gray-800 text-sm font-medium mb-2">
                 {t('apply.selectGuide')}
               </p>
-              <p className="text-primary-600 text-xs">
+              <p className="text-gray-700 text-xs">
                 {t('apply.selectGuide2')}
               </p>
             </div>
@@ -358,7 +358,7 @@ export default function ApplyPage() {
             {/* 멘토 목록 */}
             {isLoadingMentors ? (
               <div className="text-center py-12">
-                <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <div className="w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p className="text-gray-600">{t('mentors.loading')}</p>
               </div>
             ) : (

@@ -10,6 +10,14 @@ export const metadata: Metadata = {
     title: '2026 직업박람회 | 내수동교회',
     description: '5월 9일 내수동교회에서 진행하는 직업박람회',
     type: 'website',
+    images: [
+      {
+        url: '/og-image.jpg',
+        width: 1200,
+        height: 630,
+        alt: '2026 직업박람회 - What am I Called for?',
+      },
+    ],
   },
 };
 

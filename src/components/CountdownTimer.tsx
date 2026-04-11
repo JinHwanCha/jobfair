@@ -80,13 +80,13 @@ export default function CountdownTimer({ compact = false }: { compact?: boolean 
         {blocks.map((b, i) => (
           <div key={b.label} className="flex items-center gap-1.5 sm:gap-4">
             <div className="flex flex-col items-center">
-              <div className="w-12 h-12 sm:w-18 sm:h-18 bg-primary-500 text-white rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl font-bold font-mono shadow-lg">
+              <div className="w-12 h-12 sm:w-18 sm:h-18 bg-gray-900 text-primary-400 rounded-xl sm:rounded-2xl flex items-center justify-center text-xl sm:text-3xl font-bold font-mono shadow-lg">
                 {b.value}
               </div>
               <span className="text-[10px] sm:text-sm text-gray-500 mt-1 sm:mt-2">{b.label}</span>
             </div>
             {i < blocks.length - 1 && (
-              <span className="text-lg sm:text-3xl font-bold text-primary-400 -mt-4 sm:-mt-5">:</span>
+              <span className="text-lg sm:text-3xl font-bold text-gray-400 -mt-4 sm:-mt-5">:</span>
             )}
           </div>
         ))}

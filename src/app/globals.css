@@ -5,8 +5,8 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
 
 :root {
-  --foreground-rgb: 51, 51, 51;
-  --background-rgb: 240, 250, 251;
+  --foreground-rgb: 26, 26, 26;
+  --background-rgb: 255, 253, 247;
 }
 
 html, body {
@@ -22,11 +22,11 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-500 hover:bg-primary-600 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95;
+    @apply bg-gray-900 hover:bg-black text-primary-400 font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95;
   }
   
   .btn-secondary {
-    @apply bg-warm-200 hover:bg-warm-300 text-primary-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200;
+    @apply bg-primary-200 hover:bg-primary-300 text-gray-900 font-semibold py-3 px-6 rounded-xl transition-all duration-200;
   }
   
   .card {
@@ -34,7 +34,7 @@ body {
   }
   
   .input-field {
-    @apply w-full px-4 py-3 border border-warm-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all duration-200 bg-white;
+    @apply w-full px-4 py-3 border border-warm-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 bg-white;
   }
   
   .label {
@@ -54,7 +54,7 @@ body {
   }
   
   .mentor-card {
-    @apply bg-white rounded-2xl shadow-md p-5 border border-warm-200 hover:shadow-lg hover:border-primary-200 transition-all duration-200 overflow-hidden;
+    @apply bg-white rounded-2xl shadow-md p-5 border border-warm-200 hover:shadow-lg hover:border-primary-300 transition-all duration-200 overflow-hidden;
   }
   
   .time-badge {
@@ -84,23 +84,23 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #c4e9ef;
+  background: #FFF9C4;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4aacbf;
+  background: #FDD835;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #0b7361;
+  background: #F9A825;
 }
 
 /* 헤더 얇은 스크롤바 */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #4aacbf transparent;
+  scrollbar-color: #FDD835 transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -112,14 +112,14 @@ body {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #4aacbf;
+  background: #FDD835;
   border-radius: 2px;
 }
 
 /* 선택 스타일 */
 ::selection {
-  background: #8ef0d7;
-  color: #333;
+  background: #FFF59D;
+  color: #1a1a1a;
 }
 
 .page-container {

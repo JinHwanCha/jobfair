@@ -65,9 +65,9 @@ export default function MentorModal({ mentor, onClose }: MentorModalProps) {
         {/* 내용 */}
         <div className="px-6 py-5 space-y-5">
           {/* 직업 정보 */}
-          <div className="bg-gradient-to-r from-primary-50 to-warm-100 rounded-xl p-4">
+          <div className="bg-gradient-to-r from-primary-100 to-warm-200 rounded-xl p-4">
             <div className="flex items-center justify-between flex-wrap gap-1">
-              <p className="text-lg font-bold text-primary-700">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
+              <p className="text-lg font-bold text-gray-900">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
               <span className={`category-badge ${getCategoryColor(mentor.category)}`}>
                 {getShortCategoryLabel(mentor.category)}
               </span>
@@ -92,7 +92,7 @@ export default function MentorModal({ mentor, onClose }: MentorModalProps) {
           {mentor.keywords && (
             <div className="flex flex-wrap gap-2">
               {mentor.keywords.split(/[,#]/).filter(k => k.trim()).map((keyword, idx) => (
-                <span key={idx} className="px-3 py-1 bg-primary-50 text-primary-700 rounded-full text-sm font-medium">
+                <span key={idx} className="px-3 py-1 bg-primary-100 text-gray-800 rounded-full text-sm font-medium">
                   #{keyword.trim()}
                 </span>
               ))}

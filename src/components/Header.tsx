@@ -35,8 +35,8 @@ export default function Header() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* 로고 */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">JF</span>
+            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
+              <span className="text-primary-400 font-bold text-sm">JF</span>
             </div>
             <span className="font-bold text-gray-800 hidden sm:block">{t('nav.logo')}</span>
           </Link>
@@ -50,7 +50,7 @@ export default function Header() {
                   href={item.href}
                   className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
                     pathname === item.href
-                      ? 'bg-primary-100 text-primary-700'
+                      ? 'bg-primary-200 text-gray-900'
                       : 'text-gray-600 hover:bg-warm-100 hover:text-gray-900'
                   }`}
                 >
@@ -67,7 +67,7 @@ export default function Header() {
                   onClick={() => setLang(l.value)}
                   className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                     lang === l.value
-                      ? 'bg-primary-500 text-white'
+                      ? 'bg-gray-900 text-primary-400'
                       : 'text-gray-500 hover:bg-gray-100'
                   }`}
                 >
@@ -108,7 +108,7 @@ export default function Header() {
               href={item.href}
               className={`block px-4 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 pathname === item.href
-                  ? 'bg-primary-100 text-primary-700'
+                  ? 'bg-primary-200 text-gray-900'
                   : 'text-gray-600 hover:bg-warm-50'
               }`}
             >
@@ -124,7 +124,7 @@ export default function Header() {
                 onClick={() => setLang(l.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   lang === l.value
-                    ? 'bg-primary-500 text-white'
+                    ? 'bg-gray-900 text-primary-400'
                     : 'text-gray-500 bg-gray-50 hover:bg-gray-100'
                 }`}
               >

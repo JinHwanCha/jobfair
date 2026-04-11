@@ -27,36 +27,36 @@ export default function HomePage() {
       <Header />
 
       {/* 히어로 섹션 */}
-      <section className="bg-gradient-to-br from-primary-500 to-primary-600 text-white">
+      <section className="bg-gradient-to-br from-primary-400 to-primary-500 text-gray-900">
         <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
+            <div className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
               <span className="text-2xl">📅</span>
-              <span className="font-medium">{t('home.date')}</span>
+              <span className="font-medium text-gray-900">{t('home.date')}</span>
             </div>
             
-            <h1 className="text-3xl sm:text-5xl font-bold mb-4">
+            <h1 className="text-3xl sm:text-5xl font-bold mb-4 text-gray-900">
               {t('home.title')}
             </h1>
             
-            <p className="text-lg sm:text-xl text-primary-100 mb-2">
+            <p className="text-lg sm:text-xl text-gray-800 mb-2">
               {t('home.subtitle')}
             </p>
             
-            <p className="text-primary-200 mb-8">
+            <p className="text-gray-700 mb-8">
               {t('home.desc')}
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/apply"
-                className="btn-primary bg-white text-primary-600 hover:bg-primary-50 shadow-xl"
+                className="btn-primary bg-gray-900 text-white hover:bg-black shadow-xl"
               >
                 {t('home.applyNow')}
               </Link>
               <Link
                 href="/mentors"
-                className="btn-secondary bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm"
+                className="btn-secondary bg-white/40 text-gray-900 hover:bg-white/60 backdrop-blur-sm"
               >
                 {t('home.browseMentors')}
               </Link>
@@ -67,9 +67,9 @@ export default function HomePage() {
 
       {/* 카운트다운 띠 배너 */}
       {isOpen === false && (
-        <section className="bg-primary-600">
+        <section className="bg-gray-900">
           <div className="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
-            <span className="text-white font-semibold text-sm sm:text-base">{t('countdown.bannerLabel')}</span>
+            <span className="text-primary-400 font-semibold text-sm sm:text-base">{t('countdown.bannerLabel')}</span>
             <CountdownTimer compact />
           </div>
         </section>
@@ -82,7 +82,7 @@ export default function HomePage() {
             <h2 className="section-title mb-0">{t('home.mentorsSection')}</h2>
             <Link
               href="/mentors"
-              className="text-primary-600 font-medium hover:text-primary-700"
+              className="text-primary-700 font-medium hover:text-primary-800"
             >
               {t('home.viewAll')}
             </Link>
@@ -144,7 +144,7 @@ export default function HomePage() {
           
           <div className="space-y-4">
             <div className="card flex items-start gap-4">
-              <div className="w-10 h-10 bg-primary-500 text-white rounded-xl flex items-center justify-center font-bold shrink-0">
+              <div className="w-10 h-10 bg-gray-900 text-primary-400 rounded-xl flex items-center justify-center font-bold shrink-0">
                 1
               </div>
               <div>
@@ -156,7 +156,7 @@ export default function HomePage() {
             </div>
             
             <div className="card flex items-start gap-4">
-              <div className="w-10 h-10 bg-primary-500 text-white rounded-xl flex items-center justify-center font-bold shrink-0">
+              <div className="w-10 h-10 bg-gray-900 text-primary-400 rounded-xl flex items-center justify-center font-bold shrink-0">
                 2
               </div>
               <div>
@@ -168,7 +168,7 @@ export default function HomePage() {
             </div>
             
             <div className="card flex items-start gap-4">
-              <div className="w-10 h-10 bg-primary-500 text-white rounded-xl flex items-center justify-center font-bold shrink-0">
+              <div className="w-10 h-10 bg-gray-900 text-primary-400 rounded-xl flex items-center justify-center font-bold shrink-0">
                 3
               </div>
               <div>
@@ -183,9 +183,9 @@ export default function HomePage() {
       </section>
 
       {/* CTA 섹션 */}
-      <section className="py-12 sm:py-16 bg-gradient-to-br from-warm-200 to-primary-100">
+      <section className="py-12 sm:py-16 bg-gradient-to-br from-primary-100 to-warm-200">
         <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-4">
             {t('home.ctaTitle')}
           </h2>
           <p className="text-gray-600 mb-8">

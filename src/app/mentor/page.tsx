@@ -91,7 +91,7 @@ export default function MentorPage() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-4 w-full bg-primary-500 text-white py-2.5 rounded-lg font-medium hover:bg-primary-600 transition-colors disabled:opacity-50"
+          className="mt-4 w-full bg-gray-900 text-primary-400 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50"
         >
           {loading ? t('mentor.loading') : t('mentor.login')}
         </button>
@@ -107,11 +107,11 @@ export default function MentorPage() {
       {/* 결과 */}
       {data && (
         <div>
-          <div className="bg-primary-50 rounded-xl p-4 mb-6">
-            <p className="text-primary-800 font-semibold text-lg">
+          <div className="bg-primary-100 rounded-xl p-4 mb-6">
+            <p className="text-gray-900 font-semibold text-lg">
               {data.mentorName} {t('mentor.mentorSuffix')}
             </p>
-            <p className="text-primary-600 text-sm">{data.mentorJob}</p>
+            <p className="text-gray-700 text-sm">{data.mentorJob}</p>
           </div>
 
           <div className="space-y-4">
@@ -130,7 +130,7 @@ export default function MentorPage() {
                       {slot.mentees.map((mentee, idx) => (
                         <div key={idx} className="flex flex-col gap-1 p-3 bg-warm-50 rounded-lg">
                           <div className="flex items-center gap-2">
-                            <span className="inline-flex items-center justify-center w-6 h-6 bg-primary-100 text-primary-700 rounded-full text-xs font-bold">
+                            <span className="inline-flex items-center justify-center w-6 h-6 bg-primary-200 text-gray-900 rounded-full text-xs font-bold">
                               {idx + 1}
                             </span>
                             <span className="font-medium text-gray-800">{mentee.name}</span>
