@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
 import MentorPreview from '@/components/MentorPreview';
+import MentorCard from '@/components/MentorCard';
+import MentorModal from '@/components/MentorModal';
 import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
 import { Mentor } from '@/types';
 import { useI18n } from '@/lib/i18n';
@@ -13,6 +15,7 @@ export default function HomePage() {
   const isOpen = useIsOpen();
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [resumeMentors, setResumeMentors] = useState<Mentor[]>([]);
+  const [selectedResumeMentor, setSelectedResumeMentor] = useState<Mentor | null>(null);
 
   useEffect(() => {
     fetch('/api/mentors')
@@ -203,16 +206,20 @@ export default function HomePage() {
           {resumeMentors.length > 0 && (
             <div className="grid sm:grid-cols-3 gap-4 mb-6">
               {resumeMentors.map(m => (
-                <div key={m.id} className="card text-center">
-                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="text-lg">📝</span>
-                  </div>
-                  <h4 className="font-bold text-gray-800">{m.name}</h4>
-                  <p className="text-sm text-gray-600">{m.jobPosition || m.job}</p>
-                  {m.keywords && <p className="text-xs text-gray-500 mt-1">{m.keywords}</p>}
-                </div>
+                <MentorCard
+                  key={m.id}
+                  mentor={m}
+                  onClickDetail={() => setSelectedResumeMentor(m)}
+                />
               ))}
             </div>
+          )}
+
+          {selectedResumeMentor && (
+            <MentorModal
+              mentor={selectedResumeMentor}
+              onClose={() => setSelectedResumeMentor(null)}
+            />
           )}
 
           <div className="text-center">

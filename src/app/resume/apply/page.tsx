@@ -3,6 +3,8 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
+import MentorCard from '@/components/MentorCard';
+import MentorModal from '@/components/MentorModal';
 import { Mentor, ResumeApplyFormData } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
@@ -15,6 +17,7 @@ export default function ResumeApplyPage() {
   const [submitError, setSubmitError] = useState('');
   const [spotsLeft, setSpotsLeft] = useState<number | null>(null);
   const [birthYearConfirmed, setBirthYearConfirmed] = useState(false);
+  const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
 
   const [formData, setFormData] = useState<ResumeApplyFormData>({
     name: '',
@@ -142,17 +145,21 @@ export default function ResumeApplyPage() {
             <h3 className="font-bold text-gray-800 mb-3">{t('resume.mentorsTitle')}</h3>
             <div className="grid sm:grid-cols-3 gap-3">
               {mentors.map(m => (
-                <div key={m.id} className="card text-center">
-                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="text-lg">📝</span>
-                  </div>
-                  <h4 className="font-bold text-gray-800">{m.name}</h4>
-                  <p className="text-sm text-gray-600">{m.jobPosition || m.job}</p>
-                  {m.keywords && <p className="text-xs text-gray-500 mt-1">{m.keywords}</p>}
-                </div>
+                <MentorCard
+                  key={m.id}
+                  mentor={m}
+                  onClickDetail={() => setSelectedMentor(m)}
+                />
               ))}
             </div>
           </div>
+        )}
+
+        {selectedMentor && (
+          <MentorModal
+            mentor={selectedMentor}
+            onClose={() => setSelectedMentor(null)}
+          />
         )}
 
         {/* 교차 신청 안내 */}
