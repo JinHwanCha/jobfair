@@ -55,7 +55,7 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
                 key={i}
                 onClick={() => setCurrent(i)}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  i === current ? 'w-8 bg-gray-900' : 'w-4 bg-gray-200 hover:bg-gray-300'
+                  i === current ? 'w-8 bg-primary-500' : 'w-4 bg-gray-200 hover:bg-gray-300'
                 }`}
               />
             ))}
@@ -66,7 +66,7 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
         <div className="px-6 pb-2">
           {/* 스텝 번호 배지 */}
           <div className="flex items-center gap-2 mb-4">
-            <span className="w-7 h-7 rounded-full bg-gray-900 text-primary-400 text-xs font-bold flex items-center justify-center">
+            <span className="w-7 h-7 rounded-full bg-primary-400 text-gray-900 text-xs font-bold flex items-center justify-center">
               {current + 1}
             </span>
             <span className="text-sm font-medium text-gray-700">STEP {current + 1} / 4</span>
@@ -104,14 +104,14 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
           {current < 3 ? (
             <button
               onClick={() => setCurrent(current + 1)}
-              className="flex-1 py-2.5 rounded-xl text-sm font-medium bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+              className="flex-1 py-2.5 rounded-xl text-sm font-medium bg-primary-400 text-gray-900 hover:bg-primary-500 transition-colors"
             >
               →
             </button>
           ) : (
             <button
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl text-sm font-medium bg-gray-900 text-white hover:bg-gray-800 transition-colors"
+              className="flex-1 py-2.5 rounded-xl text-sm font-medium bg-primary-400 text-gray-900 hover:bg-primary-500 transition-colors"
             >
               {t('preview.close')}
             </button>
@@ -223,7 +223,7 @@ function Step4Preview() {
         ))}
       </div>
       <div className="flex items-center gap-1.5 bg-white rounded-lg p-2">
-        <div className="w-4 h-4 border-2 border-gray-800 rounded" />
+        <div className="w-4 h-4 border-2 border-primary-500 rounded" />
         <div className="h-2.5 bg-gray-200 rounded w-32" />
       </div>
     </div>

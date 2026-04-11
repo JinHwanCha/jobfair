@@ -35,8 +35,8 @@ export default function Header() {
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* 로고 */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
-            <div className="w-8 h-8 bg-gray-900 rounded-lg flex items-center justify-center">
-              <span className="text-primary-400 font-bold text-sm">JF</span>
+            <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
+              <span className="text-gray-900 font-bold text-sm">JF</span>
             </div>
             <span className="font-bold text-gray-800 hidden sm:block">{t('nav.logo')}</span>
           </Link>
@@ -67,7 +67,7 @@ export default function Header() {
                   onClick={() => setLang(l.value)}
                   className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
                     lang === l.value
-                      ? 'bg-gray-900 text-primary-400'
+                      ? 'bg-primary-400 text-gray-900'
                       : 'text-gray-500 hover:bg-gray-100'
                   }`}
                 >
@@ -124,7 +124,7 @@ export default function Header() {
                 onClick={() => setLang(l.value)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors ${
                   lang === l.value
-                    ? 'bg-gray-900 text-primary-400'
+                    ? 'bg-primary-400 text-gray-900'
                     : 'text-gray-500 bg-gray-50 hover:bg-gray-100'
                 }`}
               >

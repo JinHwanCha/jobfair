@@ -6,7 +6,7 @@
 
 :root {
   --foreground-rgb: 26, 26, 26;
-  --background-rgb: 255, 253, 247;
+  --background-rgb: 255, 255, 245;
 }
 
 html, body {
@@ -22,11 +22,11 @@ body {
 
 @layer components {
   .btn-primary {
-    @apply bg-gray-900 hover:bg-black text-primary-400 font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95;
+    @apply bg-primary-400 hover:bg-primary-500 text-gray-900 font-semibold py-3 px-6 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg active:scale-95;
   }
   
   .btn-secondary {
-    @apply bg-primary-200 hover:bg-primary-300 text-gray-900 font-semibold py-3 px-6 rounded-xl transition-all duration-200;
+    @apply bg-primary-100 hover:bg-primary-200 text-gray-800 font-semibold py-3 px-6 rounded-xl transition-all duration-200;
   }
   
   .card {
@@ -74,7 +74,7 @@ body {
   }
   
   .category-badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-700;
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-gray-800;
   }
 }
 
@@ -84,23 +84,23 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #FFF9C4;
+  background: #FEFFC9;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #FDD835;
+  background: #F9FF00;
   border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #F9A825;
+  background: #E6E600;
 }
 
 /* 헤더 얇은 스크롤바 */
 .scrollbar-thin {
   scrollbar-width: thin;
-  scrollbar-color: #FDD835 transparent;
+  scrollbar-color: #F9FF00 transparent;
 }
 
 .scrollbar-thin::-webkit-scrollbar {
@@ -112,13 +112,13 @@ body {
 }
 
 .scrollbar-thin::-webkit-scrollbar-thumb {
-  background: #FDD835;
+  background: #F9FF00;
   border-radius: 2px;
 }
 
 /* 선택 스타일 */
 ::selection {
-  background: #FFF59D;
+  background: #FDFF9A;
   color: #1a1a1a;
 }
 

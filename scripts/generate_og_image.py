@@ -7,13 +7,14 @@ import math
 import os
 
 WIDTH, HEIGHT = 1200, 630
-BG_COLOR = (255, 255, 255)
-YELLOW = (255, 221, 0)
-LIGHT_YELLOW = (255, 245, 157)
-PALE_YELLOW = (255, 253, 231)
+BG_COLOR = (253, 255, 245)
+LIME_YELLOW = (200, 230, 64)       # primary-400
+LIGHT_LIME = (238, 250, 160)       # primary-200
+PALE_LIME = (247, 253, 208)        # primary-100
+WARM_YELLOW = (255, 248, 197)      # warm-200
 BLACK = (0, 0, 0)
 DARK_GRAY = (51, 51, 51)
-LIGHT_GRAY = (220, 220, 220)
+LIGHT_GRAY = (235, 235, 235)
 
 img = Image.new('RGB', (WIDTH, HEIGHT), BG_COLOR)
 draw = ImageDraw.Draw(img)
@@ -50,17 +51,17 @@ def draw_diamond_star(draw, cx, cy, size, color):
         draw.polygon([(tip_x, tip_y), (side1_x, side1_y), (side2_x, side2_y)], fill=color)
 
 # Draw geometric shapes like the poster
-# Large yellow star (left)
-draw_diamond_star(draw, 180, 340, 250, YELLOW)
+# Large lime-yellow star (left)
+draw_diamond_star(draw, 180, 340, 250, LIME_YELLOW)
 
-# Medium light yellow star (center-right)
-draw_diamond_star(draw, 680, 380, 180, LIGHT_YELLOW)
+# Medium light lime star (center-right)
+draw_diamond_star(draw, 680, 380, 180, LIGHT_LIME)
 
 # Small pale geometric shapes (right area)
-draw_diamond_star(draw, 1050, 150, 140, PALE_YELLOW)
+draw_diamond_star(draw, 1050, 150, 140, WARM_YELLOW)
 
-# Light gray geometric accent (top-right)
-draw_diamond_star(draw, 1100, 80, 100, (235, 235, 235))
+# Light accent (top-right)
+draw_diamond_star(draw, 1100, 80, 100, PALE_LIME)
 
 # Try to use a nice font, fallback to default
 font_paths = [

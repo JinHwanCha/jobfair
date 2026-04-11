@@ -229,14 +229,14 @@ export default function ApplyPage() {
               <div
                 className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
                   step >= num
-                    ? 'bg-gray-900 text-primary-400'
+                    ? 'bg-primary-400 text-gray-900'
                     : 'bg-warm-200 text-gray-500'
                 }`}
               >
                 {num}
               </div>
               {num < 4 && (
-                <div className={`w-12 h-1 ${step > num ? 'bg-gray-900' : 'bg-warm-200'}`} />
+                <div className={`w-12 h-1 ${step > num ? 'bg-primary-500' : 'bg-warm-200'}`} />
               )}
             </div>
           ))}
@@ -358,7 +358,7 @@ export default function ApplyPage() {
             {/* 멘토 목록 */}
             {isLoadingMentors ? (
               <div className="text-center py-12">
-                <div className="w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                 <p className="text-gray-600">{t('mentors.loading')}</p>
               </div>
             ) : (

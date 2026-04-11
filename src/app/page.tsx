@@ -27,15 +27,15 @@ export default function HomePage() {
       <Header />
 
       {/* 히어로 섹션 */}
-      <section className="bg-gradient-to-br from-primary-400 to-primary-500 text-gray-900">
+      <section className="bg-gradient-to-br from-primary-300 to-primary-400 text-gray-900">
         <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24">
           <div className="text-center">
             <div className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
               <span className="text-2xl">📅</span>
-              <span className="font-medium text-gray-900">{t('home.date')}</span>
+              <span className="font-medium">{t('home.date')}</span>
             </div>
             
-            <h1 className="text-3xl sm:text-5xl font-bold mb-4 text-gray-900">
+            <h1 className="text-3xl sm:text-5xl font-bold mb-4">
               {t('home.title')}
             </h1>
             
@@ -50,7 +50,7 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/apply"
-                className="btn-primary bg-gray-900 text-white hover:bg-black shadow-xl"
+                className="btn-primary bg-gray-900 text-primary-300 hover:bg-black shadow-xl"
               >
                 {t('home.applyNow')}
               </Link>
@@ -69,7 +69,7 @@ export default function HomePage() {
       {isOpen === false && (
         <section className="bg-gray-900">
           <div className="max-w-4xl mx-auto px-4 py-4 flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
-            <span className="text-primary-400 font-semibold text-sm sm:text-base">{t('countdown.bannerLabel')}</span>
+            <span className="text-white font-semibold text-sm sm:text-base">{t('countdown.bannerLabel')}</span>
             <CountdownTimer compact />
           </div>
         </section>
@@ -82,7 +82,7 @@ export default function HomePage() {
             <h2 className="section-title mb-0">{t('home.mentorsSection')}</h2>
             <Link
               href="/mentors"
-              className="text-primary-700 font-medium hover:text-primary-800"
+              className="text-gray-700 font-medium hover:text-gray-900"
             >
               {t('home.viewAll')}
             </Link>
@@ -144,7 +144,7 @@ export default function HomePage() {
           
           <div className="space-y-4">
             <div className="card flex items-start gap-4">
-              <div className="w-10 h-10 bg-gray-900 text-primary-400 rounded-xl flex items-center justify-center font-bold shrink-0">
+              <div className="w-10 h-10 bg-primary-400 text-gray-900 rounded-xl flex items-center justify-center font-bold shrink-0">
                 1
               </div>
               <div>
@@ -156,7 +156,7 @@ export default function HomePage() {
             </div>
             
             <div className="card flex items-start gap-4">
-              <div className="w-10 h-10 bg-gray-900 text-primary-400 rounded-xl flex items-center justify-center font-bold shrink-0">
+              <div className="w-10 h-10 bg-primary-400 text-gray-900 rounded-xl flex items-center justify-center font-bold shrink-0">
                 2
               </div>
               <div>
@@ -168,7 +168,7 @@ export default function HomePage() {
             </div>
             
             <div className="card flex items-start gap-4">
-              <div className="w-10 h-10 bg-gray-900 text-primary-400 rounded-xl flex items-center justify-center font-bold shrink-0">
+              <div className="w-10 h-10 bg-primary-400 text-gray-900 rounded-xl flex items-center justify-center font-bold shrink-0">
                 3
               </div>
               <div>

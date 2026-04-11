@@ -136,7 +136,7 @@ export default function MyPage() {
 
         <div className="text-center">
           <h3 className="text-xl font-bold text-gray-800 mb-1">{slot.mentorName}</h3>
-          <p className="text-primary-700 font-medium mb-3">{slot.mentorJob}</p>
+          <p className="text-gray-600 font-medium mb-3">{slot.mentorJob}</p>
           
           <div className="flex items-center justify-center gap-1 text-gray-600 bg-primary-100 rounded-xl py-2">
             <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -159,7 +159,7 @@ export default function MyPage() {
           )}
           {slot.isOriginalChoice && slot.message && (
             <div className="mt-3 bg-primary-100 rounded-lg px-3 py-2 text-left">
-              <p className="text-[10px] text-primary-700 mb-0.5">{t('my.myMessage')}</p>
+              <p className="text-[10px] text-gray-500 mb-0.5">{t('my.myMessage')}</p>
               <p className="text-xs text-gray-800 italic">&ldquo;{slot.message}&rdquo;</p>
             </div>
           )}

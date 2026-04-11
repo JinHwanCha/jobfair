@@ -160,7 +160,7 @@ export default function AdminPage() {
     return (
       <div className="min-h-screen bg-gray-100 flex items-center justify-center">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">데이터 로딩 중...</p>
         </div>
       </div>
@@ -189,7 +189,7 @@ export default function AdminPage() {
                 내보내기
               </button>
               <button onClick={runAssignment} disabled={isAssigning || applicants.length === 0}
-                className="px-3 py-2 bg-gray-900 text-primary-400 rounded-lg hover:bg-gray-800 text-xs sm:text-sm font-medium disabled:opacity-50">
+                className="px-3 py-2 bg-primary-400 text-gray-900 rounded-lg hover:bg-primary-500 text-xs sm:text-sm font-medium disabled:opacity-50">
                 {isAssigning ? '배정 중...' : '자동 배정'}
               </button>
             </div>
@@ -210,7 +210,7 @@ export default function AdminPage() {
             return (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
-                  activeTab === tab ? 'bg-gray-900 text-primary-400' : 'text-gray-600 hover:bg-gray-100'
+                  activeTab === tab ? 'bg-primary-400 text-gray-900' : 'text-gray-600 hover:bg-gray-100'
                 }`}>
                 {labels[tab]}
               </button>
@@ -404,7 +404,7 @@ export default function AdminPage() {
                 {['전체', ...Array.from(new Set(mentors.map(m => extractShortCategory(m.category)))).sort()].map((cat) => (
                   <button key={cat} onClick={() => setMentorCategory(cat)}
                     className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                      mentorCategory === cat ? 'bg-gray-800 text-primary-400' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                      mentorCategory === cat ? 'bg-primary-500 text-gray-900' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     }`}>
                     {cat}
                   </button>
@@ -430,7 +430,7 @@ export default function AdminPage() {
                       <div className="flex items-start justify-between mb-3">
                         <div>
                           <h3 className="font-bold text-gray-800">{mentor.name}</h3>
-                          <p className="text-sm text-primary-700">{mentor.jobPosition || mentor.job}</p>
+                          <p className="text-sm text-gray-600">{mentor.jobPosition || mentor.job}</p>
                         </div>
                         <span className="text-xs bg-gray-100 px-2 py-1 rounded-full text-gray-600">
                           {extractShortCategory(mentor.category)}

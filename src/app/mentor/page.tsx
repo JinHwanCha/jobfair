@@ -91,7 +91,7 @@ export default function MentorPage() {
         <button
           type="submit"
           disabled={loading}
-          className="mt-4 w-full bg-gray-900 text-primary-400 py-2.5 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:opacity-50"
+          className="mt-4 w-full bg-primary-400 text-gray-900 py-2.5 rounded-lg font-medium hover:bg-primary-500 transition-colors disabled:opacity-50"
         >
           {loading ? t('mentor.loading') : t('mentor.login')}
         </button>

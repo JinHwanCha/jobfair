@@ -86,7 +86,7 @@ export default function MentorCard({
         <div className="flex items-center gap-2 mb-1 min-w-0">
           <span className="text-xl shrink-0">{getCategoryIcon(mentor.category)}</span>
           <h3 className="text-lg font-bold text-gray-800 shrink-0">{mentor.name}</h3>
-          <p className="text-primary-700 font-medium text-sm truncate min-w-0">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
+          <p className="text-gray-600 font-medium text-sm truncate min-w-0">{mentor.jobPosition || mentor.jobTitle || mentor.job}</p>
         </div>
         <span className={`category-badge inline-block max-w-full truncate ${getCategoryColor(mentor.category)}`}>
           {getShortCategoryLabel(mentor.category)}
@@ -132,10 +132,10 @@ export default function MentorCard({
             disabled={disabled}
             className={`flex-1 py-2.5 rounded-xl font-medium transition-all ${
               selected
-                ? 'bg-gray-900 text-primary-400'
+                ? 'bg-primary-400 text-gray-900'
                 : disabled
                 ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                : 'bg-primary-200 text-gray-900 hover:bg-primary-300'
+                : 'bg-primary-100 text-gray-800 hover:bg-primary-200'
             }`}
           >
             {selected ? t('card.selected') : t('card.select')}

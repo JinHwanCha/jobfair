@@ -119,7 +119,7 @@ export default function MentorsPage() {
                 onClick={() => setSelectedCategory(category)}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
                   selectedCategory === category
-                    ? 'bg-gray-900 text-primary-400'
+                    ? 'bg-primary-400 text-gray-900'
                     : 'bg-primary-100 text-gray-700 hover:bg-primary-200'
                 }`}
               >
@@ -132,7 +132,7 @@ export default function MentorsPage() {
         {/* 멘토 목록 */}
         {isLoading ? (
           <div className="text-center py-16">
-            <div className="w-12 h-12 border-4 border-gray-900 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">{t('mentors.loading')}</p>
           </div>
         ) : filteredMentors.length > 0 ? (
