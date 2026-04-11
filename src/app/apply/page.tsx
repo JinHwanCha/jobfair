@@ -34,6 +34,7 @@ export default function ApplyPage() {
   const [submitSuccess, setSubmitSuccess] = useState(false);
   const [detailMentor, setDetailMentor] = useState<Mentor | null>(null);
   const [showPreview, setShowPreview] = useState(false);
+  const [birthYearConfirmed, setBirthYearConfirmed] = useState(false);
 
   useEffect(() => {
     fetch('/api/mentors')
@@ -63,6 +64,14 @@ export default function ApplyPage() {
     agreedToTerms: false,
   });
 
+  // 생년월일(YYMMDD)에서 출생년도 추출
+  const derivedBirthYear = (() => {
+    const yy = formData.birthDate.slice(0, 2);
+    if (!yy || yy.length < 2) return '';
+    const num = parseInt(yy, 10);
+    return num <= 30 ? `20${yy}` : `19${yy}`;
+  })();
+
   // 선택된 멘토 ID 목록
   const selectedMentorIds = Array.from({ length: 6 }, (_, i) =>
     formData[`choice${i + 1}` as ChoiceKey]
@@ -87,6 +96,10 @@ export default function ApplyPage() {
   // 입력값 변경 핸들러
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = e.target;
+    // 생년월일이 바뀌면 출생년도 확인 초기화
+    if (name === 'birthDate') {
+      setBirthYearConfirmed(false);
+    }
     setFormData({
       ...formData,
       [name]: type === 'checkbox' ? checked : value,
@@ -109,6 +122,10 @@ export default function ApplyPage() {
     }
     if (step === 2 && (!formData.department || !formData.birthYear || !formData.currentStatus || !formData.desiredField)) {
       alert(t('apply.alertProfile'));
+      return;
+    }
+    if (step === 2 && !birthYearConfirmed) {
+      alert(t('apply.alertBirthYearConfirm'));
       return;
     }
     if (step === 2 && formData.interestTopics.length === 0) {
@@ -240,7 +257,7 @@ export default function ApplyPage() {
           {[1, 2, 3, 4, 5].map((num) => (
             <div key={num} className="flex items-center">
               <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-sm ${
+                className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center font-bold text-xs sm:text-sm ${
                   step >= num
                     ? 'bg-primary-400 text-gray-900'
                     : 'bg-warm-200 text-gray-500'
@@ -249,7 +266,7 @@ export default function ApplyPage() {
                 {num}
               </div>
               {num < 5 && (
-                <div className={`w-12 h-1 ${step > num ? 'bg-primary-500' : 'bg-warm-200'}`} />
+                <div className={`w-6 sm:w-12 h-1 ${step > num ? 'bg-primary-500' : 'bg-warm-200'}`} />
               )}
             </div>
           ))}
@@ -343,9 +360,54 @@ export default function ApplyPage() {
               </div>
               <div>
                 <label className="label">{t('apply.birthYear')}</label>
-                <input type="text" name="birthYear" value={formData.birthYear} onChange={handleInputChange}
-                  placeholder={t('apply.birthYearPlaceholder')} maxLength={4} className="input-field" />
-                <p className="text-xs text-gray-500 mt-1">{t('apply.birthYearHint')}</p>
+                <div className="bg-warm-100 rounded-xl p-3 mt-1">
+                  <p className="text-sm text-gray-800 mb-3">
+                    <span className="font-semibold text-primary-700">{derivedBirthYear}{t('apply.birthYearSuffix')}</span> {t('apply.birthYearConfirmQ')}
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBirthYearConfirmed(true);
+                        setFormData({ ...formData, birthYear: derivedBirthYear });
+                      }}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        birthYearConfirmed && formData.birthYear === derivedBirthYear
+                          ? 'bg-primary-400 text-gray-900'
+                          : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {t('apply.birthYearYes')}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBirthYearConfirmed(true);
+                        setFormData({ ...formData, birthYear: '' });
+                      }}
+                      className={`flex-1 py-2 rounded-lg text-sm font-medium transition-colors ${
+                        birthYearConfirmed && formData.birthYear !== derivedBirthYear
+                          ? 'bg-red-100 text-red-700 border border-red-200'
+                          : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {t('apply.birthYearNo')}
+                    </button>
+                  </div>
+                  {birthYearConfirmed && formData.birthYear !== derivedBirthYear && (
+                    <div className="mt-3">
+                      <input
+                        type="text"
+                        name="birthYear"
+                        value={formData.birthYear}
+                        onChange={handleInputChange}
+                        placeholder={t('apply.birthYearManualPlaceholder')}
+                        maxLength={4}
+                        className="input-field"
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
               <div>
                 <label className="label">{t('apply.currentStatus')}</label>
@@ -584,7 +646,7 @@ export default function ApplyPage() {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t('apply.birthYear')}</span>
-                    <span className="font-medium">{formData.birthYear}</span>
+                    <span className="font-medium">{formData.birthYear}{t('apply.birthYearSuffix')}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">{t('apply.currentStatus')}</span>
