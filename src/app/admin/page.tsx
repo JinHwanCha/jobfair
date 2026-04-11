@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Applicant, Assignment, Mentor } from '@/types';
+import { Applicant, Assignment, Mentor, ResumeApplicant } from '@/types';
 
 type ChoiceKey = 'choice1' | 'choice2' | 'choice3' | 'choice4' | 'choice5' | 'choice6';
 type MessageKey = 'message1' | 'message2' | 'message3' | 'message4' | 'message5' | 'message6';
@@ -18,10 +18,11 @@ export default function AdminPage() {
     return found || '기타';
   };
 
-  const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors'>('applicants');
+  const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors' | 'resume'>('applicants');
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [resumeApplicants, setResumeApplicants] = useState<ResumeApplicant[]>([]);
   const [mentorCounts, setMentorCounts] = useState<Record<string, Record<string, number>>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isAssigning, setIsAssigning] = useState(false);
@@ -30,6 +31,7 @@ export default function AdminPage() {
   const [mentorSearch, setMentorSearch] = useState('');
   const [mentorCategory, setMentorCategory] = useState('전체');
   const [expandedMentor, setExpandedMentor] = useState<string | null>(null);
+  const [expandedResume, setExpandedResume] = useState<string | null>(null);
 
   // 멘토별 신청자 목록 (이름과 메시지 포함)
   const mentorApplicantsMap = useMemo(() => {
@@ -60,6 +62,7 @@ export default function AdminPage() {
         setAssignments(result.data.assignments || []);
         setMentors(result.data.mentors || []);
         setMentorCounts(result.data.mentorCounts || {});
+        setResumeApplicants(result.data.resumeApplicants || []);
       }
     } catch (error) {
       console.error('데이터 로드 실패:', error);
@@ -176,7 +179,7 @@ export default function AdminPage() {
             <div>
               <h1 className="text-lg sm:text-xl font-bold text-gray-800">직업박람회 관리</h1>
               <p className="text-sm text-gray-500">
-                총 신청자: {applicants.length}명 | 배정 완료: {assignments.length}명
+                총 신청자: {applicants.length}명 | 배정 완료: {assignments.length}명 | 자소서: {resumeApplicants.length}명
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -205,8 +208,8 @@ export default function AdminPage() {
       {/* 탭 네비게이션 */}
       <div className="max-w-6xl mx-auto px-4 mt-4 sm:mt-6">
         <div className="flex gap-1 sm:gap-2 bg-white rounded-lg p-1 shadow-sm">
-          {(['applicants', 'assignments', 'mentors'] as const).map((tab) => {
-            const labels = { applicants: `신청자 (${applicants.length})`, assignments: `배정 (${assignments.length})`, mentors: `멘토 (${mentors.length})` };
+          {(['applicants', 'assignments', 'mentors', 'resume'] as const).map((tab) => {
+            const labels = { applicants: `신청자 (${applicants.length})`, assignments: `배정 (${assignments.length})`, mentors: `멘토 (${mentors.length})`, resume: `자소서 (${resumeApplicants.length})` };
             return (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
@@ -487,6 +490,107 @@ export default function AdminPage() {
                     </div>
                   );
                 })}
+            </div>
+          </>
+        )}
+
+        {/* 자소서 신청자 목록 */}
+        {activeTab === 'resume' && (
+          <>
+            {/* 모바일 카드 뷰 */}
+            <div className="sm:hidden space-y-3">
+              {resumeApplicants.map((ra) => (
+                <div key={ra.id} className="bg-white rounded-xl shadow-sm p-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="font-bold text-gray-900">{ra.name}</span>
+                    <span className="text-xs text-gray-400">{new Date(ra.createdAt).toLocaleString('ko-KR')}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 text-xs text-gray-500 mb-2">
+                    <span>생년월일: {ra.birthDate}</span>
+                    <span>전화: {ra.phone4}</span>
+                    <span>학과: {ra.department}</span>
+                    <span>상황: {ra.currentStatus}</span>
+                    <span className="col-span-2">희망직군: {ra.desiredField}</span>
+                  </div>
+                  <button
+                    onClick={() => setExpandedResume(expandedResume === ra.id ? null : ra.id)}
+                    className="text-sm text-primary-700 hover:text-primary-900 font-medium"
+                  >
+                    {expandedResume === ra.id ? '▲ 자소서 접기' : '▼ 자소서 보기'}
+                  </button>
+                  {expandedResume === ra.id && (
+                    <div className="mt-2 bg-gray-50 rounded-lg p-3 text-sm text-gray-700 whitespace-pre-wrap max-h-60 overflow-y-auto">
+                      {ra.resumeText}
+                    </div>
+                  )}
+                </div>
+              ))}
+              {resumeApplicants.length === 0 && (
+                <div className="text-center py-12 text-gray-500 bg-white rounded-xl">아직 자소서 신청자가 없습니다.</div>
+              )}
+            </div>
+            {/* 데스크톱 테이블 뷰 */}
+            <div className="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">번호</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">생년월일</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">전화</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">학과</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">상황</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">희망직군</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">자소서</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-200">
+                    {resumeApplicants.map((ra, idx) => (
+                      <tr key={ra.id} className="hover:bg-gray-50">
+                        <td className="px-3 py-3 text-sm text-gray-500">{idx + 1}</td>
+                        <td className="px-3 py-3 text-sm font-medium text-gray-900">{ra.name}</td>
+                        <td className="px-3 py-3 text-sm text-gray-500">{ra.birthDate}</td>
+                        <td className="px-3 py-3 text-sm text-gray-500">{ra.phone4}</td>
+                        <td className="px-3 py-3 text-sm text-gray-500">{ra.department}</td>
+                        <td className="px-3 py-3 text-sm text-gray-500">{ra.currentStatus}</td>
+                        <td className="px-3 py-3 text-sm text-gray-500">{ra.desiredField}</td>
+                        <td className="px-3 py-3 text-sm">
+                          <button
+                            onClick={() => setExpandedResume(expandedResume === ra.id ? null : ra.id)}
+                            className="text-primary-700 hover:text-primary-900 font-medium text-xs"
+                          >
+                            {expandedResume === ra.id ? '접기' : '보기'}
+                          </button>
+                        </td>
+                        <td className="px-3 py-3 text-sm text-gray-500 whitespace-nowrap">
+                          {new Date(ra.createdAt).toLocaleString('ko-KR')}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+                {resumeApplicants.length === 0 && (
+                  <div className="text-center py-12 text-gray-500">아직 자소서 신청자가 없습니다.</div>
+                )}
+              </div>
+              {/* 자소서 내용 팝업 (테이블 아래 표시) */}
+              {expandedResume && (() => {
+                const ra = resumeApplicants.find(r => r.id === expandedResume);
+                if (!ra) return null;
+                return (
+                  <div className="border-t border-gray-200 p-4 bg-gray-50">
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold text-gray-800">📄 {ra.name}의 자소서</h4>
+                      <button onClick={() => setExpandedResume(null)} className="text-sm text-gray-500 hover:text-gray-700">닫기 ✕</button>
+                    </div>
+                    <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto bg-white rounded-lg p-4 border border-gray-200">
+                      {ra.resumeText}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
           </>
         )}

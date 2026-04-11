@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllApplicants, getAllAssignments, getMentorApplicationCounts, getMentors, deleteAllData, deleteApplicant } from '@/lib/data';
+import { getAllApplicants, getAllAssignments, getMentorApplicationCounts, getMentors, deleteAllData, deleteApplicant, getAllResumeApplicants } from '@/lib/data';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,6 +9,7 @@ export async function GET() {
     const applicants = await getAllApplicants();
     const assignments = await getAllAssignments();
     const mentorCounts = await getMentorApplicationCounts(mentors);
+    const resumeApplicants = await getAllResumeApplicants();
 
     return NextResponse.json({
       success: true,
@@ -17,6 +18,7 @@ export async function GET() {
         assignments,
         mentors,
         mentorCounts,
+        resumeApplicants,
       },
     });
   } catch (error) {
