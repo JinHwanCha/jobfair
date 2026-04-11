@@ -259,12 +259,11 @@ export default function MyPage() {
 
                 {/* 타임별 배정 */}
                 <div className="grid gap-4">
-                  {Array.from({ length: 6 }, (_, i) => {
+                  {Array.from({ length: 4 }, (_, i) => {
                     const timeNum = i + 1;
                     const slot = (assignment as unknown as Record<string, unknown>)[`time${timeNum}`] as AssignmentSlot | null;
                     const badgeColors = [
-                      'time-badge-1', 'time-badge-2', 'time-badge-3',
-                      'time-badge-1', 'time-badge-2', 'time-badge-3',
+                      'time-badge-1', 'time-badge-2', 'time-badge-3', 'time-badge-1',
                     ];
                     return (
                       <TimeSlotCard

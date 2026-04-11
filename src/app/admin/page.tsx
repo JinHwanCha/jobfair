@@ -326,9 +326,9 @@ export default function AdminPage() {
                 <div key={assignment.applicantId} className="bg-white rounded-xl shadow-sm p-4">
                   <h4 className="font-bold text-gray-900 mb-3">{assignment.applicantName}</h4>
                   <div className="space-y-2">
-                    {Array.from({ length: 6 }, (_, i) => {
+                    {Array.from({ length: 4 }, (_, i) => {
                       const slot = (assignment as unknown as Record<string, unknown>)[`time${i + 1}`] as Assignment['time1'];
-                      const colors = ['blue', 'green', 'purple', 'orange', 'pink', 'teal'];
+                      const colors = ['blue', 'green', 'purple', 'orange'];
                       return (
                         <div key={i} className="flex items-center justify-between text-sm">
                           <span className={`text-xs bg-${colors[i]}-50 text-${colors[i]}-700 px-2 py-0.5 rounded-full font-medium`}>{i + 1}타임</span>
@@ -356,7 +356,7 @@ export default function AdminPage() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
-                      {Array.from({ length: 6 }, (_, i) => (
+                      {Array.from({ length: 4 }, (_, i) => (
                         <th key={i} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase" colSpan={2}>{i + 1}타임 / 장소</th>
                       ))}
                     </tr>
@@ -365,7 +365,7 @@ export default function AdminPage() {
                     {assignments.map((assignment) => (
                       <tr key={assignment.applicantId} className="hover:bg-gray-50">
                         <td className="px-3 py-3 text-sm font-medium text-gray-900">{assignment.applicantName}</td>
-                        {Array.from({ length: 6 }, (_, i) => {
+                        {Array.from({ length: 4 }, (_, i) => {
                           const slot = (assignment as unknown as Record<string, unknown>)[`time${i + 1}`] as Assignment['time1'];
                           return [
                             <td key={`m${i}`} className="px-3 py-3 text-sm">

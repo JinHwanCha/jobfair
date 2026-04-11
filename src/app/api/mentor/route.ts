@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
     const applicantMap = new Map(applicants.map((a) => [a.id, a]));
 
     const timeSlots = [];
-    for (let t = 1; t <= 6; t++) {
+    for (let t = 1; t <= 4; t++) {
       const slotKey = `time${t}` as keyof typeof mySlot;
       const assignedIds: string[] = mySlot ? (mySlot[slotKey] as string[]) || [] : [];
 

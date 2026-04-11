@@ -1,6 +1,7 @@
 import { Mentor, Applicant, Assignment, AssignmentSlot, MentorSlot, MentoringTopic } from '@/types';
 
-const NUM_TIMES = 6;
+const NUM_TIMES = 4; // 4개 타임 슬롯
+const NUM_CHOICES = 6; // 6지망까지 선택
 
 // 신청자의 언어 그룹 결정
 type LangGroup = 'korean' | 'english' | 'chinese';
@@ -32,23 +33,23 @@ function slotLangKey(mentorId: string, timeNum: number): string {
  *
  * 배정 규칙:
  * 1. 전체 신청자를 선착순으로 정렬, 관심 주제별로 그룹핑
- * 2. 1지망 → 2지망 → ... → 6지망 순으로 배정 시도
- * 3. 멘토당 타임별 3명 제한 (maxCapacity)
- * 4. 같은 타임 슬롯에는 같은 언어 그룹만 배정 (한국인/영어권/중화권 분리)
+ * 2. 6지망까지 선택하지만, 4개 타임 슬롯에 배정
+ * 3. 1~4지망 먼저 배정 시도, 실패 시 5~6지망이 우선 대체
+ * 4. 멘토당 타임별 4명 제한 (maxCapacity)
+ * 5. 같은 타임 슬롯에는 같은 언어 그룹만 배정 (한국인/영어권/중화권 분리)
  *    - 빈 슬롯은 누구든 먼저 들어가는 사람의 그룹으로 확정
- * 5. 같은 타임 슬롯에는 관심 주제가 겹치는 신청자를 우선 배치
- * 6. 초과 또는 언어 그룹 불일치 시 다음 타임으로 자동 배정
- * 7. 모든 지망 실패 시 동일 카테고리 멘토로 배정
+ * 6. 같은 타임 슬롯에는 관심 주제가 겹치는 신청자를 우선 배치
+ * 7. 6지망까지 모두 실패 시 희망직군(desiredField) 기반으로 멘토 매칭
+ * 8. 최후 수단으로 아무 멘토나 배정
  */
 export function runAutoAssignment(
   applicants: Applicant[],
   mentors: Mentor[]
 ): { assignments: Assignment[]; mentorSlots: MentorSlot[] } {
-  // 멘토 슬롯 초기화
+  // 멘토 슬롯 초기화 (4타임)
   const mentorSlots: MentorSlot[] = mentors.map(mentor => ({
     mentorId: mentor.id,
-    time1: [], time2: [], time3: [],
-    time4: [], time5: [], time6: [],
+    time1: [], time2: [], time3: [], time4: [],
   }));
 
   // 타임 슬롯별 언어 그룹 추적 초기화 (전부 null = 빈 슬롯)
@@ -90,11 +91,22 @@ export function runAutoAssignment(
     categoryMentorsMap.set(mentor.category, [...existing, mentor]);
   });
 
+  // 희망직군별 멘토 매핑 (desiredField fallback용)
+  const fieldMentorsMap = new Map<string, Mentor[]>();
+  mentors.forEach(mentor => {
+    // 멘토의 field와 jobTitle을 기반으로 매핑
+    const fields = [mentor.field, mentor.jobTitle, mentor.category].filter(Boolean);
+    for (const field of fields) {
+      const existing = fieldMentorsMap.get(field) || [];
+      fieldMentorsMap.set(field, [...existing, mentor]);
+    }
+  });
+
   // 전체 신청자를 관심 주제 그룹별로 배정 (언어 그룹별 슬롯 분리)
   for (const applicant of groupedApplicants) {
     const langGroup = getApplicantLangGroup(applicant);
     const assignment = assignSingleApplicant(
-      applicant, langGroup, mentors, mentorSlots, slotLangMap, slotTopicMap, mentorMap, categoryMentorsMap
+      applicant, langGroup, mentors, mentorSlots, slotLangMap, slotTopicMap, mentorMap, categoryMentorsMap, fieldMentorsMap
     );
     assignments.push(assignment);
   }
@@ -104,6 +116,8 @@ export function runAutoAssignment(
 
 /**
  * 단일 신청자 배정
+ * - 6지망까지 선택하지만 4개 타임 슬롯에만 배정
+ * - 1~4지망 우선, 5~6지망은 우선 대체
  * - 같은 언어 그룹의 슬롯만 배정 가능
  */
 function assignSingleApplicant(
@@ -114,19 +128,19 @@ function assignSingleApplicant(
   slotLangMap: SlotLangMap,
   slotTopicMap: SlotTopicMap,
   mentorMap: Map<string, Mentor>,
-  categoryMentorsMap: Map<string, Mentor[]>
+  categoryMentorsMap: Map<string, Mentor[]>,
+  fieldMentorsMap: Map<string, Mentor[]>
 ): Assignment {
   const assignment: Assignment = {
     applicantId: applicant.id,
     applicantName: applicant.name,
     phone4: applicant.phone4,
-    time1: null, time2: null, time3: null,
-    time4: null, time5: null, time6: null,
+    time1: null, time2: null, time3: null, time4: null,
   };
 
-  // 지망 순서대로 수집
+  // 6지망까지 전부 수집
   const choices: { choiceNum: number; mentorId: string }[] = [];
-  for (let i = 1; i <= NUM_TIMES; i++) {
+  for (let i = 1; i <= NUM_CHOICES; i++) {
     const mentorId = (applicant as unknown as Record<string, unknown>)[`choice${i}`] as string;
     if (mentorId) choices.push({ choiceNum: i, mentorId });
   }
@@ -135,7 +149,10 @@ function assignSingleApplicant(
   const assignedTimes = new Set<number>();
   const applicantTopics = applicant.interestTopics || [];
 
+  // Phase 1: 1~6지망 순서대로 빈 타임에 배정 시도 (4개 타임 다 채울 때까지)
   for (const { choiceNum, mentorId } of choices) {
+    if (assignedTimes.size >= NUM_TIMES) break; // 4타임 다 찼으면 중단
+
     const mentor = mentorMap.get(mentorId);
     if (!mentor) continue;
 
@@ -163,10 +180,10 @@ function assignSingleApplicant(
     }
   }
 
-  // 배정되지 않은 타임이 있으면 동일 카테고리 멘토로 대체 배정
+  // Phase 2: 아직 빈 타임이 있으면 대체 배정
   const allTimes = Array.from({ length: NUM_TIMES }, (_, i) => i + 1);
   const unassignedTimes = allTimes.filter(t => !assignedTimes.has(t));
-  
+
   const originalChoiceIds = choices.map(c => c.mentorId);
 
   // 이미 배정된 멘토 ID 추적 (중복 배정 방지)
@@ -178,14 +195,7 @@ function assignSingleApplicant(
   }
 
   for (const timeNum of unassignedTimes) {
-    // 원래 선택한 멘토들의 카테고리 우선 순위로 대체 멘토 찾기
-    const originalCategories = originalChoiceIds
-      .map(id => mentorMap.get(id)?.category)
-      .filter((c): c is string => !!c);
-
-    const uniqueCategories = [...new Set(originalCategories)];
-
-    // 해당 타임에 원래 어떤 지망을 선택했는지 추적
+    // 해당 타임에 원래 어떤 지망을 선택했는지 추적 (대체 배정 시 표시용)
     const originalChoiceForTime = choices[timeNum - 1];
     const originalChoiceName = originalChoiceForTime ? mentorMap.get(originalChoiceForTime.mentorId)?.name : undefined;
     const originalMessage = originalChoiceForTime
@@ -194,7 +204,7 @@ function assignSingleApplicant(
 
     let assigned = false;
 
-    // 먼저: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도
+    // 2-1: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도
     for (const { mentorId } of choices) {
       if (assignedMentorIds.has(mentorId)) continue;
       const mentor = mentorMap.get(mentorId);
@@ -215,7 +225,35 @@ function assignSingleApplicant(
 
     if (assigned) continue;
 
-    // 같은 카테고리 대체 멘토
+    // 2-2: 희망직군(desiredField)에 해당하는 멘토 우선 배정
+    if (applicant.desiredField) {
+      const fieldMentors = fieldMentorsMap.get(applicant.desiredField) || [];
+      const fieldAlternatives = fieldMentors.filter(m => !assignedMentorIds.has(m.id));
+
+      for (const altMentor of fieldAlternatives) {
+        const altSlot = mentorSlots.find(s => s.mentorId === altMentor.id);
+        if (!altSlot) continue;
+
+        const result = tryAssignToMentorAtTime(
+          applicant.id, altMentor, altSlot, timeNum, false, originalChoiceName, originalMessage, langGroup, slotLangMap, applicantTopics, slotTopicMap
+        );
+        if (result) {
+          setAssignmentSlot(assignment, timeNum, result.slot);
+          assignedMentorIds.add(altMentor.id);
+          assigned = true;
+          break;
+        }
+      }
+    }
+
+    if (assigned) continue;
+
+    // 2-3: 같은 카테고리 대체 멘토
+    const originalCategories = originalChoiceIds
+      .map(id => mentorMap.get(id)?.category)
+      .filter((c): c is string => !!c);
+    const uniqueCategories = [...new Set(originalCategories)];
+
     for (const category of uniqueCategories) {
       if (assigned) break;
 
@@ -251,7 +289,7 @@ function assignSingleApplicant(
       }
     }
 
-    // 같은 카테고리에서도 못 찾으면, 아무 멘토나 배정
+    // 2-4: 최후 수단 - 아무 멘토나 배정
     if (!assigned) {
       for (const mentor of mentors) {
         if (assignedMentorIds.has(mentor.id)) continue;

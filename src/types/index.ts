@@ -11,7 +11,7 @@ export interface Mentor {
   bibleVerse?: string;   // 하나님 말씀/성경 구절
   advice?: string;       // 학생들에게 조언
   location?: string;
-  maxCapacity: number;   // 타임당 최대 수용 인원 (기본 3명)
+  maxCapacity: number;   // 타임당 최대 수용 인원 (기본 4명)
   // Sheet 2 추가 데이터
   jobPosition?: string;  // 현재 직무 / 회사
   major?: string;        // 전공
@@ -65,8 +65,6 @@ export interface Assignment {
   time2: AssignmentSlot | null;
   time3: AssignmentSlot | null;
   time4: AssignmentSlot | null;
-  time5: AssignmentSlot | null;
-  time6: AssignmentSlot | null;
 }
 
 export interface AssignmentSlot {
@@ -87,8 +85,6 @@ export interface MentorSlot {
   time2: string[];
   time3: string[];
   time4: string[];
-  time5: string[];
-  time6: string[];
 }
 
 // API 응답 타입

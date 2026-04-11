@@ -153,8 +153,6 @@ export async function setAssignments(assignments: Assignment[]): Promise<void> {
     time2: a.time2,
     time3: a.time3,
     time4: a.time4,
-    time5: a.time5,
-    time6: a.time6,
   }));
 
   const { error } = await supabase.from('assignments').insert(rows);
@@ -173,8 +171,6 @@ export async function setMentorSlots(slots: MentorSlot[]): Promise<void> {
     time2: s.time2,
     time3: s.time3,
     time4: s.time4,
-    time5: s.time5,
-    time6: s.time6,
   }));
 
   const { error } = await supabase.from('mentor_slots').insert(rows);
@@ -194,8 +190,6 @@ export async function getMentorSlots(): Promise<MentorSlot[]> {
     time2: row.time2 || [],
     time3: row.time3 || [],
     time4: row.time4 || [],
-    time5: row.time5 || [],
-    time6: row.time6 || [],
   }));
 }
 
@@ -364,7 +358,5 @@ function dbToAssignment(row: any): Assignment {
     time2: row.time2 || null,
     time3: row.time3 || null,
     time4: row.time4 || null,
-    time5: row.time5 || null,
-    time6: row.time6 || null,
   };
 }
