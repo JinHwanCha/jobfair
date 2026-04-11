@@ -25,6 +25,7 @@ export default function Header() {
     { href: '/', label: t('nav.home') },
     { href: '/mentors', label: t('nav.mentors') },
     { href: '/apply', label: t('nav.apply') },
+    { href: '/resume/apply', label: t('nav.resume') },
     { href: '/my', label: t('nav.my') },
   ];
 

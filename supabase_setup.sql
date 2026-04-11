@@ -91,3 +91,26 @@ ALTER TABLE assignments ADD COLUMN IF NOT EXISTS time6 JSONB;
 ALTER TABLE mentor_slots ADD COLUMN IF NOT EXISTS time4 JSONB DEFAULT '[]'::JSONB;
 ALTER TABLE mentor_slots ADD COLUMN IF NOT EXISTS time5 JSONB DEFAULT '[]'::JSONB;
 ALTER TABLE mentor_slots ADD COLUMN IF NOT EXISTS time6 JSONB DEFAULT '[]'::JSONB;
+
+-- ============================================
+-- 자소서 첨삭 신청자 테이블
+-- ============================================
+CREATE TABLE IF NOT EXISTS resume_applicants (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  birth_date TEXT NOT NULL,
+  phone4 TEXT NOT NULL,
+  department TEXT DEFAULT '',
+  birth_year TEXT DEFAULT '',
+  current_status TEXT DEFAULT '',
+  desired_field TEXT DEFAULT '',
+  resume_text TEXT NOT NULL DEFAULT '',
+  agreed_to_terms BOOLEAN DEFAULT TRUE,
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_resume_applicants_name_phone4 ON resume_applicants (name, phone4);
+
+ALTER TABLE resume_applicants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Service role full access" ON resume_applicants FOR ALL USING (true) WITH CHECK (true);

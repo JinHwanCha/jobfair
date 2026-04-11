@@ -140,3 +140,35 @@ export interface LookupFormData {
   name: string;
   phone4: string;
 }
+
+// 자소서 첨삭 신청자 타입
+export interface ResumeApplicant {
+  id: string;
+  name: string;
+  birthDate: string;
+  phone4: string;
+  department: string;
+  birthYear: string;
+  currentStatus: string;
+  desiredField: string;
+  resumeText: string;
+  agreedToTerms: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// 자소서 첨삭 폼 데이터
+export interface ResumeApplyFormData {
+  name: string;
+  birthDate: string;
+  phone4: string;
+  department: string;
+  birthYear: string;
+  currentStatus: string;
+  desiredField: string;
+  resumeText: string;
+  agreedToTerms: boolean;
+}
+
+// 자소서 첨삭 멘토 이름 목록 (시트에서 필터링용)
+export const RESUME_MENTOR_NAMES = ['성재훈', '송하정', '강요셉/최우희'];

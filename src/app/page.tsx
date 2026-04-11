@@ -182,6 +182,25 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* 자소서 첨삭 프로그램 섹션 */}
+      <section className="py-12 sm:py-16 bg-blue-50">
+        <div className="max-w-4xl mx-auto px-4">
+          <div className="text-center mb-6">
+            <span className="text-3xl mb-4 block">📝</span>
+            <h2 className="section-title">{t('home.resumeSection')}</h2>
+            <p className="text-gray-600 mb-2">{t('home.resumeDesc')}</p>
+            <span className="inline-block bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full">
+              {t('home.resumeLimit')}
+            </span>
+          </div>
+          <div className="text-center mt-6">
+            <Link href="/resume/apply" className="btn-primary inline-block bg-blue-500 hover:bg-blue-600 text-white">
+              {t('home.resumeApply')}
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* CTA 섹션 */}
       <section className="py-12 sm:py-16 bg-gradient-to-br from-primary-100 to-warm-200">
         <div className="max-w-4xl mx-auto px-4 text-center">

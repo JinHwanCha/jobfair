@@ -1,12 +1,24 @@
-import { Mentor, Applicant, Assignment, MentorSlot, ForeignLanguageGroup, MentoringTopic } from '@/types';
+import { Mentor, Applicant, Assignment, MentorSlot, ForeignLanguageGroup, MentoringTopic, ResumeApplicant, RESUME_MENTOR_NAMES } from '@/types';
 import { fetchMentorsFromSheet } from '@/lib/sheets';
 import { supabase } from '@/lib/supabase';
 
-// Google Sheets에서 멘토 데이터 가져오기
-export async function getMentors(): Promise<Mentor[]> {
+// Google Sheets에서 전체 멘토 데이터 가져오기
+async function getAllMentorsFromSheet(): Promise<Mentor[]> {
   const mentors = await fetchMentorsFromSheet();
   if (mentors.length > 0) return mentors;
   return [];
+}
+
+// 멘토링 멘토만 (자소서 멘토 제외)
+export async function getMentors(): Promise<Mentor[]> {
+  const all = await getAllMentorsFromSheet();
+  return all.filter(m => !RESUME_MENTOR_NAMES.includes(m.name));
+}
+
+// 자소서 첨삭 멘토만
+export async function getResumeMentors(): Promise<Mentor[]> {
+  const all = await getAllMentorsFromSheet();
+  return all.filter(m => RESUME_MENTOR_NAMES.includes(m.name));
 }
 
 // 신청자 조회 (이름 + 전화번호 뒷자리 + 생년월일로)
@@ -359,4 +371,109 @@ function dbToAssignment(row: any): Assignment {
     time3: row.time3 || null,
     time4: row.time4 || null,
   };
+}
+
+// ============================================
+// 자소서 첨삭 관련 함수
+// ============================================
+
+const RESUME_MAX_APPLICANTS = 12;
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function dbToResumeApplicant(row: any): ResumeApplicant {
+  return {
+    id: row.id,
+    name: row.name,
+    birthDate: row.birth_date,
+    phone4: row.phone4,
+    department: row.department || '',
+    birthYear: row.birth_year || '',
+    currentStatus: row.current_status || '',
+    desiredField: row.desired_field || '',
+    resumeText: row.resume_text || '',
+    agreedToTerms: row.agreed_to_terms,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
+// 자소서 신청자 수 조회
+export async function getResumeApplicantCount(): Promise<number> {
+  const { count, error } = await supabase
+    .from('resume_applicants')
+    .select('*', { count: 'exact', head: true });
+  if (error) throw error;
+  return count || 0;
+}
+
+// 자소서 신청자 전체 조회
+export async function getAllResumeApplicants(): Promise<ResumeApplicant[]> {
+  const { data, error } = await supabase
+    .from('resume_applicants')
+    .select('*')
+    .order('created_at', { ascending: true });
+  if (error) throw error;
+  return (data || []).map(dbToResumeApplicant);
+}
+
+// 자소서 신청자 추가
+export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'createdAt' | 'updatedAt'>): Promise<ResumeApplicant> {
+  // 선착순 제한 확인
+  const count = await getResumeApplicantCount();
+  if (count >= RESUME_MAX_APPLICANTS) {
+    throw new Error('LIMIT_REACHED');
+  }
+
+  // 중복 확인
+  const { data: existing } = await supabase
+    .from('resume_applicants')
+    .select('id')
+    .eq('name', input.name)
+    .eq('phone4', input.phone4)
+    .eq('birth_date', input.birthDate)
+    .limit(1)
+    .single();
+
+  if (existing) {
+    // 기존 신청 업데이트
+    const { data, error } = await supabase
+      .from('resume_applicants')
+      .update({
+        department: input.department || '',
+        birth_year: input.birthYear || '',
+        current_status: input.currentStatus || '',
+        desired_field: input.desiredField || '',
+        resume_text: input.resumeText,
+        agreed_to_terms: input.agreedToTerms,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', existing.id)
+      .select()
+      .single();
+    if (error) throw error;
+    return dbToResumeApplicant(data);
+  }
+
+  const id = `resume-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  const now = new Date().toISOString();
+  const { data, error } = await supabase
+    .from('resume_applicants')
+    .insert({
+      id,
+      name: input.name,
+      birth_date: input.birthDate,
+      phone4: input.phone4,
+      department: input.department || '',
+      birth_year: input.birthYear || '',
+      current_status: input.currentStatus || '',
+      desired_field: input.desiredField || '',
+      resume_text: input.resumeText,
+      agreed_to_terms: input.agreedToTerms,
+      created_at: now,
+      updated_at: now,
+    })
+    .select()
+    .single();
+  if (error) throw error;
+  return dbToResumeApplicant(data);
 }
