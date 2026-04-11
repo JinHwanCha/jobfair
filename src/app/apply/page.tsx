@@ -166,6 +166,8 @@ export default function ApplyPage() {
 
       if (result.success) {
         setSubmitSuccess(true);
+      } else if (result.error === 'CROSS_BLOCK_RESUME') {
+        setSubmitError(t('apply.crossBlockResumeError'));
       } else {
         setSubmitError(result.error || t('apply.errorDefault'));
       }
@@ -250,6 +252,13 @@ export default function ApplyPage() {
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('apply.title')}</h1>
           <p className="text-gray-600">{t('apply.subtitle')}</p>
+        </div>
+
+        {/* 교차 신청 안내 */}
+        <div className="max-w-lg mx-auto mb-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+            {t('apply.crossBlockResume')}
+          </div>
         </div>
 
         {/* 진행 상태 표시 */}

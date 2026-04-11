@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { addResumeApplicant, getResumeApplicantCount } from '@/lib/data';
+import { addResumeApplicant, getResumeApplicantCount, hasApplicant } from '@/lib/data';
 import { ResumeApplyFormData } from '@/types';
 
 export async function POST(request: NextRequest) {
@@ -31,6 +31,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: '개인정보 수집 및 이용에 동의해야 합니다.',
+      });
+    }
+
+    // 멘토링 신청자 교차 차단
+    const alreadyMentoringApplied = await hasApplicant(body.name, body.phone4, body.birthDate);
+    if (alreadyMentoringApplied) {
+      return NextResponse.json({
+        success: false,
+        error: 'CROSS_BLOCK_MENTORING',
       });
     }
 

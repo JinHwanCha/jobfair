@@ -258,6 +258,10 @@ const translations = {
   'home.resumeDesc': { ko: '전문 멘토가 여러분의 자소서를 직접 첨삭해드립니다. 50분 강의 후 1:1 첨삭 시간!', en: 'Expert mentors will review your resume directly. 50-min lecture + 1:1 review time!', zh: '专业导师直接帮您修改简历。50分钟讲座后进行1对1修改！' },
   'home.resumeLimit': { ko: '선착순 12명 한정', en: 'Limited to first 12 applicants', zh: '限先到先得12人' },
   'home.resumeApply': { ko: '자소서 첨삭 신청하기', en: 'Apply for Resume Review', zh: '申请简历修改' },
+  'apply.crossBlockResume': { ko: '⚠️ 자소서 첨삭을 이미 신청하신 분은 멘토링 신청이 불가합니다.', en: '⚠️ If you have already applied for resume review, you cannot apply for mentoring.', zh: '⚠️ 已申请简历修改的人无法申请导师辅导。' },
+  'apply.crossBlockResumeError': { ko: '자소서 첨삭을 이미 신청하여 멘토링 신청이 불가합니다.', en: 'You have already applied for resume review and cannot apply for mentoring.', zh: '您已申请简历修改，无法申请导师辅导。' },
+  'resume.crossBlockMentoring': { ko: '⚠️ 멘토링을 이미 신청하신 분은 자소서 첨삭 신청이 불가합니다.', en: '⚠️ If you have already applied for mentoring, you cannot apply for resume review.', zh: '⚠️ 已申请导师辅导的人无法申请简历修改。' },
+  'resume.crossBlockMentoringError': { ko: '멘토링을 이미 신청하여 자소서 첨삭 신청이 불가합니다.', en: 'You have already applied for mentoring and cannot apply for resume review.', zh: '您已申请导师辅导，无法申请简历修改。' },
 } as const;
 
 type TranslationKey = keyof typeof translations;

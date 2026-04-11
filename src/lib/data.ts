@@ -373,6 +373,32 @@ function dbToAssignment(row: any): Assignment {
   };
 }
 
+// 멘토링 신청자 존재 여부 확인 (cross-check용)
+export async function hasApplicant(name: string, phone4: string, birthDate: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('applicants')
+    .select('id')
+    .eq('name', name)
+    .eq('phone4', phone4)
+    .eq('birth_date', birthDate)
+    .limit(1)
+    .single();
+  return !!data;
+}
+
+// 자소서 신청자 존재 여부 확인 (cross-check용)
+export async function hasResumeApplicant(name: string, phone4: string, birthDate: string): Promise<boolean> {
+  const { data } = await supabase
+    .from('resume_applicants')
+    .select('id')
+    .eq('name', name)
+    .eq('phone4', phone4)
+    .eq('birth_date', birthDate)
+    .limit(1)
+    .single();
+  return !!data;
+}
+
 // ============================================
 // 자소서 첨삭 관련 함수
 // ============================================

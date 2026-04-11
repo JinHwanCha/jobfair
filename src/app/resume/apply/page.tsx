@@ -82,6 +82,8 @@ export default function ResumeApplyPage() {
 
       if (result.success) {
         setSubmitSuccess(true);
+      } else if (result.error === 'CROSS_BLOCK_MENTORING') {
+        setSubmitError(t('resume.crossBlockMentoringError'));
       } else {
         setSubmitError(result.error || '신청 중 오류가 발생했습니다.');
       }
@@ -141,7 +143,7 @@ export default function ResumeApplyPage() {
             <div className="grid sm:grid-cols-3 gap-3">
               {mentors.map(m => (
                 <div key={m.id} className="card text-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
                     <span className="text-lg">📝</span>
                   </div>
                   <h4 className="font-bold text-gray-800">{m.name}</h4>
@@ -153,14 +155,21 @@ export default function ResumeApplyPage() {
           </div>
         )}
 
+        {/* 교차 신청 안내 */}
+        <div className="max-w-lg mx-auto mb-4">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 text-sm text-amber-800">
+            {t('resume.crossBlockMentoring')}
+          </div>
+        </div>
+
         {/* 스텝 인디케이터 */}
         <div className="flex items-center justify-center gap-2 mb-8">
           {[1, 2, 3, 4].map((s) => (
             <div key={s} className="flex items-center gap-2">
               <div className={`w-6 h-6 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs sm:text-sm font-bold ${
-                step >= s ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-400'
+                step >= s ? 'bg-primary-400 text-gray-900' : 'bg-gray-200 text-gray-400'
               }`}>{s}</div>
-              {s < 4 && <div className={`w-6 sm:w-12 h-1 rounded ${step > s ? 'bg-blue-500' : 'bg-gray-200'}`} />}
+              {s < 4 && <div className={`w-6 sm:w-12 h-1 rounded ${step > s ? 'bg-primary-400' : 'bg-gray-200'}`} />}
             </div>
           ))}
         </div>
@@ -340,7 +349,7 @@ export default function ResumeApplyPage() {
                 <div className="flex gap-3">
                   <button onClick={() => setStep(3)} className="btn-secondary flex-1">{t('apply.prev')}</button>
                   <button onClick={handleSubmit} disabled={isSubmitting || !formData.agreedToTerms}
-                    className="btn-primary flex-1 bg-blue-500 hover:bg-blue-600 text-white">
+                    className="btn-primary flex-1">
                     {isSubmitting ? t('apply.submitting') : t('resume.submit')}
                   </button>
                 </div>

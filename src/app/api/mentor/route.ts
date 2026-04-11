@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMentors, getMentorSlots, getAllApplicants } from '@/lib/data';
+import { getMentors, getMentorSlots, getAllApplicants, getResumeMentors, getAllResumeApplicants } from '@/lib/data';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,10 +20,38 @@ export async function POST(request: NextRequest) {
       (m) => m.name.trim() === name.trim() && m.phone4 === phone4
     );
 
+    // 자소서 첨삭 멘토인지 확인
     if (!mentor) {
+      const resumeMentors = await getResumeMentors();
+      const resumeMentor = resumeMentors.find(
+        (m) => m.name.trim() === name.trim() && m.phone4 === phone4
+      );
+
+      if (!resumeMentor) {
+        return NextResponse.json({
+          success: false,
+          error: '멘토 정보를 찾을 수 없습니다. 이름과 전화번호를 확인해주세요.',
+        });
+      }
+
+      // 자소서 첨삭 멘토: 자소서 신청자 목록 반환
+      const resumeApplicants = await getAllResumeApplicants();
       return NextResponse.json({
-        success: false,
-        error: '멘토 정보를 찾을 수 없습니다. 이름과 전화번호를 확인해주세요.',
+        success: true,
+        data: {
+          mentorName: resumeMentor.name,
+          mentorJob: resumeMentor.job,
+          isResumeMentor: true,
+          resumeApplicants: resumeApplicants.map(a => ({
+            name: a.name,
+            department: a.department,
+            birthYear: a.birthYear,
+            currentStatus: a.currentStatus,
+            desiredField: a.desiredField,
+            resumeText: a.resumeText,
+            createdAt: a.createdAt,
+          })),
+        },
       });
     }
 

@@ -18,10 +18,22 @@ interface TimeSlotData {
   mentees: Mentee[];
 }
 
+interface ResumeApplicantView {
+  name: string;
+  department: string;
+  birthYear: string;
+  currentStatus: string;
+  desiredField: string;
+  resumeText: string;
+  createdAt: string;
+}
+
 interface MentorData {
   mentorName: string;
   mentorJob: string;
-  timeSlots: TimeSlotData[];
+  isResumeMentor?: boolean;
+  timeSlots?: TimeSlotData[];
+  resumeApplicants?: ResumeApplicantView[];
 }
 
 export default function MentorPage() {
@@ -31,6 +43,7 @@ export default function MentorPage() {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<MentorData | null>(null);
   const [error, setError] = useState('');
+  const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,8 +130,66 @@ export default function MentorPage() {
               {data.mentorName} {t('mentor.mentorSuffix')}
             </p>
             <p className="text-gray-700 text-sm">{data.mentorJob}</p>
+            {data.isResumeMentor && (
+              <p className="text-sm text-primary-800 mt-1 font-medium">
+                {t('resume.totalApplicants')}: {data.resumeApplicants?.length || 0}{t('resume.personUnit')}
+              </p>
+            )}
           </div>
 
+          {/* 자소서 첨삭 멘토: 신청자 목록 */}
+          {data.isResumeMentor && data.resumeApplicants && (
+            <div className="space-y-4">
+              {data.resumeApplicants.length === 0 ? (
+                <div className="text-center py-12 text-gray-500">{t('resume.noApplicants')}</div>
+              ) : (
+                data.resumeApplicants.map((a, idx) => (
+                  <div key={idx} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <div
+                      className="flex items-center justify-between cursor-pointer px-4 py-3"
+                      onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-primary-200 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">
+                          {idx + 1}
+                        </div>
+                        <div>
+                          <h4 className="font-bold text-gray-800">{a.name}</h4>
+                          <p className="text-xs text-gray-500">
+                            {a.department} · {a.currentStatus} · {t('mentor.desired')}: {a.desiredField}
+                          </p>
+                        </div>
+                      </div>
+                      <span className="text-gray-400 text-lg">{expandedIdx === idx ? '▲' : '▼'}</span>
+                    </div>
+
+                    {expandedIdx === idx && (
+                      <div className="px-4 pb-4 pt-2 border-t border-gray-100">
+                        <div className="grid grid-cols-2 gap-2 text-sm mb-3">
+                          <div><span className="text-gray-500">{t('apply.birthYear')}:</span> <span className="font-medium">{a.birthYear}{t('apply.birthYearSuffix')}</span></div>
+                          <div><span className="text-gray-500">{t('apply.currentStatus')}:</span> <span className="font-medium">{a.currentStatus}</span></div>
+                          <div><span className="text-gray-500">{t('apply.department')}:</span> <span className="font-medium">{a.department}</span></div>
+                          <div><span className="text-gray-500">{t('apply.desiredField')}:</span> <span className="font-medium">{a.desiredField}</span></div>
+                        </div>
+
+                        <div className="bg-gray-50 rounded-xl p-4">
+                          <h5 className="font-bold text-gray-800 text-sm mb-2">📄 {t('resume.resumeContent')}</h5>
+                          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{a.resumeText}</p>
+                        </div>
+
+                        <p className="text-xs text-gray-400 mt-2">
+                          {t('resume.appliedAt')}: {new Date(a.createdAt).toLocaleString('ko-KR')}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* 일반 멘토링 멘토: 타임 슬롯 */}
+          {!data.isResumeMentor && data.timeSlots && (
           <div className="space-y-4">
             {data.timeSlots.map((slot) => (
               <div key={slot.time} className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
@@ -181,6 +252,7 @@ export default function MentorPage() {
               </div>
             ))}
           </div>
+          )}
 
           <div className="mt-6 bg-yellow-50 border border-yellow-200 rounded-xl p-4">
             <h4 className="font-semibold text-yellow-800 mb-2">{t('my.notes')}</h4>

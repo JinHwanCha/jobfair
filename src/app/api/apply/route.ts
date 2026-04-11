@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { upsertApplicant, getAllApplicants, getMentors, setAssignments, setMentorSlots } from '@/lib/data';
+import { upsertApplicant, getAllApplicants, getMentors, setAssignments, setMentorSlots, hasResumeApplicant } from '@/lib/data';
 import { ApplyFormData } from '@/types';
 import { runAutoAssignment } from '@/lib/assignment';
 
@@ -33,6 +33,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({
         success: false,
         error: '개인정보 수집 및 이용에 동의해야 합니다.',
+      });
+    }
+
+    // 자소서 첨삭 신청자 교차 차단
+    const alreadyResumeApplied = await hasResumeApplicant(body.name, body.phone4, body.birthDate);
+    if (alreadyResumeApplied) {
+      return NextResponse.json({
+        success: false,
+        error: 'CROSS_BLOCK_RESUME',
       });
     }
 

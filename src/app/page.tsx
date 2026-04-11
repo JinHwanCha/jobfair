@@ -12,11 +12,17 @@ export default function HomePage() {
   const { t } = useI18n();
   const isOpen = useIsOpen();
   const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [resumeMentors, setResumeMentors] = useState<Mentor[]>([]);
 
   useEffect(() => {
     fetch('/api/mentors')
       .then(res => res.json())
       .then(result => { if (result.success) setMentors(result.data); })
+      .catch(console.error);
+
+    fetch('/api/resume/mentors')
+      .then(res => res.json())
+      .then(result => { if (result.success) setResumeMentors(result.data); })
       .catch(console.error);
   }, []);
 
@@ -183,18 +189,34 @@ export default function HomePage() {
       </section>
 
       {/* 자소서 첨삭 프로그램 섹션 */}
-      <section className="py-12 sm:py-16 bg-blue-50">
+      <section className="py-12 sm:py-16 bg-warm-100">
         <div className="max-w-4xl mx-auto px-4">
           <div className="text-center mb-6">
             <span className="text-3xl mb-4 block">📝</span>
             <h2 className="section-title">{t('home.resumeSection')}</h2>
             <p className="text-gray-600 mb-2">{t('home.resumeDesc')}</p>
-            <span className="inline-block bg-blue-100 text-blue-700 text-sm font-medium px-3 py-1 rounded-full">
+            <span className="inline-block bg-primary-100 text-primary-800 text-sm font-medium px-3 py-1 rounded-full">
               {t('home.resumeLimit')}
             </span>
           </div>
-          <div className="text-center mt-6">
-            <Link href="/resume/apply" className="btn-primary inline-block bg-blue-500 hover:bg-blue-600 text-white">
+
+          {resumeMentors.length > 0 && (
+            <div className="grid sm:grid-cols-3 gap-4 mb-6">
+              {resumeMentors.map(m => (
+                <div key={m.id} className="card text-center">
+                  <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                    <span className="text-lg">📝</span>
+                  </div>
+                  <h4 className="font-bold text-gray-800">{m.name}</h4>
+                  <p className="text-sm text-gray-600">{m.jobPosition || m.job}</p>
+                  {m.keywords && <p className="text-xs text-gray-500 mt-1">{m.keywords}</p>}
+                </div>
+              ))}
+            </div>
+          )}
+
+          <div className="text-center">
+            <Link href="/resume/apply" className="btn-primary inline-block">
               {t('home.resumeApply')}
             </Link>
           </div>
