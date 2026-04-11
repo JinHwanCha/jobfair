@@ -92,7 +92,7 @@ export default function HomePage() {
 
           {mentors.length > 0 && (
             <div className="text-center mt-8">
-              <Link href="/mentors" className="btn-secondary inline-block">
+              <Link href="/mentors" className="btn-secondary inline-block bg-primary-200">
                 {mentors.length}{t('home.viewAllMentors')}
               </Link>
             </div>
