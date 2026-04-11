@@ -6,6 +6,7 @@ import Header from '@/components/Header';
 import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
 import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
+import ResumePreviewModal from '@/components/ResumePreviewModal';
 import { Mentor, ResumeApplyFormData } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
@@ -20,6 +21,7 @@ export default function ResumeApplyPage() {
   const [spotsLeft, setSpotsLeft] = useState<number | null>(null);
   const [birthYearConfirmed, setBirthYearConfirmed] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   const [formData, setFormData] = useState<ResumeApplyFormData>({
     name: '',
@@ -119,12 +121,20 @@ export default function ResumeApplyPage() {
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-6">{t('apply.notYetOpen')}</h2>
             <CountdownTimer />
-            <div className="mt-8">
-              <Link href="/" className="btn-secondary inline-block">
+            <div className="flex flex-col sm:flex-row gap-3 mt-8">
+              <button
+                onClick={() => setShowPreview(true)}
+                className="btn-primary flex-1 flex items-center justify-center gap-2"
+              >
+                <span>📋</span>
+                {t('resumePreview.button')}
+              </button>
+              <Link href="/" className="btn-secondary flex-1 inline-flex items-center justify-center">
                 {t('apply.goHome')}
               </Link>
             </div>
           </div>
+          {showPreview && <ResumePreviewModal onClose={() => setShowPreview(false)} />}
         </main>
       </div>
     );

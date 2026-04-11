@@ -162,6 +162,17 @@ const translations = {
   'preview.step5Title': { ko: '신청 정보 확인', en: 'Review & Submit', zh: '确认并提交' },
   'preview.step5Desc': { ko: '입력한 정보와 선택한 멘토를 최종 확인하고, 개인정보 동의 후 신청을 완료합니다.', en: 'Review your info and selected mentors, agree to the terms, and submit your application.', zh: '确认您的信息和选择的导师，同意条款后提交申请。' },
 
+  // ── Resume Preview ──
+  'resumePreview.button': { ko: '신청 미리보기', en: 'Preview Steps', zh: '预览申请步骤' },
+  'resumePreview.step1Title': { ko: '기본 정보 입력', en: 'Basic Info', zh: '基本信息' },
+  'resumePreview.step1Desc': { ko: '이름, 생년월일(6자리), 휴대폰 번호 뒷자리(4자리)를 입력합니다.', en: 'Enter your name, date of birth (6 digits), and last 4 digits of your phone number.', zh: '输入姓名、出生日期（6位数字）和手机号码后4位。' },
+  'resumePreview.step2Title': { ko: '멘티 프로필', en: 'Mentee Profile', zh: '学员资料' },
+  'resumePreview.step2Desc': { ko: '학과, 출생년도, 현재 상황, 희망 직군을 입력합니다.', en: 'Enter your major, birth year, current status, and desired field.', zh: '输入专业、出生年份、当前状况和希望职业领域。' },
+  'resumePreview.step3Title': { ko: '자소서 작성', en: 'Write Resume', zh: '撰写简历' },
+  'resumePreview.step3Desc': { ko: '멘토가 검토할 자소서를 작성합니다. 첨삭받고 싶은 내용을 자유롭게 입력하세요. (최대 5,000자)', en: 'Write the resume you want reviewed. Enter any content you want feedback on. (Max 5,000 characters)', zh: '撰写您希望导师审阅的简历。自由输入内容。（最多5,000字）' },
+  'resumePreview.step4Title': { ko: '신청 정보 확인', en: 'Review & Submit', zh: '确认并提交' },
+  'resumePreview.step4Desc': { ko: '입력한 정보와 자소서 내용을 최종 확인하고, 개인정보 동의 후 신청을 완료합니다.', en: 'Review your info and resume content, agree to the terms, and submit.', zh: '确认您的信息和简历内容，同意条款后提交申请。' },
+
   // ── My Page ──
   'my.title': { ko: '내 배정 확인', en: 'My Assign', zh: '我的分配确认' },
   'my.subtitle': { ko: '신청 시 입력한 정보로 배정 결과를 확인하세요', en: 'Check your assignment with the info you provided', zh: '请使用申请时输入的信息确认分配结果' },
