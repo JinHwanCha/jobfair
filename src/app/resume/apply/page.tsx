@@ -5,11 +5,13 @@ import Link from 'next/link';
 import Header from '@/components/Header';
 import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
+import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
 import { Mentor, ResumeApplyFormData } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
 export default function ResumeApplyPage() {
   const { t } = useI18n();
+  const isOpen = useIsOpen();
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [step, setStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -100,6 +102,33 @@ export default function ResumeApplyPage() {
   const canGoStep2 = formData.name && formData.birthDate.length === 6 && formData.phone4.length === 4;
   const canGoStep3 = formData.department && birthYearConfirmed && formData.currentStatus && formData.desiredField;
   const canGoStep4 = formData.resumeText.trim().length >= 10;
+
+  // 신청 오픈 전 안내 화면
+  if (isOpen === false) {
+    return (
+      <div className="page-container">
+        <Header />
+        <main className="content-container">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('resume.title')}</h1>
+            <p className="text-gray-600">{t('resume.subtitle')}</p>
+          </div>
+          <div className="card max-w-lg mx-auto py-10 px-4 text-center">
+            <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <span className="text-2xl">⏰</span>
+            </div>
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-6">{t('apply.notYetOpen')}</h2>
+            <CountdownTimer />
+            <div className="mt-8">
+              <Link href="/" className="btn-secondary inline-block">
+                {t('apply.goHome')}
+              </Link>
+            </div>
+          </div>
+        </main>
+      </div>
+    );
+  }
 
   if (submitSuccess) {
     return (
