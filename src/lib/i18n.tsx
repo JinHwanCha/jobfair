@@ -99,7 +99,7 @@ const translations = {
   'apply.name': { ko: '이름', en: 'Name', zh: '姓名' },
   'apply.namePlaceholder': { ko: '홍길동', en: 'John Doe', zh: '请输入姓名' },
   'apply.birthDate': { ko: '생년월일 (6자리)', en: 'Date of Birth (6 digits)', zh: '出生日期（6位数字）' },
-  'apply.birthDateHint': { ko: '예: 2008년 3월 15일 → 080315', en: 'e.g. March 15, 2008 → 080315', zh: '例：2008年3月15日 → 080315' },
+  'apply.birthDateHint': { ko: '예: 2001년 1월 1일 → 010101', en: 'e.g. January 1, 2001 → 010101', zh: '例：2001年1月1日 → 010101' },
   'apply.phone4': { ko: '휴대폰 번호 뒷자리 (4자리)', en: 'Last 4 digits of phone number', zh: '手机号码后4位' },
   'apply.next': { ko: '다음', en: 'Next', zh: '下一步' },
   'apply.prev': { ko: '이전', en: 'Back', zh: '上一步' },

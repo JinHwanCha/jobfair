@@ -297,7 +297,7 @@ export default function ApplyPage() {
               <div>
                 <label className="label">{t('apply.birthDate')}</label>
                 <input type="text" name="birthDate" value={formData.birthDate} onChange={handleInputChange}
-                  placeholder="991225" maxLength={6} className="input-field" />
+                  placeholder="010101" maxLength={6} className="input-field" />
                 <p className="text-xs text-gray-500 mt-1">{t('apply.birthDateHint')}</p>
               </div>
               <div>

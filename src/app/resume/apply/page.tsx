@@ -245,7 +245,7 @@ export default function ResumeApplyPage() {
                   <div>
                     <label className="label">{t('apply.birthDate')}</label>
                     <input type="text" name="birthDate" value={formData.birthDate}
-                      onChange={handleInputChange} placeholder="080315" maxLength={6} className="input-field" />
+                      onChange={handleInputChange} placeholder="010101" maxLength={6} className="input-field" />
                     <p className="text-xs text-gray-500 mt-1">{t('apply.birthDateHint')}</p>
                   </div>
                   <div>
