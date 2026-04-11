@@ -141,6 +141,9 @@ export interface LookupFormData {
   phone4: string;
 }
 
+// 지향 기업 유형
+export type CompanyType = 'large' | 'public' | 'private';
+
 // 자소서 첨삭 신청자 타입
 export interface ResumeApplicant {
   id: string;
@@ -151,7 +154,10 @@ export interface ResumeApplicant {
   birthYear: string;
   currentStatus: string;
   desiredField: string;
+  companyType: CompanyType[]; // 대기업/공기업/사기업
+  reviewGoal: string; // 첨삭을 통해 원하는 바
   resumeText: string;
+  queueNumber: number; // 순번
   agreedToTerms: boolean;
   createdAt: string;
   updatedAt: string;
@@ -166,6 +172,8 @@ export interface ResumeApplyFormData {
   birthYear: string;
   currentStatus: string;
   desiredField: string;
+  companyType: CompanyType[];
+  reviewGoal: string;
   resumeText: string;
   agreedToTerms: boolean;
 }

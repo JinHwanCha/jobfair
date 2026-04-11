@@ -141,6 +141,28 @@ export default function AdminPage() {
     }
   };
 
+  const deleteResume = async (resumeApplicantId: string, name: string) => {
+    const code = prompt(`"${name}" 자소서 신청자를 삭제합니다. 관리자 코드를 입력하세요:`);
+    if (!code) return;
+    setMessage('');
+    try {
+      const response = await fetch('/api/admin', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, resumeApplicantId }),
+      });
+      const result = await response.json();
+      if (result.success) {
+        setMessage(`"${name}" 자소서 신청자가 삭제되었습니다.`);
+        loadData();
+      } else {
+        setMessage(`오류: ${result.error}`);
+      }
+    } catch {
+      setMessage('삭제 중 오류가 발생했습니다.');
+    }
+  };
+
   const exportData = async () => {
     try {
       const response = await fetch('/api/admin/export');
@@ -502,7 +524,13 @@ export default function AdminPage() {
               {resumeApplicants.map((ra) => (
                 <div key={ra.id} className="bg-white rounded-xl shadow-sm p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-gray-900">{ra.name}</span>
+                    <div className="flex items-center gap-2">
+                      <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
+                        ra.queueNumber <= 12 ? 'bg-primary-200 text-gray-900' : 'bg-amber-100 text-amber-700'
+                      }`}>{ra.queueNumber}</span>
+                      <span className="font-bold text-gray-900">{ra.name}</span>
+                      {ra.queueNumber > 12 && <span className="text-xs text-amber-600">예비</span>}
+                    </div>
                     <span className="text-xs text-gray-400">{new Date(ra.createdAt).toLocaleString('ko-KR')}</span>
                   </div>
                   <div className="grid grid-cols-2 gap-1 text-xs text-gray-500 mb-2">
@@ -511,13 +539,25 @@ export default function AdminPage() {
                     <span>학과: {ra.department}</span>
                     <span>상황: {ra.currentStatus}</span>
                     <span className="col-span-2">희망직군: {ra.desiredField}</span>
+                    <span className="col-span-2">기업유형: {ra.companyType && ra.companyType.length > 0 ? ra.companyType.map((ct: string) => ({large: '대기업', public: '공기업', private: '사기업'}[ct] || ct)).join(', ') : '-'}</span>
                   </div>
-                  <button
-                    onClick={() => setExpandedResume(expandedResume === ra.id ? null : ra.id)}
-                    className="text-sm text-primary-700 hover:text-primary-900 font-medium"
-                  >
-                    {expandedResume === ra.id ? '▲ 자소서 접기' : '▼ 자소서 보기'}
-                  </button>
+                  {ra.reviewGoal && (
+                    <div className="bg-purple-50 rounded-lg p-2 text-xs text-purple-800 mb-2">
+                      🎯 첨삭목표: {ra.reviewGoal}
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => setExpandedResume(expandedResume === ra.id ? null : ra.id)}
+                      className="text-sm text-primary-700 hover:text-primary-900 font-medium"
+                    >
+                      {expandedResume === ra.id ? '▲ 자소서 접기' : '▼ 자소서 보기'}
+                    </button>
+                    <button
+                      onClick={() => deleteResume(ra.id, ra.name)}
+                      className="text-red-500 text-xs font-medium px-2 py-1 rounded hover:bg-red-50"
+                    >삭제</button>
+                  </div>
                   {expandedResume === ra.id && (
                     <div className="mt-2 bg-gray-50 rounded-lg p-3 text-sm text-gray-700 whitespace-pre-wrap max-h-60 overflow-y-auto">
                       {ra.resumeText}
@@ -535,27 +575,38 @@ export default function AdminPage() {
                 <table className="w-full">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">번호</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">순번</th>
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">생년월일</th>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">전화</th>
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">학과</th>
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">상황</th>
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">희망직군</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">기업유형</th>
+                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">첨삭목표</th>
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">자소서</th>
                       <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
+                      <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase">삭제</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {resumeApplicants.map((ra, idx) => (
-                      <tr key={ra.id} className="hover:bg-gray-50">
-                        <td className="px-3 py-3 text-sm text-gray-500">{idx + 1}</td>
+                    {resumeApplicants.map((ra) => (
+                      <tr key={ra.id} className={`hover:bg-gray-50 ${ra.queueNumber > 12 ? 'bg-amber-50/50' : ''}`}>
+                        <td className="px-3 py-3 text-sm">
+                          <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
+                            ra.queueNumber <= 12 ? 'bg-primary-200 text-gray-900' : 'bg-amber-100 text-amber-700'
+                          }`}>{ra.queueNumber}</span>
+                        </td>
                         <td className="px-3 py-3 text-sm font-medium text-gray-900">{ra.name}</td>
-                        <td className="px-3 py-3 text-sm text-gray-500">{ra.birthDate}</td>
-                        <td className="px-3 py-3 text-sm text-gray-500">{ra.phone4}</td>
                         <td className="px-3 py-3 text-sm text-gray-500">{ra.department}</td>
                         <td className="px-3 py-3 text-sm text-gray-500">{ra.currentStatus}</td>
                         <td className="px-3 py-3 text-sm text-gray-500">{ra.desiredField}</td>
+                        <td className="px-3 py-3 text-sm text-gray-500">
+                          {ra.companyType && ra.companyType.length > 0
+                            ? ra.companyType.map((ct: string) => ({large: '대', public: '공', private: '사'}[ct] || ct)).join('/')
+                            : '-'}
+                        </td>
+                        <td className="px-3 py-3 text-sm text-gray-500 max-w-[150px] truncate" title={ra.reviewGoal}>
+                          {ra.reviewGoal || '-'}
+                        </td>
                         <td className="px-3 py-3 text-sm">
                           <button
                             onClick={() => setExpandedResume(expandedResume === ra.id ? null : ra.id)}
@@ -566,6 +617,10 @@ export default function AdminPage() {
                         </td>
                         <td className="px-3 py-3 text-sm text-gray-500 whitespace-nowrap">
                           {new Date(ra.createdAt).toLocaleString('ko-KR')}
+                        </td>
+                        <td className="px-3 py-3 text-sm text-center">
+                          <button onClick={() => deleteResume(ra.id, ra.name)}
+                            className="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded hover:bg-red-50">삭제</button>
                         </td>
                       </tr>
                     ))}
@@ -582,9 +637,14 @@ export default function AdminPage() {
                 return (
                   <div className="border-t border-gray-200 p-4 bg-gray-50">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold text-gray-800">📄 {ra.name}의 자소서</h4>
+                      <h4 className="font-bold text-gray-800">📄 {ra.name}의 자소서 (순번 #{ra.queueNumber})</h4>
                       <button onClick={() => setExpandedResume(null)} className="text-sm text-gray-500 hover:text-gray-700">닫기 ✕</button>
                     </div>
+                    {ra.reviewGoal && (
+                      <div className="bg-purple-50 rounded-lg p-3 text-sm text-purple-800 mb-3">
+                        🎯 <span className="font-medium">첨삭목표:</span> {ra.reviewGoal}
+                      </div>
+                    )}
                     <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto bg-white rounded-lg p-4 border border-gray-200">
                       {ra.resumeText}
                     </div>

@@ -51,6 +51,8 @@ export async function POST(request: NextRequest) {
       birthYear: body.birthYear || '',
       currentStatus: body.currentStatus || '',
       desiredField: body.desiredField || '',
+      companyType: body.companyType || [],
+      reviewGoal: body.reviewGoal || '',
       resumeText: body.resumeText,
       agreedToTerms: body.agreedToTerms,
     });
@@ -60,12 +62,6 @@ export async function POST(request: NextRequest) {
       data: applicant,
     });
   } catch (error: unknown) {
-    if (error instanceof Error && error.message === 'LIMIT_REACHED') {
-      return NextResponse.json({
-        success: false,
-        error: '선착순 12명 마감되었습니다. 더 이상 신청할 수 없습니다.',
-      });
-    }
     console.error('자소서 신청 처리 오류:', error);
     return NextResponse.json({
       success: false,

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getAllApplicants, getAllAssignments, getMentorApplicationCounts, getMentors, deleteAllData, deleteApplicant, getAllResumeApplicants } from '@/lib/data';
+import { getAllApplicants, getAllAssignments, getMentorApplicationCounts, getMentors, deleteAllData, deleteApplicant, deleteResumeApplicant, getAllResumeApplicants } from '@/lib/data';
 
 export const dynamic = 'force-dynamic';
 
@@ -49,6 +49,15 @@ export async function DELETE(request: NextRequest) {
       return NextResponse.json({
         success: true,
         message: '해당 신청자가 삭제되었습니다.',
+      });
+    }
+
+    const { resumeApplicantId } = body;
+    if (resumeApplicantId) {
+      await deleteResumeApplicant(resumeApplicantId);
+      return NextResponse.json({
+        success: true,
+        message: '해당 자소서 신청자가 삭제되었습니다.',
       });
     }
 

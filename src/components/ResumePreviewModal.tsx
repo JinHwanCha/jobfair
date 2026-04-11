@@ -154,6 +154,14 @@ function Step2Preview() {
         <span className="text-xs text-gray-400 w-14 shrink-0">희망직군</span>
         <div className="flex-1 h-5 bg-gray-100 rounded" />
       </div>
+      <div className="bg-white rounded-lg px-3 py-2">
+        <span className="text-xs text-gray-400 block mb-1.5">기업유형</span>
+        <div className="flex gap-2">
+          <div className="h-5 bg-primary-100 rounded-full w-14" />
+          <div className="h-5 bg-gray-100 rounded-full w-14" />
+          <div className="h-5 bg-gray-100 rounded-full w-14" />
+        </div>
+      </div>
     </div>
   );
 }
@@ -170,12 +178,17 @@ function Step3Preview() {
           <div className="h-2.5 bg-gray-100 rounded w-full" />
           <div className="h-2.5 bg-gray-100 rounded w-5/6" />
           <div className="h-2.5 bg-gray-100 rounded w-4/6" />
-          <div className="h-2.5 bg-gray-100 rounded w-full" />
-          <div className="h-2.5 bg-gray-100 rounded w-3/4" />
         </div>
       </div>
-      <div className="text-center">
-        <span className="text-[10px] text-gray-400">0 / 5,000</span>
+      <div className="bg-white rounded-lg p-3">
+        <div className="flex items-center gap-2 mb-2">
+          <span className="text-lg">🎯</span>
+          <div className="h-3 bg-purple-200 rounded w-24" />
+        </div>
+        <div className="space-y-1.5">
+          <div className="h-2.5 bg-purple-50 rounded w-full" />
+          <div className="h-2.5 bg-purple-50 rounded w-3/4" />
+        </div>
       </div>
     </div>
   );

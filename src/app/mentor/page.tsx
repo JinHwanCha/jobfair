@@ -24,7 +24,10 @@ interface ResumeApplicantView {
   birthYear: string;
   currentStatus: string;
   desiredField: string;
+  companyType: string[];
+  reviewGoal: string;
   resumeText: string;
+  queueNumber: number;
   createdAt: string;
 }
 
@@ -150,11 +153,16 @@ export default function MentorPage() {
                       onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
                     >
                       <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 bg-primary-200 rounded-full flex items-center justify-center text-sm font-bold text-gray-900">
-                          {idx + 1}
+                        <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
+                          a.queueNumber <= 12 ? 'bg-primary-200 text-gray-900' : 'bg-amber-100 text-amber-700'
+                        }`}>
+                          {a.queueNumber}
                         </div>
                         <div>
-                          <h4 className="font-bold text-gray-800">{a.name}</h4>
+                          <h4 className="font-bold text-gray-800">
+                            {a.name}
+                            {a.queueNumber > 12 && <span className="ml-2 text-xs text-amber-600 font-normal">{t('resume.waitlistBadge')}</span>}
+                          </h4>
                           <p className="text-xs text-gray-500">
                             {a.department} · {a.currentStatus} · {t('mentor.desired')}: {a.desiredField}
                           </p>
@@ -170,7 +178,22 @@ export default function MentorPage() {
                           <div><span className="text-gray-500">{t('apply.currentStatus')}:</span> <span className="font-medium">{a.currentStatus}</span></div>
                           <div><span className="text-gray-500">{t('apply.department')}:</span> <span className="font-medium">{a.department}</span></div>
                           <div><span className="text-gray-500">{t('apply.desiredField')}:</span> <span className="font-medium">{a.desiredField}</span></div>
+                          <div className="col-span-2">
+                            <span className="text-gray-500">{t('resume.companyType')}:</span>{' '}
+                            <span className="font-medium">
+                              {a.companyType && a.companyType.length > 0
+                                ? a.companyType.map((ct: string) => ({large: t('resume.companyType.large'), public: t('resume.companyType.public'), private: t('resume.companyType.private')}[ct] || ct)).join(', ')
+                                : '-'}
+                            </span>
+                          </div>
                         </div>
+
+                        {a.reviewGoal && (
+                          <div className="bg-purple-50 rounded-xl p-4 mb-3">
+                            <h5 className="font-bold text-gray-800 text-sm mb-2">🎯 {t('resume.reviewGoal')}</h5>
+                            <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{a.reviewGoal}</p>
+                          </div>
+                        )}
 
                         <div className="bg-gray-50 rounded-xl p-4">
                           <h5 className="font-bold text-gray-800 text-sm mb-2">📄 {t('resume.resumeContent')}</h5>

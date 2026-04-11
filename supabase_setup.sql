@@ -114,3 +114,10 @@ CREATE INDEX IF NOT EXISTS idx_resume_applicants_name_phone4 ON resume_applicant
 
 ALTER TABLE resume_applicants ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "Service role full access" ON resume_applicants FOR ALL USING (true) WITH CHECK (true);
+
+-- ============================================
+-- 자소서 첨삭 테이블 마이그레이션 (예비번호 + 기업유형 + 첨삭목표)
+-- ============================================
+ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS company_type JSONB DEFAULT '[]'::JSONB;
+ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS review_goal TEXT DEFAULT '';
+ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS queue_number INTEGER DEFAULT 0;

@@ -326,6 +326,11 @@ export async function deleteApplicant(applicantId: string): Promise<void> {
   await supabase.from('applicants').delete().eq('id', applicantId);
 }
 
+// 자소서 신청자 삭제
+export async function deleteResumeApplicant(resumeApplicantId: string): Promise<void> {
+  await supabase.from('resume_applicants').delete().eq('id', resumeApplicantId);
+}
+
 // --- DB row ↔ App type 변환 ---
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -416,7 +421,10 @@ function dbToResumeApplicant(row: any): ResumeApplicant {
     birthYear: row.birth_year || '',
     currentStatus: row.current_status || '',
     desiredField: row.desired_field || '',
+    companyType: row.company_type || [],
+    reviewGoal: row.review_goal || '',
     resumeText: row.resume_text || '',
+    queueNumber: row.queue_number || 0,
     agreedToTerms: row.agreed_to_terms,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
@@ -432,24 +440,18 @@ export async function getResumeApplicantCount(): Promise<number> {
   return count || 0;
 }
 
-// 자소서 신청자 전체 조회
+// 자소서 신청자 전체 조회 (순번순)
 export async function getAllResumeApplicants(): Promise<ResumeApplicant[]> {
   const { data, error } = await supabase
     .from('resume_applicants')
     .select('*')
-    .order('created_at', { ascending: true });
+    .order('queue_number', { ascending: true });
   if (error) throw error;
   return (data || []).map(dbToResumeApplicant);
 }
 
-// 자소서 신청자 추가
-export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'createdAt' | 'updatedAt'>): Promise<ResumeApplicant> {
-  // 선착순 제한 확인
-  const count = await getResumeApplicantCount();
-  if (count >= RESUME_MAX_APPLICANTS) {
-    throw new Error('LIMIT_REACHED');
-  }
-
+// 자소서 신청자 추가 (예비번호 포함, 제한 없음)
+export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'createdAt' | 'updatedAt' | 'queueNumber'>): Promise<ResumeApplicant> {
   // 중복 확인
   const { data: existing } = await supabase
     .from('resume_applicants')
@@ -461,7 +463,8 @@ export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'cr
     .single();
 
   if (existing) {
-    // 기존 신청 업데이트
+    // 기존 신청 업데이트 → 순번 맨 뒤로 밀려남
+    const maxQ = await getMaxQueueNumber();
     const { data, error } = await supabase
       .from('resume_applicants')
       .update({
@@ -469,8 +472,11 @@ export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'cr
         birth_year: input.birthYear || '',
         current_status: input.currentStatus || '',
         desired_field: input.desiredField || '',
+        company_type: input.companyType || [],
+        review_goal: input.reviewGoal || '',
         resume_text: input.resumeText,
         agreed_to_terms: input.agreedToTerms,
+        queue_number: maxQ + 1,
         updated_at: new Date().toISOString(),
       })
       .eq('id', existing.id)
@@ -480,6 +486,7 @@ export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'cr
     return dbToResumeApplicant(data);
   }
 
+  const maxQ = await getMaxQueueNumber();
   const id = `resume-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
   const now = new Date().toISOString();
   const { data, error } = await supabase
@@ -493,8 +500,11 @@ export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'cr
       birth_year: input.birthYear || '',
       current_status: input.currentStatus || '',
       desired_field: input.desiredField || '',
+      company_type: input.companyType || [],
+      review_goal: input.reviewGoal || '',
       resume_text: input.resumeText,
       agreed_to_terms: input.agreedToTerms,
+      queue_number: maxQ + 1,
       created_at: now,
       updated_at: now,
     })
@@ -502,4 +512,15 @@ export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'cr
     .single();
   if (error) throw error;
   return dbToResumeApplicant(data);
+}
+
+// 현재 최대 순번 조회
+async function getMaxQueueNumber(): Promise<number> {
+  const { data } = await supabase
+    .from('resume_applicants')
+    .select('queue_number')
+    .order('queue_number', { ascending: false })
+    .limit(1)
+    .single();
+  return data?.queue_number || 0;
 }
