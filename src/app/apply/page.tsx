@@ -217,6 +217,9 @@ export default function ApplyPage() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('apply.title')}</h1>
             <p className="text-gray-600">{t('apply.subtitle')}</p>
+            <div className="mt-3 inline-block bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-sm text-amber-800">
+              {t('apply.crossBlockResume')}
+            </div>
           </div>
           <div className="card max-w-lg mx-auto py-10 px-4 text-center">
             <div className="w-14 h-14 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">

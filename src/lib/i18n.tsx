@@ -282,6 +282,7 @@ const translations = {
   'resume.reviewGoalHint': { ko: '합격 여부 확인, 문장 구조 개선 등 첨삭을 통해 얻고 싶은 것을 적어주세요.', en: 'Describe what you want from the review (e.g., pass/fail feedback, sentence improvement).', zh: '请描述您希望从修改中获得什么（例如：合格判断、句子改进等）。' },
   'resume.reviewGoalPlaceholder': { ko: '예: 합격 가능성 판단, 자소서 구조 피드백, 문장 다듬기 등', en: 'e.g., Pass probability assessment, structure feedback, sentence polishing', zh: '例如：合格可能性判断、简历结构反馈、语句润色等' },
   'resume.waitlistInfo': { ko: '📋 선착순 12명이 1:1 첨삭을 받으며, 이후 신청자는 예비번호를 받습니다. 내용을 수정하면 순번이 맨 뒤로 밀려나게 되니 신중히 작성해주세요!', en: '📋 The first 12 applicants receive 1:1 review. Additional applicants receive a waitlist number. Editing your content will move you to the back of the queue!', zh: '📋 前12名申请者将获得1对1修改。之后的申请者将获得候补号码。修改内容会将您排到队列末尾！' },
+  'resume.waitlistNotice': { ko: '⚠️ 선착순 12명 · 자소서 수정 시 후순위로 밀립니다', en: '⚠️ First 12 applicants · Editing moves you to the back', zh: '⚠️ 先到先得12人 · 修改后排名靠后' },
   'resume.queueConfirmed': { ko: '확정 순번', en: 'Confirmed #', zh: '确认编号' },
   'resume.queueWaitlist': { ko: '예비 순번', en: 'Waitlist #', zh: '候补编号' },
   'resume.queueWaitlistHint': { ko: '앞순번 수정 시 올라갈 수 있습니다', en: 'May move up if earlier spots open', zh: '前面的人修改时可能会上升' },

@@ -46,6 +46,9 @@ export default function ResumePreviewModal({ onClose }: { onClose: () => void })
 
         {/* 상단 스테퍼 */}
         <div className="pt-5 pb-3 px-6">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-800 text-center mb-3">
+            ⚠️ 선착순 12명 · 자소서 수정 시 후순위로 밀립니다
+          </div>
           <div className="flex items-center justify-center gap-1.5">
             {STEPS.map((_, i) => (
               <button
