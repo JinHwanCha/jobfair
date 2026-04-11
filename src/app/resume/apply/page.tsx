@@ -110,11 +110,13 @@ export default function ResumeApplyPage() {
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-800 mb-2">{t('resume.title')}</h1>
             <p className="text-gray-600">{t('resume.subtitle')}</p>
-            <div className="mt-3 inline-block bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-sm text-amber-800">
-              {t('resume.waitlistNotice')}
-            </div>
-            <div className="mt-2 inline-block bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-sm text-amber-800">
-              {t('resume.crossBlockMentoring')}
+            <div className="flex flex-col items-center gap-2 mt-3 max-w-lg mx-auto">
+              <div className="w-full bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-sm text-amber-800">
+                {t('resume.waitlistNotice')}
+              </div>
+              <div className="w-full bg-amber-50 border border-amber-200 rounded-xl px-4 py-2 text-sm text-amber-800">
+                {t('resume.crossBlockMentoring')}
+              </div>
             </div>
           </div>
           <div className="card max-w-lg mx-auto py-10 px-4 text-center">
