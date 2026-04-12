@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useI18n } from '@/lib/i18n';
+import { CompanyType, getResumeSections } from '@/types';
 
 interface Mentee {
   name: string;
@@ -24,9 +25,10 @@ interface ResumeApplicantView {
   birthYear: string;
   currentStatus: string;
   desiredField: string;
-  companyType: string[];
+  companyType: CompanyType[];
   reviewGoal: string;
   resumeText: string;
+  resumeSections: Record<string, string>;
   queueNumber: number;
   createdAt: string;
 }
@@ -47,6 +49,23 @@ export default function MentorPage() {
   const [data, setData] = useState<MentorData | null>(null);
   const [error, setError] = useState('');
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const [copiedSection, setCopiedSection] = useState<string | null>(null);
+
+  const copyText = (text: string) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -196,8 +215,71 @@ export default function MentorPage() {
                         )}
 
                         <div className="bg-gray-50 rounded-xl p-4">
-                          <h5 className="font-bold text-gray-800 text-sm mb-2">📄 {t('resume.resumeContent')}</h5>
-                          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{a.resumeText}</p>
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="font-bold text-gray-800 text-sm">📄 {t('resume.resumeContent')}</h5>
+                            <button
+                              onClick={() => {
+                                const sectionKeys = a.resumeSections && Object.keys(a.resumeSections).length > 0
+                                  ? getResumeSections(a.companyType || [])
+                                  : [];
+                                let text = '';
+                                if (sectionKeys.length > 0) {
+                                  text = sectionKeys.map(key => {
+                                    const titleKey = `resume.section.${key}` as Parameters<typeof t>[0];
+                                    return `[${t(titleKey)}]\n${a.resumeSections[key] || ''}`;
+                                  }).join('\n\n');
+                                } else {
+                                  text = a.resumeText;
+                                }
+                                copyText(text);
+                                setCopiedIdx(idx);
+                                setTimeout(() => setCopiedIdx(null), 2000);
+                              }}
+                              className="text-xs font-medium px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                            >
+                              {copiedIdx === idx ? `✓ ${t('resume.section.copied')}` : `📋 ${t('resume.section.copyAll')}`}
+                            </button>
+                          </div>
+                          {a.resumeSections && Object.keys(a.resumeSections).length > 0 ? (
+                            <div className="space-y-4">
+                              {getResumeSections(a.companyType || []).map(key => {
+                                const titleKey = `resume.section.${key}` as Parameters<typeof t>[0];
+                                const content = a.resumeSections[key];
+                                if (!content) return null;
+                                const sectionCopyId = `${idx}-${key}`;
+                                return (
+                                  <div key={key}
+                                    onClick={() => {
+                                      copyText(content);
+                                      setCopiedSection(sectionCopyId);
+                                      setTimeout(() => setCopiedSection(null), 2000);
+                                    }}
+                                    className="cursor-pointer hover:bg-blue-50 rounded-lg p-2 -mx-2 transition-colors relative group"
+                                  >
+                                    <div className="flex items-center justify-between mb-1">
+                                      <p className="text-xs font-bold text-blue-700">{t(titleKey)}</p>
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded transition-all ${
+                                        copiedSection === sectionCopyId
+                                          ? 'bg-green-100 text-green-600'
+                                          : 'bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100'
+                                      }`}>
+                                        {copiedSection === sectionCopyId ? '✓ 복사됨' : '클릭하여 복사'}
+                                      </span>
+                                    </div>
+                                    <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{content}</p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed cursor-pointer hover:bg-blue-50 rounded-lg p-2 -mx-2 transition-colors"
+                              onClick={() => {
+                                copyText(a.resumeText);
+                                setCopiedIdx(idx);
+                                setTimeout(() => setCopiedIdx(null), 2000);
+                              }}
+                            >{a.resumeText}</p>
+                          )}
                         </div>
 
                         <p className="text-xs text-gray-400 mt-2">

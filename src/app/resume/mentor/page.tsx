@@ -30,6 +30,22 @@ export default function ResumeMentorPage() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
   const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
+  const [copiedSection, setCopiedSection] = useState<string | null>(null);
+
+  const copyText = (text: string) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text);
+    } else {
+      const textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.style.position = 'fixed';
+      textarea.style.left = '-9999px';
+      document.body.appendChild(textarea);
+      textarea.select();
+      document.execCommand('copy');
+      document.body.removeChild(textarea);
+    }
+  };
 
   const handleLogin = async () => {
     if (!name || !phone4 || phone4.length !== 4) {
@@ -169,18 +185,7 @@ export default function ResumeMentorPage() {
                                 } else {
                                   text = a.resumeText;
                                 }
-                                if (navigator.clipboard && window.isSecureContext) {
-                                  navigator.clipboard.writeText(text);
-                                } else {
-                                  const textarea = document.createElement('textarea');
-                                  textarea.value = text;
-                                  textarea.style.position = 'fixed';
-                                  textarea.style.left = '-9999px';
-                                  document.body.appendChild(textarea);
-                                  textarea.select();
-                                  document.execCommand('copy');
-                                  document.body.removeChild(textarea);
-                                }
+                                copyText(text);
                                 setCopiedIdx(idx);
                                 setTimeout(() => setCopiedIdx(null), 2000);
                               }}
@@ -195,16 +200,39 @@ export default function ResumeMentorPage() {
                                 const titleKey = `resume.section.${key}` as Parameters<typeof t>[0];
                                 const content = a.resumeSections[key];
                                 if (!content) return null;
+                                const sectionCopyId = `${idx}-${key}`;
                                 return (
-                                  <div key={key}>
-                                    <p className="text-xs font-bold text-blue-700 mb-1">{t(titleKey)}</p>
+                                  <div key={key}
+                                    onClick={() => {
+                                      copyText(content);
+                                      setCopiedSection(sectionCopyId);
+                                      setTimeout(() => setCopiedSection(null), 2000);
+                                    }}
+                                    className="cursor-pointer hover:bg-blue-50 rounded-lg p-2 -mx-2 transition-colors relative group"
+                                  >
+                                    <div className="flex items-center justify-between mb-1">
+                                      <p className="text-xs font-bold text-blue-700">{t(titleKey)}</p>
+                                      <span className={`text-[10px] px-1.5 py-0.5 rounded transition-all ${
+                                        copiedSection === sectionCopyId
+                                          ? 'bg-green-100 text-green-600'
+                                          : 'bg-gray-100 text-gray-400 opacity-0 group-hover:opacity-100'
+                                      }`}>
+                                        {copiedSection === sectionCopyId ? '✓ 복사됨' : '클릭하여 복사'}
+                                      </span>
+                                    </div>
                                     <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{content}</p>
                                   </div>
                                 );
                               })}
                             </div>
                           ) : (
-                            <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{a.resumeText}</p>
+                            <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed cursor-pointer hover:bg-blue-50 rounded-lg p-2 -mx-2 transition-colors"
+                              onClick={() => {
+                                copyText(a.resumeText);
+                                setCopiedIdx(idx);
+                                setTimeout(() => setCopiedIdx(null), 2000);
+                              }}
+                            >{a.resumeText}</p>
                           )}
                         </div>
 
