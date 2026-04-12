@@ -486,6 +486,7 @@ export async function addResumeApplicant(input: Omit<ResumeApplicant, 'id' | 'cr
       .select()
       .single();
     if (error) throw error;
+    await recompactResumeQueue();
     return dbToResumeApplicant(data);
   }
 
