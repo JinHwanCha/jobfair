@@ -131,6 +131,10 @@ body {
   padding-top: 56px;
 }
 
+.opacity-90 {
+  opacity: 0.9;
+}
+
 .ml-1 {
   margin-left: 0.25rem;
 }
