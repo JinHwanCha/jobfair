@@ -125,6 +125,9 @@ export default function ResumeApplyPage() {
             </div>
             <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-6">{t('apply.notYetOpen')}</h2>
             <CountdownTimer />
+            <div className="bg-blue-50 border border-blue-200 rounded-xl px-4 py-3 text-sm text-blue-800 mt-6 text-left">
+              {t('resumePreview.prepareNotice')}
+            </div>
             <div className="flex flex-col sm:flex-row gap-3 mt-8">
               <button
                 onClick={() => setShowPreview(true)}

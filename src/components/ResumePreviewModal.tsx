@@ -46,8 +46,11 @@ export default function ResumePreviewModal({ onClose }: { onClose: () => void })
 
         {/* 상단 스테퍼 */}
         <div className="pt-5 pb-3 px-6">
-          <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-800 text-center mb-3">
+          <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-xs text-amber-800 text-center mb-2">
             ⚠️ 선착순 12명 · 자소서 수정 시 후순위로 밀립니다
+          </div>
+          <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 text-xs text-blue-800 text-center mb-3">
+            {t('resumePreview.prepareNotice')}
           </div>
           <div className="flex items-center justify-center gap-1.5">
             {STEPS.map((_, i) => (
@@ -157,12 +160,12 @@ function Step2Preview() {
         <span className="text-xs text-gray-400 w-14 shrink-0">희망직군</span>
         <div className="flex-1 h-5 bg-gray-100 rounded" />
       </div>
-      <div className="bg-white rounded-lg px-3 py-2">
+      <div className="bg-white rounded-lg px-3 py-1.5">
         <span className="text-xs text-gray-400 block mb-1.5">기업유형</span>
-        <div className="flex gap-2">
-          <div className="h-5 bg-primary-100 rounded-full w-14" />
-          <div className="h-5 bg-gray-100 rounded-full w-14" />
-          <div className="h-5 bg-gray-100 rounded-full w-14" />
+        <div className="flex gap-1.5">
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-yellow-100 text-yellow-700">대기업</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-sky-100 text-sky-700">공기업</span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-700">사기업</span>
         </div>
       </div>
     </div>

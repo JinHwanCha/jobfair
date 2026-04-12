@@ -48,7 +48,7 @@ const translations = {
   // ── Home – CTA / Footer ──
   'home.ctaTitle': { ko: '지금 바로 신청하세요!', en: 'Apply Now!', zh: '立即申请！' },
   'home.ctaDesc': { ko: '다양한 분야의 멘토와 함께 진로에 대한 소중한 이야기를 나눠보세요.', en: 'Share valuable career stories with mentors from various fields.', zh: '与各领域导师分享宝贵的职业故事。' },
-  'home.ctaButton': { ko: '멘토 신청하기', en: 'Apply for Mentors', zh: '申请导师' },
+  'home.ctaButton': { ko: '멘토링 신청하기', en: 'Apply for Mentoring', zh: '申请导师辅导' },
   'home.footer': { ko: '© 2026 내수동교회 직업박람회. All rights reserved.', en: '© 2026 Naesudong Church Job Fair. All rights reserved.', zh: '© 2026 内秀洞教会职业博览会。保留所有权利。' },
   'home.footerContact': { ko: '문의: 내수동교회 청년부', en: 'Contact: Naesudong Church Young Adults Dept.', zh: '咨询：内秀洞教会青年部' },
 
@@ -172,6 +172,7 @@ const translations = {
   'resumePreview.step3Desc': { ko: '멘토가 검토할 자소서를 작성합니다. 첨삭받고 싶은 내용을 자유롭게 입력하세요. (최대 5,000자)', en: 'Write the resume you want reviewed. Enter any content you want feedback on. (Max 5,000 characters)', zh: '撰写您希望导师审阅的简历。自由输入内容。（最多5,000字）' },
   'resumePreview.step4Title': { ko: '신청 정보 확인', en: 'Review & Submit', zh: '确认并提交' },
   'resumePreview.step4Desc': { ko: '입력한 정보와 자소서 내용을 최종 확인하고, 개인정보 동의 후 신청을 완료합니다.', en: 'Review your info and resume content, agree to the terms, and submit.', zh: '确认您的信息和简历内容，同意条款后提交申请。' },
+  'resumePreview.prepareNotice': { ko: '📝 5,000자 이하의 자소서를 미리 작성해서 준비해주세요!', en: '📝 Please prepare your resume (under 5,000 characters) in advance!', zh: '📝 请提前准备好5,000字以内的简历！' },
 
   // ── My Page ──
   'my.title': { ko: '내 배정 확인', en: 'My Assign', zh: '我的分配确认' },

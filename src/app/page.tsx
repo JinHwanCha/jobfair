@@ -35,42 +35,36 @@ export default function HomePage() {
     <div className="page-container">
       <Header />
 
-      {/* 히어로 섹션 */}
-      <section className="bg-gradient-to-br from-primary-300 to-primary-400 text-gray-900">
-        <div className="max-w-4xl mx-auto px-4 py-16 sm:py-24">
-          <div className="text-center">
-            <div className="inline-flex items-center gap-2 bg-black/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-              <span className="text-2xl">📅</span>
-              <span className="font-medium">{t('home.date')}</span>
-            </div>
-            
-            <h1 className="text-3xl sm:text-5xl font-bold mb-4">
-              {t('home.title')}
-            </h1>
-            
-            <p className="text-lg sm:text-xl text-gray-800 mb-2">
-              {t('home.subtitle')}
-            </p>
-            
-            <p className="text-gray-700 mb-8">
-              {t('home.desc')}
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/apply"
-                className="btn-primary bg-gray-900 text-primary-300 hover:bg-black shadow-xl"
-              >
-                {t('home.applyNow')}
-              </Link>
-              <Link
-                href="/mentors"
-                className="btn-secondary bg-white/40 text-gray-900 hover:bg-white/60 backdrop-blur-sm"
-              >
-                {t('home.browseMentors')}
-              </Link>
-            </div>
-          </div>
+      {/* 히어로 섹션 – KV 이미지 */}
+      <section className="relative w-896 overflow-hidden bg-white">
+        {/* PC KV */}
+        <img
+          src="/kv_pc_txt.jpg"
+          alt="2026 직업박람회 – What am I Called for?"
+          className="hidden sm:block w-full h-auto"
+          draggable={false}
+        />
+        {/* Mobile KV */}
+        <img
+          src="/kv_mo_txt.jpg"
+          alt="2026 직업박람회 – What am I Called for?"
+          className="block sm:hidden w-full h-auto"
+          draggable={false}
+        />
+        {/* CTA 버튼 오버레이 */}
+        <div className="absolute bottom-0 left-0 right-0 pb-6 sm:pb-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center pointer-events-none">
+          <Link
+            href="/apply"
+            className="pointer-events-auto btn-primary bg-gray-900 text-primary-300 hover:bg-black shadow-xl text-base sm:text-lg px-8 py-3"
+          >
+            {t('home.applyNow')}
+          </Link>
+          <Link
+            href="/mentors"
+            className="pointer-events-auto btn-secondary bg-white/80 text-gray-900 hover:bg-white backdrop-blur-sm shadow-lg text-base sm:text-lg px-8 py-3"
+          >
+            {t('home.browseMentors')}
+          </Link>
         </div>
       </section>
 
