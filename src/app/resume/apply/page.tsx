@@ -7,7 +7,7 @@ import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
 import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
 import ResumePreviewModal from '@/components/ResumePreviewModal';
-import { Mentor, ResumeApplyFormData } from '@/types';
+import { Mentor, ResumeApplyFormData, getResumeSections, ResumeSectionKey } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
 export default function ResumeApplyPage() {
@@ -34,6 +34,7 @@ export default function ResumeApplyPage() {
     companyType: [],
     reviewGoal: '',
     resumeText: '',
+    resumeSections: {},
     agreedToTerms: false,
   });
 
@@ -75,10 +76,14 @@ export default function ResumeApplyPage() {
     setSubmitError('');
 
     try {
+      // resumeText 자동 생성
+      const sectionKeys = getResumeSections(formData.companyType);
+      const combinedText = sectionKeys.map(key => `[${key}]\n${formData.resumeSections[key] || ''}`).join('\n\n');
+
       const response = await fetch('/api/resume/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, resumeText: combinedText }),
       });
       const result = await response.json();
 
@@ -99,7 +104,8 @@ export default function ResumeApplyPage() {
 
   const canGoStep2 = formData.name && formData.birthDate.length === 6 && formData.phone4.length === 4;
   const canGoStep3 = formData.department && birthYearConfirmed && formData.currentStatus && formData.desiredField && formData.companyType.length > 0;
-  const canGoStep4 = formData.resumeText.trim().length >= 10;
+  const activeSections = getResumeSections(formData.companyType);
+  const canGoStep4 = activeSections.length > 0 && activeSections.every(key => (formData.resumeSections[key] || '').trim().length >= 10);
 
   // 신청 오픈 전 안내 화면
   if (isOpen === false) {
@@ -359,23 +365,41 @@ export default function ResumeApplyPage() {
               </div>
             )}
 
-            {/* Step 3: 자소서 작성 */}
+            {/* Step 3: 자소서 작성 (섹션별) */}
             {step === 3 && (
               <div className="card max-w-lg mx-auto">
                 <h3 className="text-lg font-bold text-gray-800 mb-2">{t('resume.writeTitle')}</h3>
-                <p className="text-sm text-gray-600 mb-4">{t('resume.writeDesc')}</p>
-                <textarea
-                  name="resumeText"
-                  value={formData.resumeText}
-                  onChange={handleInputChange}
-                  placeholder={t('resume.writePlaceholder')}
-                  rows={12}
-                  className="input-field resize-y min-h-[200px]"
-                  maxLength={5000}
-                />
-                <p className="text-xs text-gray-500 mt-1 text-right">
-                  {formData.resumeText.length} / 5,000
-                </p>
+                <p className="text-sm text-gray-600 mb-2">{t('resume.writeDesc')}</p>
+                <div className="inline-block bg-primary-50 border border-primary-200 rounded-lg px-3 py-1.5 text-xs font-medium text-primary-800 mb-4">
+                  {formData.companyType.includes('public') ? t('resume.writeTemplatePublic') : t('resume.writeTemplatePrivate')}
+                </div>
+
+                <div className="space-y-6">
+                  {activeSections.map((sectionKey) => {
+                    const titleKey = `resume.section.${sectionKey}` as Parameters<typeof t>[0];
+                    const promptKey = `resume.section.${sectionKey}.prompt` as Parameters<typeof t>[0];
+                    const content = formData.resumeSections[sectionKey] || '';
+                    return (
+                      <div key={sectionKey}>
+                        <label className="label">{t(titleKey)}</label>
+                        <p className="text-xs text-gray-500 whitespace-pre-wrap mb-2">{t(promptKey)}</p>
+                        <textarea
+                          value={content}
+                          onChange={(e) => setFormData(prev => ({
+                            ...prev,
+                            resumeSections: { ...prev.resumeSections, [sectionKey]: e.target.value },
+                          }))}
+                          rows={8}
+                          className="input-field resize-y min-h-[160px]"
+                          maxLength={1500}
+                        />
+                        <p className={`text-xs mt-1 text-right ${content.length < 600 ? 'text-amber-600' : content.length > 1000 ? 'text-amber-600' : 'text-green-600'}`}>
+                          {content.length}{t('resume.section.charCount')}
+                        </p>
+                      </div>
+                    );
+                  })}
+                </div>
 
                 <div className="mt-6">
                   <label className="label">{t('resume.reviewGoal')}</label>
@@ -419,8 +443,18 @@ export default function ResumeApplyPage() {
                   </div>
 
                   <div className="bg-blue-50 rounded-xl p-4">
-                    <h4 className="font-bold text-gray-800 mb-2 text-sm">{t('resume.writeTitle')}</h4>
-                    <p className="text-sm text-gray-700 whitespace-pre-wrap max-h-40 overflow-y-auto">{formData.resumeText}</p>
+                    <h4 className="font-bold text-gray-800 mb-3 text-sm">{t('resume.writeTitle')}</h4>
+                    <div className="space-y-3">
+                      {activeSections.map(sectionKey => {
+                        const titleKey = `resume.section.${sectionKey}` as Parameters<typeof t>[0];
+                        return (
+                          <div key={sectionKey}>
+                            <p className="text-xs font-bold text-blue-700 mb-1">{t(titleKey)}</p>
+                            <p className="text-sm text-gray-700 whitespace-pre-wrap max-h-32 overflow-y-auto">{formData.resumeSections[sectionKey] || ''}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
 
                   {formData.reviewGoal && (

@@ -141,8 +141,19 @@ export interface LookupFormData {
   phone4: string;
 }
 
+// 자소서 섹션 키
+export type ResumeSectionKey = 'motivation' | 'motivationPublic' | 'competency' | 'problemSolving' | 'teamwork' | 'ethics';
+
 // 지향 기업 유형
 export type CompanyType = 'large' | 'public' | 'private';
+
+// 기업 유형별 자소서 섹션 정의
+export const RESUME_SECTIONS_PRIVATE: ResumeSectionKey[] = ['motivation', 'competency', 'problemSolving', 'teamwork'];
+export const RESUME_SECTIONS_PUBLIC: ResumeSectionKey[] = ['motivationPublic', 'competency', 'problemSolving', 'teamwork', 'ethics'];
+
+export function getResumeSections(companyType: CompanyType[]): ResumeSectionKey[] {
+  return companyType.includes('public') ? RESUME_SECTIONS_PUBLIC : RESUME_SECTIONS_PRIVATE;
+}
 
 // 자소서 첨삭 신청자 타입
 export interface ResumeApplicant {
@@ -156,7 +167,8 @@ export interface ResumeApplicant {
   desiredField: string;
   companyType: CompanyType[]; // 대기업/공기업/사기업
   reviewGoal: string; // 첨삭을 통해 원하는 바
-  resumeText: string;
+  resumeText: string; // 통합 텍스트 (자동 생성)
+  resumeSections: Record<string, string>; // 섹션별 자소서
   queueNumber: number; // 순번
   agreedToTerms: boolean;
   createdAt: string;
@@ -175,6 +187,7 @@ export interface ResumeApplyFormData {
   companyType: CompanyType[];
   reviewGoal: string;
   resumeText: string;
+  resumeSections: Record<string, string>;
   agreedToTerms: boolean;
 }
 

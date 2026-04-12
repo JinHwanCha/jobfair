@@ -175,25 +175,26 @@ function Step2Preview() {
 function Step3Preview() {
   return (
     <div className="mt-3 space-y-2">
-      <div className="bg-white rounded-lg p-3">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg">📄</span>
-          <div className="h-3 bg-gray-200 rounded w-20" />
+      {['지원동기', '직무역량', '문제해결', '협업'].map((label, i) => (
+        <div key={i} className="bg-white rounded-lg p-2.5">
+          <div className="flex items-center justify-between mb-1.5">
+            <div className="h-2.5 bg-blue-200 rounded w-14" />
+            <div className="h-2 bg-gray-200 rounded w-10 text-[9px] text-gray-400 text-right">{label}</div>
+          </div>
+          <div className="space-y-1">
+            <div className="h-2 bg-gray-100 rounded w-full" />
+            <div className="h-2 bg-gray-100 rounded w-4/5" />
+          </div>
         </div>
-        <div className="space-y-1.5">
-          <div className="h-2.5 bg-gray-100 rounded w-full" />
-          <div className="h-2.5 bg-gray-100 rounded w-5/6" />
-          <div className="h-2.5 bg-gray-100 rounded w-4/6" />
+      ))}
+      <div className="bg-white rounded-lg p-2.5">
+        <div className="flex items-center gap-2 mb-1.5">
+          <span className="text-xs">🎯</span>
+          <div className="h-2.5 bg-purple-200 rounded w-16" />
         </div>
-      </div>
-      <div className="bg-white rounded-lg p-3">
-        <div className="flex items-center gap-2 mb-2">
-          <span className="text-lg">🎯</span>
-          <div className="h-3 bg-purple-200 rounded w-24" />
-        </div>
-        <div className="space-y-1.5">
-          <div className="h-2.5 bg-purple-50 rounded w-full" />
-          <div className="h-2.5 bg-purple-50 rounded w-3/4" />
+        <div className="space-y-1">
+          <div className="h-2 bg-purple-50 rounded w-full" />
+          <div className="h-2 bg-purple-50 rounded w-3/4" />
         </div>
       </div>
     </div>

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { addResumeApplicant, getResumeApplicantCount, hasApplicant } from '@/lib/data';
-import { ResumeApplyFormData } from '@/types';
+import { ResumeApplyFormData, getResumeSections } from '@/types';
 
 export async function POST(request: NextRequest) {
   try {
@@ -20,11 +20,16 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    if (!body.resumeText || body.resumeText.trim().length < 10) {
-      return NextResponse.json({
-        success: false,
-        error: '자소서 내용을 10자 이상 입력해주세요.',
-      });
+    // 섹션별 자소서 검증
+    const sections = getResumeSections(body.companyType || []);
+    const resumeSections = body.resumeSections || {};
+    for (const key of sections) {
+      if (!resumeSections[key] || resumeSections[key].trim().length < 10) {
+        return NextResponse.json({
+          success: false,
+          error: '모든 자소서 항목을 10자 이상 입력해주세요.',
+        });
+      }
     }
 
     if (!body.agreedToTerms) {
@@ -43,6 +48,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
+    // resumeText 자동 생성 (섹션 합산)
+    const resumeText = sections.map(key => `[${key}]\n${resumeSections[key] || ''}`).join('\n\n');
+
     const applicant = await addResumeApplicant({
       name: body.name,
       birthDate: body.birthDate,
@@ -53,7 +61,8 @@ export async function POST(request: NextRequest) {
       desiredField: body.desiredField || '',
       companyType: body.companyType || [],
       reviewGoal: body.reviewGoal || '',
-      resumeText: body.resumeText,
+      resumeText,
+      resumeSections,
       agreedToTerms: body.agreedToTerms,
     });
 

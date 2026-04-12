@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import Header from '@/components/Header';
 import { useI18n } from '@/lib/i18n';
+import { CompanyType, getResumeSections, ResumeSectionKey } from '@/types';
 
 interface ResumeApplicantView {
   name: string;
@@ -10,7 +11,11 @@ interface ResumeApplicantView {
   birthYear: string;
   currentStatus: string;
   desiredField: string;
+  companyType: CompanyType[];
+  reviewGoal: string;
   resumeText: string;
+  resumeSections: Record<string, string>;
+  queueNumber: number;
   createdAt: string;
 }
 
@@ -24,6 +29,7 @@ export default function ResumeMentorPage() {
   const [applicants, setApplicants] = useState<ResumeApplicantView[]>([]);
   const [loggedIn, setLoggedIn] = useState(false);
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null);
+  const [copiedIdx, setCopiedIdx] = useState<number | null>(null);
 
   const handleLogin = async () => {
     if (!name || !phone4 || phone4.length !== 4) {
@@ -126,11 +132,71 @@ export default function ResumeMentorPage() {
                           <div><span className="text-gray-500">{t('apply.currentStatus')}:</span> <span className="font-medium">{a.currentStatus}</span></div>
                           <div><span className="text-gray-500">{t('apply.department')}:</span> <span className="font-medium">{a.department}</span></div>
                           <div><span className="text-gray-500">{t('apply.desiredField')}:</span> <span className="font-medium">{a.desiredField}</span></div>
+                          {a.companyType && a.companyType.length > 0 && (
+                            <div className="col-span-2"><span className="text-gray-500">{t('resume.companyType')}:</span> <span className="font-medium">{a.companyType.map((ct: string) => ({large: t('resume.companyType.large'), public: t('resume.companyType.public'), private: t('resume.companyType.private')}[ct] || ct)).join(', ')}</span></div>
+                          )}
+                          {a.queueNumber > 0 && (
+                            <div className="col-span-2">
+                              <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
+                                a.queueNumber <= 12 ? 'bg-green-100 text-green-700' : 'bg-amber-100 text-amber-700'
+                              }`}>
+                                {a.queueNumber <= 12 ? `${t('resume.queueConfirmed')} #${a.queueNumber}` : `${t('resume.queueWaitlist')} #${a.queueNumber}`}
+                              </span>
+                            </div>
+                          )}
                         </div>
 
+                        {a.reviewGoal && (
+                          <div className="bg-purple-50 rounded-xl p-3 mb-3">
+                            <h5 className="font-bold text-purple-800 text-sm mb-1">🎯 {t('resume.reviewGoal')}</h5>
+                            <p className="text-sm text-purple-700 whitespace-pre-wrap">{a.reviewGoal}</p>
+                          </div>
+                        )}
+
+                        {/* 자소서 섹션별 표시 */}
                         <div className="bg-gray-50 rounded-xl p-4">
-                          <h5 className="font-bold text-gray-800 text-sm mb-2">📄 {t('resume.resumeContent')}</h5>
-                          <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{a.resumeText}</p>
+                          <div className="flex items-center justify-between mb-3">
+                            <h5 className="font-bold text-gray-800 text-sm">📄 {t('resume.resumeContent')}</h5>
+                            <button
+                              onClick={() => {
+                                const sectionKeys = a.resumeSections && Object.keys(a.resumeSections).length > 0
+                                  ? getResumeSections(a.companyType || [])
+                                  : [];
+                                let text = '';
+                                if (sectionKeys.length > 0) {
+                                  text = sectionKeys.map(key => {
+                                    const titleKey = `resume.section.${key}` as Parameters<typeof t>[0];
+                                    return `[${t(titleKey)}]\n${a.resumeSections[key] || ''}`;
+                                  }).join('\n\n');
+                                } else {
+                                  text = a.resumeText;
+                                }
+                                navigator.clipboard.writeText(text);
+                                setCopiedIdx(idx);
+                                setTimeout(() => setCopiedIdx(null), 2000);
+                              }}
+                              className="text-xs font-medium px-3 py-1.5 rounded-lg bg-blue-100 text-blue-700 hover:bg-blue-200 transition-colors"
+                            >
+                              {copiedIdx === idx ? `✓ ${t('resume.section.copied')}` : `📋 ${t('resume.section.copyAll')}`}
+                            </button>
+                          </div>
+                          {a.resumeSections && Object.keys(a.resumeSections).length > 0 ? (
+                            <div className="space-y-4">
+                              {getResumeSections(a.companyType || []).map(key => {
+                                const titleKey = `resume.section.${key}` as Parameters<typeof t>[0];
+                                const content = a.resumeSections[key];
+                                if (!content) return null;
+                                return (
+                                  <div key={key}>
+                                    <p className="text-xs font-bold text-blue-700 mb-1">{t(titleKey)}</p>
+                                    <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{content}</p>
+                                  </div>
+                                );
+                              })}
+                            </div>
+                          ) : (
+                            <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{a.resumeText}</p>
+                          )}
                         </div>
 
                         <p className="text-xs text-gray-400 mt-2">

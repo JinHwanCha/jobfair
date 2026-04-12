@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Applicant, Assignment, Mentor, ResumeApplicant } from '@/types';
+import { Applicant, Assignment, Mentor, ResumeApplicant, getResumeSections } from '@/types';
 
 type ChoiceKey = 'choice1' | 'choice2' | 'choice3' | 'choice4' | 'choice5' | 'choice6';
 type MessageKey = 'message1' | 'message2' | 'message3' | 'message4' | 'message5' | 'message6';
@@ -560,7 +560,21 @@ export default function AdminPage() {
                   </div>
                   {expandedResume === ra.id && (
                     <div className="mt-2 bg-gray-50 rounded-lg p-3 text-sm text-gray-700 whitespace-pre-wrap max-h-60 overflow-y-auto">
-                      {ra.resumeText}
+                      {ra.resumeSections && Object.keys(ra.resumeSections).length > 0 ? (
+                        <div className="space-y-3">
+                          {getResumeSections(ra.companyType || []).map(key => {
+                            const label: Record<string, string> = { motivation: '지원동기', motivationPublic: '지원동기+공공성', competency: '직무역량', problemSolving: '문제해결', teamwork: '협업', ethics: '윤리/가치관' };
+                            const content = ra.resumeSections[key];
+                            if (!content) return null;
+                            return (
+                              <div key={key}>
+                                <p className="text-xs font-bold text-blue-700 mb-0.5">[{label[key] || key}]</p>
+                                <p className="text-sm">{content}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : ra.resumeText}
                     </div>
                   )}
                 </div>
@@ -646,7 +660,21 @@ export default function AdminPage() {
                       </div>
                     )}
                     <div className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed max-h-80 overflow-y-auto bg-white rounded-lg p-4 border border-gray-200">
-                      {ra.resumeText}
+                      {ra.resumeSections && Object.keys(ra.resumeSections).length > 0 ? (
+                        <div className="space-y-3">
+                          {getResumeSections(ra.companyType || []).map(key => {
+                            const label: Record<string, string> = { motivation: '지원동기', motivationPublic: '지원동기+공공성', competency: '직무역량', problemSolving: '문제해결', teamwork: '협업', ethics: '윤리/가치관' };
+                            const content = ra.resumeSections[key];
+                            if (!content) return null;
+                            return (
+                              <div key={key}>
+                                <p className="text-xs font-bold text-blue-700 mb-0.5">[{label[key] || key}]</p>
+                                <p className="text-sm">{content}</p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      ) : ra.resumeText}
                     </div>
                   </div>
                 );
