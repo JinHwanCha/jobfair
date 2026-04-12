@@ -286,12 +286,20 @@ export default function TestResumeApplyPage() {
                       }`}>
                         <input type="checkbox" checked={formData.companyType.includes(ct)}
                           onChange={() => {
-                            setFormData(prev => ({
-                              ...prev,
-                              companyType: prev.companyType.includes(ct)
+                            setFormData(prev => {
+                              const newCompanyType = prev.companyType.includes(ct)
                                 ? prev.companyType.filter(c => c !== ct)
-                                : [...prev.companyType, ct],
-                            }));
+                                : [...prev.companyType, ct];
+                              const wasPublic = prev.companyType.includes('public');
+                              const isPublic = newCompanyType.includes('public');
+                              let newSections = { ...prev.resumeSections };
+                              if (wasPublic && !isPublic && newSections.motivationPublic && !newSections.motivation) {
+                                newSections.motivation = newSections.motivationPublic;
+                              } else if (!wasPublic && isPublic && newSections.motivation && !newSections.motivationPublic) {
+                                newSections.motivationPublic = newSections.motivation;
+                              }
+                              return { ...prev, companyType: newCompanyType, resumeSections: newSections };
+                            });
                           }}
                           className="w-4 h-4 accent-primary-500" />
                         <span className="text-sm font-medium">{{large: t('resume.companyType.large'), public: t('resume.companyType.public'), private: t('resume.companyType.private')}[ct]}</span>
@@ -336,9 +344,14 @@ export default function TestResumeApplyPage() {
                         className="input-field resize-y min-h-[160px]"
                         maxLength={1500}
                       />
-                      <p className={`text-xs mt-1 text-right ${content.length < 600 ? 'text-amber-600' : content.length > 1000 ? 'text-amber-600' : 'text-green-600'}`}>
-                        {content.length}{t('resume.section.charCount')}
-                      </p>
+                      <div className="flex justify-between items-center mt-1">
+                        {content.length > 0 && content.trim().length < 10 && (
+                          <p className="text-xs text-red-500 font-medium">{t('resume.section.minChar')}</p>
+                        )}
+                        <p className={`text-xs text-right ml-auto ${content.length < 600 ? 'text-amber-600' : content.length > 1000 ? 'text-amber-600' : 'text-green-600'}`}>
+                          {content.length}{t('resume.section.charCount')}
+                        </p>
+                      </div>
                     </div>
                   );
                 })}
@@ -352,6 +365,9 @@ export default function TestResumeApplyPage() {
                   rows={3} className="input-field resize-y min-h-[80px]" maxLength={500} />
                 <p className="text-xs text-gray-500 mt-1 text-right">{formData.reviewGoal.length} / 500</p>
               </div>
+              {!canGoStep4 && activeSections.some(key => (formData.resumeSections[key] || '').trim().length > 0) && (
+                <p className="text-xs text-red-500 text-center mt-4">{t('resume.section.fillAll')}</p>
+              )}
               <div className="flex gap-3 mt-6">
                 <button onClick={() => setStep(2)} className="btn-secondary flex-1">{t('apply.prev')}</button>
                 <button onClick={() => canGoStep4 && setStep(4)} disabled={!canGoStep4}

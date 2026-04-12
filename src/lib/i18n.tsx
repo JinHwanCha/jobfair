@@ -265,6 +265,8 @@ const translations = {
   'resume.section.ethics': { ko: '윤리/가치관', en: 'Ethics & Values', zh: '伦理/价值观' },
   'resume.section.ethics.prompt': { ko: '"공공기관 직원으로서 필요한 자세는 무엇이라 생각하는지 기술하시오."\n"윤리적 갈등 상황에서 어떻게 행동했는지 경험을 작성하시오."', en: '"Describe what attitude you think is needed as a public institution employee."\n"Write about how you acted in an ethical dilemma."', zh: '"请描述您认为作为公共机构员工需要什么态度。"\n"请写下您在伦理冲突情况下的行为经历。"' },
   'resume.section.charCount': { ko: '자 (권장 600~1,000자)', en: ' chars (600-1,000 recommended)', zh: '字（建议600~1,000字）' },
+  'resume.section.minChar': { ko: '최소 10자 이상 입력해주세요', en: 'Minimum 10 characters required', zh: '请至少输入10个字符' },
+  'resume.section.fillAll': { ko: '모든 항목을 10자 이상 작성해주세요', en: 'Please write at least 10 characters per section', zh: '请每个部分至少填写10个字符' },
   'resume.section.copyAll': { ko: '전체 자소서 복사', en: 'Copy All', zh: '复制全部' },
   'resume.section.copied': { ko: '복사됨!', en: 'Copied!', zh: '已复制！' },
   'resume.confirmTitle': { ko: '신청 정보 확인', en: 'Review Application', zh: '确认申请信息' },

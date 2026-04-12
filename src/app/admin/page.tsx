@@ -349,7 +349,9 @@ export default function AdminPage() {
             <div className="sm:hidden space-y-3">
               {assignments.map((assignment) => (
                 <div key={assignment.applicantId} className="bg-white rounded-xl shadow-sm p-4">
-                  <h4 className="font-bold text-gray-900 mb-3">{assignment.applicantName}</h4>
+                  <h4 className="font-bold text-gray-900 mb-1">{assignment.applicantName}
+                    <span className="text-xs text-gray-400 font-normal ml-2">({assignment.phone4})</span>
+                  </h4>
                   <div className="space-y-2">
                     {Array.from({ length: 4 }, (_, i) => {
                       const slot = (assignment as unknown as Record<string, unknown>)[`time${i + 1}`] as Assignment['time1'];
@@ -389,7 +391,7 @@ export default function AdminPage() {
                   <tbody className="divide-y divide-gray-200">
                     {assignments.map((assignment) => (
                       <tr key={assignment.applicantId} className="hover:bg-gray-50">
-                        <td className="px-3 py-3 text-sm font-medium text-gray-900">{assignment.applicantName}</td>
+                        <td className="px-3 py-3 text-sm font-medium text-gray-900">{assignment.applicantName} <span className="text-xs text-gray-400">({assignment.phone4})</span></td>
                         {Array.from({ length: 4 }, (_, i) => {
                           const slot = (assignment as unknown as Record<string, unknown>)[`time${i + 1}`] as Assignment['time1'];
                           return [

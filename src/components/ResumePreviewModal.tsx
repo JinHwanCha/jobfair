@@ -178,8 +178,8 @@ function Step3Preview() {
       {['지원동기', '직무역량', '문제해결', '협업'].map((label, i) => (
         <div key={i} className="bg-white rounded-lg p-2.5">
           <div className="flex items-center justify-between mb-1.5">
-            <div className="h-2.5 bg-blue-200 rounded w-14" />
-            <div className="h-2 bg-gray-200 rounded w-10 text-[9px] text-gray-400 text-right">{label}</div>
+            {/* <div className="h-2.5 bg-blue-200 rounded w-14" /> */}
+            <div className="h-2.5 bg-blue-200 rounded w-14 text-[9px] text-gray-400 text-right">{label}</div>
           </div>
           <div className="space-y-1">
             <div className="h-2 bg-gray-100 rounded w-full" />
