@@ -18,6 +18,8 @@ export default function TestResumeApplyPage() {
   const [queueNumber, setQueueNumber] = useState<number | null>(null);
   const [birthYearConfirmed, setBirthYearConfirmed] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
+  const [step2Attempted, setStep2Attempted] = useState(false);
+  const [showNotice, setShowNotice] = useState(true);
 
   const [formData, setFormData] = useState<ResumeApplyFormData>({
     name: '',
@@ -131,6 +133,27 @@ export default function TestResumeApplyPage() {
     <div className="page-container">
       <Header />
       <main className="content-container">
+        {/* 공지 팝업 */}
+        {showNotice && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
+            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+              <h3 className="text-lg font-bold text-gray-800 mb-4">{t('resume.noticeTitle')}</h3>
+              <div className="space-y-3 mb-6">
+                <div className="flex gap-3 bg-blue-50 rounded-xl p-3">
+                  <span className="text-xl shrink-0">👤</span>
+                  <p className="text-sm text-blue-800">{t('resume.noticeItem1')}</p>
+                </div>
+                <div className="flex gap-3 bg-amber-50 rounded-xl p-3">
+                  <span className="text-xl shrink-0">✍️</span>
+                  <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
+                </div>
+              </div>
+              <button onClick={() => setShowNotice(false)} className="btn-primary w-full">{t('resume.noticeConfirm')}</button>
+            </div>
+          </div>
+        )}
+
         {/* TEST 모드 배너 */}
         <div className="max-w-lg mx-auto mb-4">
           <div className="bg-red-50 border border-red-300 rounded-xl px-4 py-3 text-sm text-red-800 font-bold text-center">
@@ -222,7 +245,8 @@ export default function TestResumeApplyPage() {
                 <div>
                   <label className="label">{t('apply.department')}</label>
                   <input type="text" name="department" value={formData.department}
-                    onChange={handleInputChange} placeholder={t('apply.departmentPlaceholder')} className="input-field" />
+                    onChange={handleInputChange} placeholder={t('apply.departmentPlaceholder')} className={`input-field ${step2Attempted && !formData.department ? 'border-red-400 bg-red-50' : ''}`} />
+                  {step2Attempted && !formData.department && <p className="text-xs text-red-500 mt-1">{t('resume.fieldRequired')}</p>}
                 </div>
                 <div>
                   <label className="label">{t('apply.birthYear')}</label>
@@ -255,11 +279,12 @@ export default function TestResumeApplyPage() {
                       ✓ {formData.birthYear}{t('apply.birthYearSuffix')}
                     </div>
                   )}
+                  {step2Attempted && !birthYearConfirmed && <p className="text-xs text-red-500 mt-1">{t('resume.birthYearRequired')}</p>}
                 </div>
                 <div>
                   <label className="label">{t('apply.currentStatus')}</label>
                   <select name="currentStatus" value={formData.currentStatus}
-                    onChange={handleInputChange} className="input-field">
+                    onChange={handleInputChange} className={`input-field ${step2Attempted && !formData.currentStatus ? 'border-red-400 bg-red-50' : ''}`}>
                     <option value="">{t('apply.currentStatusPlaceholder')}</option>
                     <option value="1학년">{t('apply.status1')}</option>
                     <option value="2학년">{t('apply.status2')}</option>
@@ -268,11 +293,13 @@ export default function TestResumeApplyPage() {
                     <option value="취준생">{t('apply.statusJobSeeker')}</option>
                     <option value="기타">{t('apply.statusOther')}</option>
                   </select>
+                  {step2Attempted && !formData.currentStatus && <p className="text-xs text-red-500 mt-1">{t('resume.fieldRequired')}</p>}
                 </div>
                 <div>
                   <label className="label">{t('apply.desiredField')}</label>
                   <input type="text" name="desiredField" value={formData.desiredField}
-                    onChange={handleInputChange} placeholder={t('apply.desiredFieldPlaceholder')} className="input-field" />
+                    onChange={handleInputChange} placeholder={t('apply.desiredFieldPlaceholder')} className={`input-field ${step2Attempted && !formData.desiredField ? 'border-red-400 bg-red-50' : ''}`} />
+                  {step2Attempted && !formData.desiredField && <p className="text-xs text-red-500 mt-1">{t('resume.fieldRequired')}</p>}
                 </div>
                 <div>
                   <label className="label">{t('resume.companyType')}</label>
@@ -306,12 +333,13 @@ export default function TestResumeApplyPage() {
                       </label>
                     ))}
                   </div>
+                  {step2Attempted && formData.companyType.length === 0 && <p className="text-xs text-red-500 mt-2">{t('resume.companyTypeRequired')}</p>}
                 </div>
               </div>
               <div className="flex gap-3 mt-6">
                 <button onClick={() => setStep(1)} className="btn-secondary flex-1">{t('apply.prev')}</button>
-                <button onClick={() => canGoStep3 && setStep(3)} disabled={!canGoStep3}
-                  className="btn-primary flex-1">{t('apply.next')}</button>
+                <button onClick={() => { setStep2Attempted(true); if (canGoStep3) setStep(3); }}
+                  className={`btn-primary flex-1 ${!canGoStep3 && step2Attempted ? 'opacity-60' : ''}`}>{t('apply.next')}</button>
               </div>
             </div>
           )}

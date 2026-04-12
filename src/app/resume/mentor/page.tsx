@@ -132,9 +132,7 @@ export default function ResumeMentorPage() {
                           <div><span className="text-gray-500">{t('apply.currentStatus')}:</span> <span className="font-medium">{a.currentStatus}</span></div>
                           <div><span className="text-gray-500">{t('apply.department')}:</span> <span className="font-medium">{a.department}</span></div>
                           <div><span className="text-gray-500">{t('apply.desiredField')}:</span> <span className="font-medium">{a.desiredField}</span></div>
-                          {a.companyType && a.companyType.length > 0 && (
-                            <div className="col-span-2"><span className="text-gray-500">{t('resume.companyType')}:</span> <span className="font-medium">{a.companyType.map((ct: string) => ({large: t('resume.companyType.large'), public: t('resume.companyType.public'), private: t('resume.companyType.private')}[ct] || ct)).join(', ')}</span></div>
-                          )}
+                          <div className="col-span-2"><span className="text-gray-500">{t('resume.companyType')}:</span> <span className="font-medium">{a.companyType && a.companyType.length > 0 ? a.companyType.map((ct: string) => ({large: t('resume.companyType.large'), public: t('resume.companyType.public'), private: t('resume.companyType.private')}[ct] || ct)).join(', ') : '-'}</span></div>
                           {a.queueNumber > 0 && (
                             <div className="col-span-2">
                               <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold ${
@@ -171,7 +169,18 @@ export default function ResumeMentorPage() {
                                 } else {
                                   text = a.resumeText;
                                 }
-                                navigator.clipboard.writeText(text);
+                                if (navigator.clipboard && window.isSecureContext) {
+                                  navigator.clipboard.writeText(text);
+                                } else {
+                                  const textarea = document.createElement('textarea');
+                                  textarea.value = text;
+                                  textarea.style.position = 'fixed';
+                                  textarea.style.left = '-9999px';
+                                  document.body.appendChild(textarea);
+                                  textarea.select();
+                                  document.execCommand('copy');
+                                  document.body.removeChild(textarea);
+                                }
                                 setCopiedIdx(idx);
                                 setTimeout(() => setCopiedIdx(null), 2000);
                               }}
