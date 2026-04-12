@@ -16,7 +16,21 @@ export default function HomePage() {
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [resumeMentors, setResumeMentors] = useState<Mentor[]>([]);
   const [selectedResumeMentor, setSelectedResumeMentor] = useState<Mentor | null>(null);
-  const [showNotice, setShowNotice] = useState(true);
+  const [showNotice, setShowNotice] = useState(false);
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('notice_dismissed');
+    if (!dismissed || dismissed !== new Date().toISOString().slice(0, 10)) {
+      setShowNotice(true);
+    }
+  }, []);
+
+  const dismissNotice = (today?: boolean) => {
+    if (today) {
+      localStorage.setItem('notice_dismissed', new Date().toISOString().slice(0, 10));
+    }
+    setShowNotice(false);
+  };
 
   useEffect(() => {
     fetch('/api/mentors')
@@ -52,7 +66,8 @@ export default function HomePage() {
                 <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
               </div>
             </div>
-            <button onClick={() => setShowNotice(false)} className="btn-primary w-full">{t('resume.noticeConfirm')}</button>
+            <button onClick={() => dismissNotice()} className="btn-primary w-full">{t('resume.noticeConfirm')}</button>
+            <button onClick={() => dismissNotice(true)} className="text-xs text-gray-400 hover:text-gray-600 w-full text-center mt-2 py-1">{t('resume.noticeDismissToday')}</button>
           </div>
         </div>
       )}

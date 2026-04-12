@@ -246,6 +246,7 @@ const translations = {
   'resume.noticeItem1': { ko: '멘토 정보가 업데이트되었습니다. 멘토 정보를 잘 확인해주세요.', en: 'Mentor information has been updated. Please review the mentor profiles carefully.', zh: '导师信息已更新，请仔细查看导师信息。' },
   'resume.noticeItem2': { ko: '자소서 작성 폼이 변경되었습니다. 새로운 양식을 확인해주세요.', en: 'The resume writing form has been updated. Please check the new format.', zh: '简历填写表格已更改，请确认新格式。' },
   'resume.noticeConfirm': { ko: '확인했습니다', en: 'Got it', zh: '已确认' },
+  'resume.noticeDismissToday': { ko: '오늘은 그만보기', en: 'Don\u2019t show today', zh: '今天不再显示' },
   'resume.subtitle': { ko: '전문 멘토에게 자소서 첨삭을 받아보세요', en: 'Get your resume reviewed by expert mentors', zh: '由专业导师帮您修改简历' },
   'resume.spotsLeft': { ko: '잔여석', en: 'Spots left:', zh: '剩余名额' },
   'resume.spotsUnit': { ko: '석', en: '', zh: '个' },
