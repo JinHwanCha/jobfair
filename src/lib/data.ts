@@ -329,6 +329,7 @@ export async function deleteApplicant(applicantId: string): Promise<void> {
 // 자소서 신청자 삭제
 export async function deleteResumeApplicant(resumeApplicantId: string): Promise<void> {
   await supabase.from('resume_applicants').delete().eq('id', resumeApplicantId);
+  await recompactResumeQueue();
 }
 
 // --- DB row ↔ App type 변환 ---
@@ -526,4 +527,23 @@ async function getMaxQueueNumber(): Promise<number> {
     .limit(1)
     .single();
   return data?.queue_number || 0;
+}
+
+// 순번 재정렬 (삭제/수정 후 빈 번호 없이 1부터 연속)
+async function recompactResumeQueue(): Promise<void> {
+  const { data, error } = await supabase
+    .from('resume_applicants')
+    .select('id, queue_number')
+    .order('queue_number', { ascending: true });
+  if (error || !data) return;
+
+  for (let i = 0; i < data.length; i++) {
+    const newNum = i + 1;
+    if (data[i].queue_number !== newNum) {
+      await supabase
+        .from('resume_applicants')
+        .update({ queue_number: newNum })
+        .eq('id', data[i].id);
+    }
+  }
 }
