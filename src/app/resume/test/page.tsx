@@ -19,7 +19,6 @@ export default function TestResumeApplyPage() {
   const [birthYearConfirmed, setBirthYearConfirmed] = useState(false);
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
   const [step2Attempted, setStep2Attempted] = useState(false);
-  const [showNotice, setShowNotice] = useState(true);
 
   const [formData, setFormData] = useState<ResumeApplyFormData>({
     name: '',
@@ -133,27 +132,6 @@ export default function TestResumeApplyPage() {
     <div className="page-container">
       <Header />
       <main className="content-container">
-        {/* 공지 팝업 */}
-        {showNotice && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" />
-            <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
-              <h3 className="text-lg font-bold text-gray-800 mb-4">{t('resume.noticeTitle')}</h3>
-              <div className="space-y-3 mb-6">
-                <div className="flex gap-3 bg-blue-50 rounded-xl p-3">
-                  <span className="text-xl shrink-0">👤</span>
-                  <p className="text-sm text-blue-800">{t('resume.noticeItem1')}</p>
-                </div>
-                <div className="flex gap-3 bg-amber-50 rounded-xl p-3">
-                  <span className="text-xl shrink-0">✍️</span>
-                  <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
-                </div>
-              </div>
-              <button onClick={() => setShowNotice(false)} className="btn-primary w-full">{t('resume.noticeConfirm')}</button>
-            </div>
-          </div>
-        )}
-
         {/* TEST 모드 배너 */}
         <div className="max-w-lg mx-auto mb-4">
           <div className="bg-red-50 border border-red-300 rounded-xl px-4 py-3 text-sm text-red-800 font-bold text-center">
