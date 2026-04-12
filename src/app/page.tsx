@@ -52,7 +52,7 @@ export default function HomePage() {
           draggable={false}
         />
         {/* CTA 버튼 오버레이 */}
-        <div className="absolute bottom-0 left-0 right-0 pb-6 sm:pb-10 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center pointer-events-none opacity-90">
+        <div className="absolute bottom-5 left-0 right-0 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center pointer-events-none opacity-90">
           <Link
             href="/apply"
             className="pointer-events-auto btn-primary bg-gray-900 text-primary-300 hover:bg-black shadow-xl text-base sm:text-lg px-8 py-3"
