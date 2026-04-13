@@ -1,21 +1,33 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Header from '@/components/Header';
-import MentorPreview from '@/components/MentorPreview';
 import MentorCard from '@/components/MentorCard';
 import MentorModal from '@/components/MentorModal';
 import CountdownTimer, { useIsOpen } from '@/components/CountdownTimer';
 import { Mentor } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
+function extractShortCategories(category: string): string[] {
+  const knownCategories = [
+    'Building', 'Leading', 'Operating', 'Teaching',
+    'Connecting', 'Creating', 'Healing', 'Influencing',
+    'Protecting Justice', 'Serving', 'Resume Editing',
+  ];
+  const found = knownCategories.filter(cat => category.includes(cat));
+  return found.length > 0 ? found : ['기타'];
+}
+
 export default function HomePage() {
   const { t } = useI18n();
   const isOpen = useIsOpen();
   const [mentors, setMentors] = useState<Mentor[]>([]);
+  const [allMentors, setAllMentors] = useState<Mentor[]>([]);
   const [resumeMentors, setResumeMentors] = useState<Mentor[]>([]);
   const [selectedResumeMentor, setSelectedResumeMentor] = useState<Mentor | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedHomeMentor, setSelectedHomeMentor] = useState<Mentor | null>(null);
   const [showNotice, setShowNotice] = useState(false);
 
   useEffect(() => {
@@ -33,18 +45,29 @@ export default function HomePage() {
   };
 
   useEffect(() => {
-    fetch('/api/mentors')
-      .then(res => res.json())
-      .then(result => { if (result.success) setMentors(result.data); })
-      .catch(console.error);
-
-    fetch('/api/resume/mentors')
-      .then(res => res.json())
-      .then(result => { if (result.success) setResumeMentors(result.data); })
-      .catch(console.error);
+    Promise.all([
+      fetch('/api/mentors').then(res => res.json()),
+      fetch('/api/resume/mentors').then(res => res.json()),
+    ]).then(([mentorResult, resumeResult]) => {
+      const regularMentors: Mentor[] = mentorResult.success ? mentorResult.data : [];
+      const rMentors: Mentor[] = resumeResult.success ? resumeResult.data : [];
+      setMentors(regularMentors);
+      setResumeMentors(rMentors);
+      const taggedResume = rMentors.map(m => ({ ...m, category: 'Resume Editing – 자소서 첨삭' }));
+      setAllMentors([...regularMentors, ...taggedResume]);
+    }).catch(console.error);
   }, []);
 
-  const previewMentors = mentors.slice(0, 4);
+  const categories = useMemo(() => {
+    const cats = new Set<string>();
+    allMentors.forEach(m => extractShortCategories(m.category).forEach(c => cats.add(c)));
+    return ['all', ...Array.from(cats).sort()];
+  }, [allMentors]);
+
+  const filteredMentors = useMemo(() => {
+    if (selectedCategory === 'all') return allMentors.slice(0, 8);
+    return allMentors.filter(m => extractShortCategories(m.category).includes(selectedCategory));
+  }, [allMentors, selectedCategory]);
 
   return (
     <div className="page-container">
@@ -127,13 +150,45 @@ export default function HomePage() {
               {t('home.viewAll')}
             </Link>
           </div>
-          
-          <MentorPreview mentors={previewMentors} />
 
-          {mentors.length > 0 && (
+          {/* 카테고리 탭 */}
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 mb-6 -mx-1">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-3 py-1.5 rounded-full text-xs sm:text-sm font-medium transition-colors ${
+                  selectedCategory === cat
+                    ? 'bg-primary-400 text-gray-900'
+                    : 'bg-primary-100 text-gray-700 hover:bg-primary-200'
+                }`}
+              >
+                {cat === 'all' ? t('mentors.all') : cat}
+              </button>
+            ))}
+          </div>
+
+          <div className="grid sm:grid-cols-2 gap-4">
+            {filteredMentors.map((mentor) => (
+              <MentorCard
+                key={mentor.id}
+                mentor={mentor}
+                onClickDetail={() => setSelectedHomeMentor(mentor)}
+              />
+            ))}
+          </div>
+
+          {selectedHomeMentor && (
+            <MentorModal
+              mentor={selectedHomeMentor}
+              onClose={() => setSelectedHomeMentor(null)}
+            />
+          )}
+
+          {allMentors.length > 0 && (
             <div className="text-center mt-8">
               <Link href="/mentors" className="btn-secondary inline-block bg-primary-200">
-                {mentors.length}{t('home.viewAllMentors')}
+                {allMentors.length}{t('home.viewAllMentors')}
               </Link>
             </div>
           )}

@@ -116,7 +116,7 @@ export default function MentorModal({ mentor, onClose }: MentorModalProps) {
           {mentor.careerCalling && (
             <div className="bg-blue-50 rounded-xl p-4">
               <p className="text-sm font-medium text-gray-500 mb-2">{t('modal.careerJourney')}</p>
-              <p className="text-gray-700 leading-relaxed">{mentor.careerCalling}</p>
+              <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{mentor.careerCalling}</p>
             </div>
           )}
         </div>
