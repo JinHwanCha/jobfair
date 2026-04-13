@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 
 const STEPS = [
@@ -30,13 +30,30 @@ export default function ResumePreviewModal({ onClose }: { onClose: () => void })
   const { t } = useI18n();
   const [current, setCurrent] = useState(0);
 
+  useEffect(() => {
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   const step = STEPS[current];
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm max-h-[85vh] overflow-y-auto">
         <button
           onClick={onClose}
           className="absolute top-3 right-3 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 z-10 transition-colors"
@@ -188,9 +205,9 @@ function Step3Preview() {
         </div>
       ))}
       <div className="bg-white rounded-lg p-2.5">
-        <div className="flex items-center gap-2 mb-1.5">
-          <span className="text-xs">🎯</span>
-          <div className="h-2.5 bg-purple-200 rounded w-16" />
+        <div className="flex items-center gap-2 mb-1.5 text-[9px]">
+          <span className="text-xs">🎯 </span>
+          <div className="h-2.5 bg-purple-200 rounded px-2">첨삭을 통해 원하는 바</div>
         </div>
         <div className="space-y-1">
           <div className="h-2 bg-purple-50 rounded w-full" />

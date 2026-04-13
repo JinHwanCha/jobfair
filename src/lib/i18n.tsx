@@ -172,7 +172,7 @@ const translations = {
   'resumePreview.step3Desc': { ko: '멘토가 검토할 자소서를 작성합니다. 첨삭받고 싶은 내용을 자유롭게 입력하세요. (최대 5,000자)', en: 'Write the resume you want reviewed. Enter any content you want feedback on. (Max 5,000 characters)', zh: '撰写您希望导师审阅的简历。自由输入内容。（最多5,000字）' },
   'resumePreview.step4Title': { ko: '신청 정보 확인', en: 'Review & Submit', zh: '确认并提交' },
   'resumePreview.step4Desc': { ko: '입력한 정보와 자소서 내용을 최종 확인하고, 개인정보 동의 후 신청을 완료합니다.', en: 'Review your info and resume content, agree to the terms, and submit.', zh: '确认您的信息和简历内容，同意条款后提交申请。' },
-  'resumePreview.prepareNotice': { ko: '📝 5,000자 이하의 자소서를 미리 작성해서 준비해주세요!', en: '📝 Please prepare your resume (under 5,000 characters) in advance!', zh: '📝 请提前准备好5,000字以内的简历！' },
+  'resumePreview.prepareNotice': { ko: '📝 아래 4가지 항목에 대해 각 1,000자 이내로 미리 작성해서 준비해주세요!\n\n① 지원동기\n② 직무역량\n③ 문제해결 경험\n④ 협업 경험', en: '📝 Please prepare the following 4 sections (up to 1,000 characters each) in advance!\n\n① Motivation\n② Job Competency\n③ Problem-Solving Experience\n④ Teamwork Experience', zh: '📝 请提前准备以下4个部分（每部分1,000字以内）！\n\n① 申请动机\n② 职务能力\n③ 解决问题经验\n④ 团队合作经验' },
 
   // ── My Page ──
   'my.title': { ko: '내 배정 확인', en: 'My Assign', zh: '我的分配确认' },

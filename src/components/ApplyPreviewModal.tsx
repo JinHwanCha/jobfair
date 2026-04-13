@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useI18n } from '@/lib/i18n';
 
 const STEPS = [
@@ -35,6 +35,23 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
   const { t } = useI18n();
   const [current, setCurrent] = useState(0);
 
+  useEffect(() => {
+    const scrollY = window.scrollY;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${scrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.left = '';
+      document.body.style.right = '';
+      document.body.style.overflow = '';
+      window.scrollTo(0, scrollY);
+    };
+  }, []);
+
   const step = STEPS[current];
 
   return (
@@ -43,7 +60,7 @@ export default function ApplyPreviewModal({ onClose }: { onClose: () => void }) 
       <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={onClose} />
 
       {/* 모달 */}
-      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm overflow-hidden">
+      <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-sm max-h-[85vh] overflow-y-auto">
         {/* 닫기 버튼 */}
         <button
           onClick={onClose}
