@@ -13,7 +13,7 @@ function extractShortCategories(category: string): string[] {
   const knownCategories = [
     'Building', 'Leading', 'Operating', 'Teaching',
     'Connecting', 'Creating', 'Healing', 'Influencing',
-    'Protecting Justice', 'Serving',
+    'Protecting Justice', 'Serving', 'Resume Editing',
   ];
   const found = knownCategories.filter(cat =>
     category.includes(cat)
@@ -30,10 +30,22 @@ export default function MentorsPage() {
   const [selectedMentor, setSelectedMentor] = useState<Mentor | null>(null);
 
   useEffect(() => {
-    fetch('/api/mentors')
-      .then(res => res.json())
-      .then(result => {
-        if (result.success) setMentors(result.data);
+    Promise.all([
+      fetch('/api/mentors').then(res => res.json()),
+      fetch('/api/resume/mentors').then(res => res.json()),
+    ])
+      .then(([mentorResult, resumeResult]) => {
+        const allMentors: Mentor[] = [];
+        if (mentorResult.success) allMentors.push(...mentorResult.data);
+        if (resumeResult.success) {
+          // 자소서 멘토에 Resume Editing 카테고리 부여
+          const resumeMentors = (resumeResult.data as Mentor[]).map(m => ({
+            ...m,
+            category: 'Resume Editing – 자소서 첨삭',
+          }));
+          allMentors.push(...resumeMentors);
+        }
+        setMentors(allMentors);
       })
       .catch(console.error)
       .finally(() => setIsLoading(false));
