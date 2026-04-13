@@ -65,7 +65,7 @@ export default function HomePage() {
   }, [allMentors]);
 
   const filteredMentors = useMemo(() => {
-    if (selectedCategory === 'all') return allMentors.slice(0, 8);
+    if (selectedCategory === 'all') return allMentors.slice(0, 4);
     return allMentors.filter(m => extractShortCategories(m.category).includes(selectedCategory));
   }, [allMentors, selectedCategory]);
 
