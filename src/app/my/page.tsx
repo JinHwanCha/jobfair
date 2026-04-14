@@ -2,11 +2,13 @@
 
 import { useState } from 'react';
 import Header from '@/components/Header';
+import { useIsAssignmentOpen } from '@/components/CountdownTimer';
 import { Assignment, AssignmentSlot } from '@/types';
 import { useI18n } from '@/lib/i18n';
 
 export default function MyPage() {
   const { t } = useI18n();
+  const isAssignmentOpen = useIsAssignmentOpen();
   const [name, setName] = useState('');
   const [phone4, setPhone4] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -181,7 +183,18 @@ export default function MyPage() {
           </p>
         </div>
 
+        {/* 배정 공개 전 안내 */}
+        {isAssignmentOpen === false && (
+          <div className="card max-w-md mx-auto mb-8 text-center">
+            <div className="text-4xl mb-4">🔒</div>
+            <h2 className="text-xl font-bold text-gray-800 mb-2">{t('my.notYetOpen')}</h2>
+            <p className="text-gray-500">{t('my.notYetOpenDesc')}</p>
+          </div>
+        )}
+
         {/* 조회 폼 */}
+        {isAssignmentOpen !== false && (
+        <>
         <div className="card max-w-md mx-auto mb-8">
           <div className="space-y-4">
             <div>
@@ -325,6 +338,8 @@ export default function MyPage() {
           <div className="text-center py-8 text-gray-500">
             <p>{t('my.promptSearch')}</p>
           </div>
+        )}
+        </>
         )}
       </main>
     </div>

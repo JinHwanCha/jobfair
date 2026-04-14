@@ -6,11 +6,27 @@ import { useI18n } from '@/lib/i18n';
 // KST 2026-04-19 18:00:00 (테스트용)
 const OPEN_TIME = new Date('2026-04-19T18:00:00+09:00').getTime();
 
+// KST 2026-05-05 11:00:00 (배정 결과 공개 시간)
+const ASSIGNMENT_REVEAL_TIME = new Date('2026-05-05T11:00:00+09:00').getTime();
+
 export function useIsOpen() {
   const [isOpen, setIsOpen] = useState<boolean | null>(null);
 
   useEffect(() => {
     const check = () => setIsOpen(Date.now() >= OPEN_TIME);
+    check();
+    const id = setInterval(check, 1000);
+    return () => clearInterval(id);
+  }, []);
+
+  return isOpen;
+}
+
+export function useIsAssignmentOpen() {
+  const [isOpen, setIsOpen] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    const check = () => setIsOpen(Date.now() >= ASSIGNMENT_REVEAL_TIME);
     check();
     const id = setInterval(check, 1000);
     return () => clearInterval(id);

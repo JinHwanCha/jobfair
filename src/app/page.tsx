@@ -138,6 +138,18 @@ export default function HomePage() {
         </section>
       )}
 
+      {/* 배정 확인 안내 배너 */}
+      <section className="bg-blue-50 border-b border-blue-100">
+        <div className="max-w-4xl mx-auto px-4 py-4 text-center space-y-1">
+          <p className="text-sm sm:text-base font-semibold text-blue-800">
+            {t('home.assignNotice')}
+          </p>
+          <p className="text-xs sm:text-sm text-blue-600">
+            {t('home.assignNoticeChange')}
+          </p>
+        </div>
+      </section>
+
       {/* 멘토 미리보기 섹션 */}
       <section className="py-12 sm:py-16">
         <div className="max-w-4xl mx-auto px-4">

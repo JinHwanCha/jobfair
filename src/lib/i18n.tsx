@@ -199,6 +199,8 @@ const translations = {
   'my.errorPhone': { ko: '전화번호 뒷자리 4자리를 입력해주세요.', en: 'Please enter the last 4 digits.', zh: '请输入手机号码后4位。' },
   'my.errorGeneral': { ko: '조회 중 오류가 발생했습니다.', en: 'An error occurred.', zh: '查询中发生错误。' },
   'my.errorNoData': { ko: '배정 정보를 찾을 수 없습니다.', en: 'Assignment not found.', zh: '未找到分配信息。' },
+  'my.notYetOpen': { ko: '배정 결과는 5월 5일 오전 11시 이후에 공개됩니다.', en: 'Assignment results will be available after May 5, 11:00 AM.', zh: '分配结果将于5月5日上午11点后公布。' },
+  'my.notYetOpenDesc': { ko: '조금만 기다려주세요! 공개 시간 이후에 다시 방문해주세요.', en: 'Please wait! Come back after the reveal time.', zh: '请稍候！公布时间后请再次访问。' },
 
   // ── Mentor Card ──
   'card.experience': { ko: '경력', en: 'Experience', zh: '经验' },
@@ -296,6 +298,8 @@ const translations = {
   'home.resumeDesc': { ko: '전문 멘토가 여러분의 자소서를 직접 첨삭해드립니다. 50분 강의 후 1:1 첨삭 시간!', en: 'Expert mentors will review your resume directly. 50-min lecture + 1:1 review time!', zh: '专业导师直接帮您修改简历。50分钟讲座后进行1对1修改！' },
   'home.resumeLimit': { ko: '선착순 12명 + 예비번호 부여', en: 'First 12 + waitlist numbers', zh: '先到先得12人+候补号码' },
   'home.resumeApply': { ko: '자소서 첨삭 신청하기', en: 'Apply for Resume Review', zh: '申请简历修改' },
+  'home.assignNotice': { ko: '📋 배정 확인은 5/5(월) 오전 11시 이후에 공개됩니다.', en: '📋 Assignment results will be available after May 5, 11:00 AM.', zh: '📋 分配结果将于5月5日上午11点后公布。' },
+  'home.assignNoticeChange': { ko: '추후 신청자들의 신청에 따라 멘토 배정이 변경될 수 있습니다.', en: 'Mentor assignments may change based on later applicants.', zh: '导师分配可能会根据后续申请者而调整。' },
   'apply.crossBlockResume': { ko: '⚠️ 자소서 첨삭을 이미 신청하신 분은 멘토링 신청이 불가합니다.', en: '⚠️ If you have already applied for resume review, you cannot apply for mentoring.', zh: '⚠️ 已申请简历修改的人无法申请导师辅导。' },
   'apply.crossBlockResumeError': { ko: '자소서 첨삭을 이미 신청하여 멘토링 신청이 불가합니다.', en: 'You have already applied for resume review and cannot apply for mentoring.', zh: '您已申请简历修改，无法申请导师辅导。' },
   'resume.crossBlockMentoring': { ko: '⚠️ 멘토링을 이미 신청하신 분은 자소서 첨삭 신청이 불가합니다.', en: '⚠️ If you have already applied for mentoring, you cannot apply for resume review.', zh: '⚠️ 已申请导师辅导的人无法申请简历修改。' },
