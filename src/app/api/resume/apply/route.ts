@@ -63,6 +63,7 @@ export async function POST(request: NextRequest) {
       reviewGoal: body.reviewGoal || '',
       resumeText,
       resumeSections,
+      jobPostingUrls: body.jobPostingUrls || [],
       agreedToTerms: body.agreedToTerms,
     });
 

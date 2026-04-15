@@ -185,6 +185,16 @@ function Step2Preview() {
           <span className="px-2 py-0.5 rounded-full text-[10px] bg-emerald-100 text-emerald-700">사기업</span>
         </div>
       </div>
+      <div className="bg-white rounded-lg px-3 py-1.5">
+        <div className="flex items-center gap-1 mb-1">
+          <span className="text-xs text-gray-400">🔗 채용공고 URL</span>
+          <span className="text-[9px] text-gray-300">(선택)</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="flex-1 h-4 bg-indigo-50 rounded text-[8px] text-indigo-300 px-1.5 flex items-center">https://...</div>
+          <div className="text-[9px] text-gray-300">+ 추가</div>
+        </div>
+      </div>
     </div>
   );
 }

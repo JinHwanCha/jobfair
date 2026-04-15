@@ -122,3 +122,4 @@ ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS company_type JSONB DEFAUL
 ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS review_goal TEXT DEFAULT '';
 ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS queue_number INTEGER DEFAULT 0;
 ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS resume_sections JSONB DEFAULT '{}'::JSONB;
+ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS job_posting_urls JSONB DEFAULT '[]'::JSONB;

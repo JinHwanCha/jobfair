@@ -29,6 +29,7 @@ interface ResumeApplicantView {
   reviewGoal: string;
   resumeText: string;
   resumeSections: Record<string, string>;
+  jobPostingUrls: string[];
   queueNumber: number;
   createdAt: string;
 }
@@ -211,6 +212,19 @@ export default function MentorPage() {
                           <div className="bg-purple-50 rounded-xl p-4 mb-3">
                             <h5 className="font-bold text-gray-800 text-sm mb-2">🎯 {t('resume.reviewGoal')}</h5>
                             <p className="text-sm text-gray-700 whitespace-pre-wrap leading-relaxed">{a.reviewGoal}</p>
+                          </div>
+                        )}
+
+                        {a.jobPostingUrls && a.jobPostingUrls.filter((u: string) => u.trim()).length > 0 && (
+                          <div className="bg-indigo-50 rounded-xl p-4 mb-3">
+                            <h5 className="font-bold text-gray-800 text-sm mb-2">🔗 채용공고 URL</h5>
+                            <ul className="space-y-1">
+                              {a.jobPostingUrls.filter((u: string) => u.trim()).map((url: string, i: number) => (
+                                <li key={i} className="text-sm text-indigo-700 truncate">
+                                  <a href={url} target="_blank" rel="noopener noreferrer" className="hover:underline">{url}</a>
+                                </li>
+                              ))}
+                            </ul>
                           </div>
                         )}
 

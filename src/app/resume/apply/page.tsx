@@ -36,6 +36,7 @@ export default function ResumeApplyPage() {
     reviewGoal: '',
     resumeText: '',
     resumeSections: {},
+    jobPostingUrls: [],
     agreedToTerms: false,
   });
 
@@ -84,7 +85,7 @@ export default function ResumeApplyPage() {
       const response = await fetch('/api/resume/apply', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...formData, resumeText: combinedText }),
+        body: JSON.stringify({ ...formData, resumeText: combinedText, jobPostingUrls: formData.jobPostingUrls.filter(u => u.trim()) }),
       });
       const result = await response.json();
 
@@ -370,6 +371,49 @@ export default function ResumeApplyPage() {
                     </div>
                     {step2Attempted && formData.companyType.length === 0 && <p className="text-xs text-red-500 mt-2">{t('resume.companyTypeRequired')}</p>}
                   </div>
+                  {/* 채용공고 URL (선택사항) */}
+                  <div>
+                    <label className="label">채용공고 URL <span className="text-gray-400 font-normal text-xs">(선택사항)</span></label>
+                    <p className="text-xs text-gray-500 mb-2">가장 최근에 지원했거나, 지원하고 싶은 실제 채용공고 URL을 입력해주세요.</p>
+                    <div className="space-y-2">
+                      {formData.jobPostingUrls.map((url, i) => (
+                        <div key={i} className="flex gap-2">
+                          <input
+                            type="url"
+                            value={url}
+                            onChange={(e) => {
+                              const newUrls = [...formData.jobPostingUrls];
+                              newUrls[i] = e.target.value;
+                              setFormData(prev => ({ ...prev, jobPostingUrls: newUrls }));
+                            }}
+                            placeholder="https://..."
+                            className="input-field flex-1"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData(prev => ({
+                                ...prev,
+                                jobPostingUrls: prev.jobPostingUrls.filter((_, idx) => idx !== i),
+                              }));
+                            }}
+                            className="px-3 py-2 rounded-xl border border-red-200 text-red-500 hover:bg-red-50 transition-colors text-sm"
+                          >
+                            ✕
+                          </button>
+                        </div>
+                      ))}
+                      {formData.jobPostingUrls.length < 5 && (
+                        <button
+                          type="button"
+                          onClick={() => setFormData(prev => ({ ...prev, jobPostingUrls: [...prev.jobPostingUrls, ''] }))}
+                          className="w-full py-2 rounded-xl border border-dashed border-gray-300 text-gray-500 hover:bg-gray-50 hover:border-gray-400 transition-colors text-sm flex items-center justify-center gap-1"
+                        >
+                          <span>+</span> URL 추가
+                        </button>
+                      )}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex gap-3 mt-6">
                   <button onClick={() => setStep(1)} className="btn-secondary flex-1">{t('apply.prev')}</button>
@@ -483,6 +527,19 @@ export default function ResumeApplyPage() {
                     <div className="bg-purple-50 rounded-xl p-4">
                       <h4 className="font-bold text-gray-800 mb-2 text-sm">{t('resume.reviewGoal')}</h4>
                       <p className="text-sm text-gray-700 whitespace-pre-wrap">{formData.reviewGoal}</p>
+                    </div>
+                  )}
+
+                  {formData.jobPostingUrls.filter(u => u.trim()).length > 0 && (
+                    <div className="bg-indigo-50 rounded-xl p-4">
+                      <h4 className="font-bold text-gray-800 mb-2 text-sm">🔗 채용공고 URL</h4>
+                      <ul className="space-y-1">
+                        {formData.jobPostingUrls.filter(u => u.trim()).map((url, i) => (
+                          <li key={i} className="text-sm text-indigo-700 truncate">
+                            <a href={url} target="_blank" rel="noopener noreferrer" className="hover:underline">{url}</a>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>

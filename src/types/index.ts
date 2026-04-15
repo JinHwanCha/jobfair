@@ -169,6 +169,7 @@ export interface ResumeApplicant {
   reviewGoal: string; // 첨삭을 통해 원하는 바
   resumeText: string; // 통합 텍스트 (자동 생성)
   resumeSections: Record<string, string>; // 섹션별 자소서
+  jobPostingUrls: string[]; // 최근 지원했거나 지원하고 싶은 채용공고 URL (선택)
   queueNumber: number; // 순번
   agreedToTerms: boolean;
   createdAt: string;
@@ -188,6 +189,7 @@ export interface ResumeApplyFormData {
   reviewGoal: string;
   resumeText: string;
   resumeSections: Record<string, string>;
+  jobPostingUrls: string[]; // 채용공고 URL (선택)
   agreedToTerms: boolean;
 }
 
