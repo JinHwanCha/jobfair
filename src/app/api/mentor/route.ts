@@ -52,6 +52,7 @@ export async function POST(request: NextRequest) {
             reviewGoal: a.reviewGoal,
             resumeText: a.resumeText,
             resumeSections: a.resumeSections,
+            jobPostingUrls: a.jobPostingUrls,
             queueNumber: a.queueNumber,
             createdAt: a.createdAt,
           })),
