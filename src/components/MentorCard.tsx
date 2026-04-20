@@ -25,6 +25,7 @@ export function getCategoryColor(category: string) {
     ['Influencing', 'bg-pink-100 text-pink-700'],
     ['Protecting Justice', 'bg-indigo-100 text-indigo-700'],
     ['Serving', 'bg-teal-100 text-teal-700'],
+    ['Resume Editing', 'bg-emerald-100 text-emerald-700'],
   ];
   for (const [key, value] of colors) {
     if (category.includes(key)) return value;
@@ -45,6 +46,7 @@ export function getCategoryIcon(category: string) {
     ['Influencing', '📢'],
     ['Protecting Justice', '⚖️'],
     ['Serving', '🤝'],
+    ['Resume Editing', '✍️'],
   ];
   for (const [key, icon] of map) {
     if (category.includes(key)) return icon;
@@ -57,7 +59,7 @@ export function getShortCategoryLabel(category: string): string {
   const knownCategories = [
     'Building', 'Leading', 'Operating', 'Teaching',
     'Connecting', 'Creating', 'Healing', 'Influencing',
-    'Protecting Justice', 'Serving',
+    'Protecting Justice', 'Serving', 'Resume Editing',
   ];
   const found = knownCategories.filter(cat => category.includes(cat));
   return found.length > 0 ? found.join(' · ') : '기타';
