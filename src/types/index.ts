@@ -194,4 +194,4 @@ export interface ResumeApplyFormData {
 }
 
 // 자소서 첨삭 멘토 이름 목록 (시트에서 필터링용)
-export const RESUME_MENTOR_NAMES = ['성재훈', '송하정', '강요셉/최우희'];
+export const RESUME_MENTOR_NAMES = ['성재훈', '송하정', '강요셉/최우희', '백재석'];

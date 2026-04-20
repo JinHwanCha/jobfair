@@ -95,10 +95,10 @@ export default function ResumeApplyPage() {
       } else if (result.error === 'CROSS_BLOCK_MENTORING') {
         setSubmitError(t('resume.crossBlockMentoringError'));
       } else {
-        setSubmitError(result.error || '신청 중 오류가 발생했습니다.');
+        setSubmitError(result.error ? `${result.error} 청년부 95또래 차진환 카톡아이디 atom103으로 연락바랍니다.` : '신청 중 오류가 발생했습니다. 청년부 95또래 차진환 카톡아이디 atom103으로 연락바랍니다.');
       }
     } catch {
-      setSubmitError('네트워크 오류가 발생했습니다.');
+      setSubmitError('네트워크 오류가 발생했습니다. 청년부 95또래 차진환 카톡아이디 atom103으로 연락바랍니다.');
     } finally {
       setIsSubmitting(false);
     }
@@ -197,7 +197,7 @@ export default function ResumeApplyPage() {
         {mentors.length > 0 && (
           <div className="mb-8">
             <h3 className="font-bold text-gray-800 mb-3">{t('resume.mentorsTitle')}</h3>
-            <div className="grid sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               {mentors.map(m => (
                 <MentorCard
                   key={m.id}
