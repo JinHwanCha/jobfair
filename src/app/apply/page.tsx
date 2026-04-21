@@ -721,7 +721,13 @@ export default function ApplyPage() {
             </div>
 
             {submitError && (
-              <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 text-sm">{submitError}</div>
+              <div className="bg-red-50 border border-red-200 p-4 rounded-xl mb-6 text-sm space-y-2">
+                <p className="text-red-600">{submitError}</p>
+                <p className="text-red-500 text-xs border-t border-red-200 pt-2">
+                  문제가 지속되면 청년부 94또래 <span className="font-bold">차진환</span>에게 문의해주세요.<br />
+                  카카오톡 ID: <span className="font-bold">atom103</span>
+                </p>
+              </div>
             )}
 
             <div className="flex gap-4">

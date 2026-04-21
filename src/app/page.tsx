@@ -357,6 +357,16 @@ export default function HomePage() {
       {/* 푸터 */}
       <footer className="bg-gray-800 text-gray-400 py-8">
         <div className="max-w-4xl mx-auto px-4 text-center">
+          {/* 신청 오류 문의 안내 */}
+          <div className="mb-6 bg-gray-700 rounded-xl px-5 py-4 inline-block text-left sm:text-center">
+            <p className="text-sm text-gray-200 font-semibold mb-1">📩 신청 오류 문의</p>
+            <p className="text-xs text-gray-300 leading-relaxed">
+              신청 중 오류가 발생하면 아래로 문의해주세요.
+            </p>
+            <p className="text-xs text-yellow-300 mt-1 font-medium">
+              청년부 94또래 <span className="font-bold">차진환</span> · 카카오톡 ID: <span className="font-bold">atom103</span>
+            </p>
+          </div>
           <p className="text-sm">
             {t('home.footer')}
           </p>

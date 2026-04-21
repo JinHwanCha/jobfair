@@ -95,10 +95,10 @@ export default function ResumeApplyPage() {
       } else if (result.error === 'CROSS_BLOCK_MENTORING') {
         setSubmitError(t('resume.crossBlockMentoringError'));
       } else {
-        setSubmitError(result.error ? `${result.error} 청년부 95또래 차진환 카톡아이디 atom103으로 연락바랍니다.` : '신청 중 오류가 발생했습니다. 청년부 95또래 차진환 카톡아이디 atom103으로 연락바랍니다.');
+        setSubmitError(result.error ? `${result.error} 청년부 94또래 차진환 카톡아이디 atom103으로 연락바랍니다.` : '신청 중 오류가 발생했습니다. 청년부 94또래 차진환 카톡아이디 atom103으로 연락바랍니다.');
       }
     } catch {
-      setSubmitError('네트워크 오류가 발생했습니다. 청년부 95또래 차진환 카톡아이디 atom103으로 연락바랍니다.');
+      setSubmitError('네트워크 오류가 발생했습니다. 청년부 94또래 차진환 카톡아이디 atom103으로 연락바랍니다.');
     } finally {
       setIsSubmitting(false);
     }
@@ -561,7 +561,13 @@ export default function ResumeApplyPage() {
                 </div>
 
                 {submitError && (
-                  <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm mb-4">{submitError}</div>
+                  <div className="bg-red-50 border border-red-200 p-3 rounded-xl text-sm mb-4 space-y-1">
+                    <p className="text-red-600">{submitError}</p>
+                    <p className="text-red-500 text-xs border-t border-red-200 pt-2">
+                      문제가 지속되면 청년부 94또래 <span className="font-bold">차진환</span>에게 문의해주세요.<br />
+                      카카오톡 ID: <span className="font-bold">atom103</span>
+                    </p>
+                  </div>
                 )}
 
                 <div className="flex gap-3">
