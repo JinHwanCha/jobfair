@@ -229,8 +229,13 @@ function assignSingleApplicant(
 
     let assigned = false;
 
-    // 2-1: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도
-    for (const { mentorId } of choices) {
+    // 2-1: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도 (신청자 수 적은 순)
+    const sortedChoices = [...choices].sort((a, b) => {
+      const slotA = mentorSlots.find(s => s.mentorId === a.mentorId);
+      const slotB = mentorSlots.find(s => s.mentorId === b.mentorId);
+      return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
+    });
+    for (const { mentorId } of sortedChoices) {
       if (assignedMentorIds.has(mentorId)) continue;
       const mentor = mentorMap.get(mentorId);
       if (!mentor) continue;
@@ -253,7 +258,13 @@ function assignSingleApplicant(
     // 2-2: 희망직군(desiredField)에 해당하는 멘토 우선 배정
     if (applicant.desiredField) {
       const fieldMentors = fieldMentorsMap.get(applicant.desiredField) || [];
-      const fieldAlternatives = fieldMentors.filter(m => !assignedMentorIds.has(m.id));
+      const fieldAlternatives = fieldMentors
+        .filter(m => !assignedMentorIds.has(m.id))
+        .sort((a, b) => {
+          const slotA = mentorSlots.find(s => s.mentorId === a.id);
+          const slotB = mentorSlots.find(s => s.mentorId === b.id);
+          return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
+        });
 
       for (const altMentor of fieldAlternatives) {
         const altSlot = mentorSlots.find(s => s.mentorId === altMentor.id);
@@ -283,9 +294,13 @@ function assignSingleApplicant(
       if (assigned) break;
 
       const sameCategoryMentors = categoryMentorsMap.get(category) || [];
-      const alternativeMentors = sameCategoryMentors.filter(
-        m => !assignedMentorIds.has(m.id)
-      );
+      const alternativeMentors = sameCategoryMentors
+        .filter(m => !assignedMentorIds.has(m.id))
+        .sort((a, b) => {
+          const slotA = mentorSlots.find(s => s.mentorId === a.id);
+          const slotB = mentorSlots.find(s => s.mentorId === b.id);
+          return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
+        });
 
       for (const altMentor of alternativeMentors) {
         const altSlot = mentorSlots.find(s => s.mentorId === altMentor.id);
@@ -316,9 +331,14 @@ function assignSingleApplicant(
       }
     }
 
-    // 2-4: 최후 수단 - 아무 멘토나 배정
+    // 2-4: 최후 수단 - 아무 멘토나 배정 (신청자 수 적은 순)
     if (!assigned) {
-      for (const mentor of mentors) {
+      const sortedMentors = [...mentors].sort((a, b) => {
+        const slotA = mentorSlots.find(s => s.mentorId === a.id);
+        const slotB = mentorSlots.find(s => s.mentorId === b.id);
+        return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
+      });
+      for (const mentor of sortedMentors) {
         if (assignedMentorIds.has(mentor.id)) continue;
         const slot = mentorSlots.find(s => s.mentorId === mentor.id);
         if (!slot) continue;
@@ -535,6 +555,11 @@ function tryAssignToMentorAtTime(
   }
 
   return null;
+}
+
+// 멘토의 전체 타임 슬롯 합산 배정 인원수 계산
+function getTotalAssigned(mentorSlot: MentorSlot): number {
+  return mentorSlot.time1.length + mentorSlot.time2.length + mentorSlot.time3.length + mentorSlot.time4.length;
 }
 
 // 타임 번호에 해당하는 슬롯 배열 가져오기
