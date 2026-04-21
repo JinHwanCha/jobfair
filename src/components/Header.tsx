@@ -34,23 +34,23 @@ export default function Header() {
     <header className="bg-white shadow-sm fixed w-full top-0 z-50">
       {/* 헤더 바 - 오버레이 위에 표시 */}
       <div className="relative z-10 bg-white max-w-4xl mx-auto px-4">
-        <div className="flex items-center justify-between h-14 sm:h-16">
+        <div className="flex items-center justify-between h-14">
           {/* 로고 */}
           <Link href="/" className="flex items-center gap-2 shrink-0">
             <div className="w-8 h-8 bg-primary-500 rounded-lg flex items-center justify-center">
               <span className="text-gray-900 font-bold text-sm">JF</span>
             </div>
-            <span className="font-bold text-gray-800 hidden sm:block">{t('nav.logo')}</span>
+            <span className="font-bold text-gray-800 hidden md:block">{t('nav.logo')}</span>
           </Link>
 
           {/* 데스크톱 네비게이션 */}
-          <div className="hidden sm:flex items-center gap-2">
-            <nav className="flex items-center gap-1">
+          <div className="hidden md:flex items-center gap-1">
+            <nav className="flex items-center gap-0.5">
               {navItems.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors whitespace-nowrap ${
+                  className={`px-2 py-1.5 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
                     pathname === item.href
                       ? 'bg-primary-200 text-gray-900'
                       : 'text-gray-600 hover:bg-warm-100 hover:text-gray-900'
@@ -62,12 +62,12 @@ export default function Header() {
             </nav>
 
             {/* 언어 선택 */}
-            <div className="flex items-center border-l border-gray-200 ml-2 pl-2 shrink-0">
+            <div className="flex items-center border-l border-gray-200 ml-1 pl-1 shrink-0">
               {LANG_LABELS.map((l) => (
                 <button
                   key={l.value}
                   onClick={() => setLang(l.value)}
-                  className={`px-2 py-1 rounded text-xs font-medium transition-colors ${
+                  className={`px-1.5 py-1 rounded text-xs font-medium transition-colors ${
                     lang === l.value
                       ? 'bg-primary-400 text-gray-900'
                       : 'text-gray-500 hover:bg-gray-100'
@@ -82,7 +82,7 @@ export default function Header() {
           {/* 모바일 햄버거 버튼 */}
           <button
             onClick={() => setOpen(!open)}
-            className="sm:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors"
+            className="md:hidden flex items-center justify-center w-9 h-9 rounded-lg hover:bg-gray-100 transition-colors"
             aria-label="메뉴"
           >
             <div className="w-5 h-4 relative flex flex-col justify-between">
@@ -96,10 +96,10 @@ export default function Header() {
 
       {/* 모바일 드롭다운 메뉴 */}
       {open && (
-        <div className="sm:hidden fixed inset-0 bg-black/20 z-0" onClick={() => setOpen(false)} />
+        <div className="md:hidden fixed inset-0 bg-black/20 z-0" onClick={() => setOpen(false)} />
       )}
       <div
-        className={`sm:hidden absolute left-0 right-0 top-full bg-white shadow-lg z-10 overflow-hidden transition-all duration-200 ease-in-out ${
+        className={`md:hidden absolute left-0 right-0 top-full bg-white shadow-lg z-10 overflow-hidden transition-all duration-200 ease-in-out ${
           open ? 'max-h-80 border-t border-gray-100' : 'max-h-0'
         }`}
       >
