@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useMemo } from 'react';
-import { Applicant, Assignment, Mentor, ResumeApplicant, getResumeSections } from '@/types';
+import { Applicant, Assignment, Mentor, ResumeApplicant, CancelledApplicant, getResumeSections } from '@/types';
 
 type ChoiceKey = 'choice1' | 'choice2' | 'choice3' | 'choice4' | 'choice5' | 'choice6';
 type MessageKey = 'message1' | 'message2' | 'message3' | 'message4' | 'message5' | 'message6';
@@ -18,11 +18,12 @@ export default function AdminPage() {
     return found || '기타';
   };
 
-  const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors' | 'resume'>('applicants');
+  const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors' | 'resume' | 'cancelled'>('applicants');
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [mentors, setMentors] = useState<Mentor[]>([]);
   const [resumeApplicants, setResumeApplicants] = useState<ResumeApplicant[]>([]);
+  const [cancelledApplicants, setCancelledApplicants] = useState<CancelledApplicant[]>([]);
   const [mentorCounts, setMentorCounts] = useState<Record<string, Record<string, number>>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isAssigning, setIsAssigning] = useState(false);
@@ -63,6 +64,7 @@ export default function AdminPage() {
         setMentors(result.data.mentors || []);
         setMentorCounts(result.data.mentorCounts || {});
         setResumeApplicants(result.data.resumeApplicants || []);
+        setCancelledApplicants(result.data.cancelledApplicants || []);
       }
     } catch (error) {
       console.error('데이터 로드 실패:', error);
@@ -201,7 +203,7 @@ export default function AdminPage() {
             <div>
               <h1 className="text-lg sm:text-xl font-bold text-gray-800">직업박람회 관리</h1>
               <p className="text-sm text-gray-500">
-                총 신청자: {applicants.length}명 | 배정 완료: {assignments.length}명 | 자소서: {resumeApplicants.length}명
+                총 신청자: {applicants.length}명 | 배정 완료: {assignments.length}명 | 자소서: {resumeApplicants.length}명 | 취소: {cancelledApplicants.length}명
               </p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -230,8 +232,8 @@ export default function AdminPage() {
       {/* 탭 네비게이션 */}
       <div className="max-w-6xl mx-auto px-4 mt-4 sm:mt-6">
         <div className="flex gap-1 sm:gap-2 bg-white rounded-lg p-1 shadow-sm">
-          {(['applicants', 'assignments', 'mentors', 'resume'] as const).map((tab) => {
-            const labels = { applicants: `신청자 (${applicants.length})`, assignments: `배정 (${assignments.length})`, mentors: `멘토 (${mentors.length})`, resume: `자소서 (${resumeApplicants.length})` };
+          {(['applicants', 'assignments', 'mentors', 'resume', 'cancelled'] as const).map((tab) => {
+            const labels = { applicants: `신청자 (${applicants.length})`, assignments: `배정 (${assignments.length})`, mentors: `멘토 (${mentors.length})`, resume: `자소서 (${resumeApplicants.length})`, cancelled: `취소 (${cancelledApplicants.length})` };
             return (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
@@ -682,6 +684,80 @@ export default function AdminPage() {
                 );
               })()}
             </div>
+          </>
+        )}
+
+        {/* 취소자 목록 */}
+        {activeTab === 'cancelled' && (
+          <>
+            {cancelledApplicants.length === 0 ? (
+              <div className="text-center py-12 text-gray-500 bg-white rounded-xl">취소한 신청자가 없습니다.</div>
+            ) : (
+              <>
+                {/* 모바일 카드 뷰 */}
+                <div className="sm:hidden space-y-3">
+                  {cancelledApplicants.map((c) => (
+                    <div key={c.id} className="bg-white rounded-xl shadow-sm p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-bold text-gray-900">{c.name}</span>
+                        <span className="text-xs bg-red-100 text-red-600 px-2 py-1 rounded-full">취소됨</span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-1 text-xs text-gray-500 mb-2">
+                        <span>생년월일: {c.birthDate}</span>
+                        <span>전화: {c.phone4}</span>
+                      </div>
+                      <div className="flex flex-wrap gap-1 mb-2">
+                        {[c.choice1, c.choice2, c.choice3].filter(Boolean).map((ch, i) => {
+                          const mname = mentors.find(m => m.id === ch)?.name || ch;
+                          return (
+                            <span key={i} className="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full">{i + 1}지망: {mname}</span>
+                          );
+                        })}
+                      </div>
+                      <p className="text-xs text-gray-400">
+                        신청: {c.appliedAt ? new Date(c.appliedAt).toLocaleString('ko-KR') : '-'}
+                      </p>
+                      <p className="text-xs text-red-400">
+                        취소: {new Date(c.cancelledAt).toLocaleString('ko-KR')}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                {/* 데스크톱 테이블 뷰 */}
+                <div className="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-gray-50">
+                        <tr>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">생년월일</th>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">전화</th>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">1지망</th>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">2지망</th>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">3지망</th>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
+                          <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">취소일</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {cancelledApplicants.map((c) => (
+                          <tr key={c.id} className="hover:bg-gray-50">
+                            <td className="px-3 py-3 font-medium text-gray-900">{c.name}</td>
+                            <td className="px-3 py-3 text-gray-600">{c.birthDate}</td>
+                            <td className="px-3 py-3 text-gray-600">{c.phone4}</td>
+                            <td className="px-3 py-3 text-gray-600 text-sm">{mentors.find(m => m.id === c.choice1)?.name || c.choice1 || '-'}</td>
+                            <td className="px-3 py-3 text-gray-600 text-sm">{mentors.find(m => m.id === c.choice2)?.name || c.choice2 || '-'}</td>
+                            <td className="px-3 py-3 text-gray-600 text-sm">{mentors.find(m => m.id === c.choice3)?.name || c.choice3 || '-'}</td>
+                            <td className="px-3 py-3 text-gray-500 text-xs">{c.appliedAt ? new Date(c.appliedAt).toLocaleString('ko-KR') : '-'}</td>
+                            <td className="px-3 py-3 text-red-500 text-xs">{new Date(c.cancelledAt).toLocaleString('ko-KR')}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </>
+            )}
           </>
         )}
       </div>

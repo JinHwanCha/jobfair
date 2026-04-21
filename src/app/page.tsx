@@ -88,6 +88,17 @@ export default function HomePage() {
                 <span className="text-xl shrink-0">✍️</span>
                 <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
               </div>
+              <div className="flex gap-3 bg-red-50 rounded-xl p-3">
+                <span className="text-xl shrink-0">🚫</span>
+                <p className="text-sm text-red-800">
+                  <span className="font-bold">{t('resume.noticeCancel')}</span><br />
+                  {t('resume.noticeCancelBefore')}
+                  <Link href="/cancel" onClick={() => setShowNotice(false)} className="underline font-bold text-red-700 hover:text-red-900">
+                    {t('resume.noticeCancelLink')}
+                  </Link>
+                  {t('resume.noticeCancelAfter')}
+                </p>
+              </div>
             </div>
             <button onClick={() => dismissNotice()} className="btn-primary w-full">{t('resume.noticeConfirm')}</button>
             <button onClick={() => dismissNotice(true)} className="text-xs text-gray-400 hover:text-gray-600 w-full text-center mt-2 py-1">{t('resume.noticeDismissToday')}</button>

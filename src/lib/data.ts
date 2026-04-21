@@ -1,4 +1,4 @@
-import { Mentor, Applicant, Assignment, MentorSlot, ForeignLanguageGroup, MentoringTopic, ResumeApplicant, RESUME_MENTOR_NAMES } from '@/types';
+import { Mentor, Applicant, Assignment, MentorSlot, ForeignLanguageGroup, MentoringTopic, ResumeApplicant, CancelledApplicant, RESUME_MENTOR_NAMES } from '@/types';
 import { fetchMentorsFromSheet } from '@/lib/sheets';
 import { supabase } from '@/lib/supabase';
 
@@ -320,10 +320,48 @@ export async function deleteAllData(): Promise<void> {
   await supabase.from('applicants').delete().neq('id', '');
 }
 
-// 개별 신청자 삭제
+// 개별 신청자 삭제 (관리자용 - 취소 기록 없이 강제 삭제)
 export async function deleteApplicant(applicantId: string): Promise<void> {
   await supabase.from('assignments').delete().eq('applicant_id', applicantId);
   await supabase.from('applicants').delete().eq('id', applicantId);
+}
+
+// 신청 취소 (취소 기록 저장 후 삭제)
+export async function cancelApplicant(applicant: Applicant): Promise<void> {
+  const cancelId = `cancel-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+  await supabase.from('cancelled_applicants').insert({
+    id: cancelId,
+    name: applicant.name,
+    birth_date: applicant.birthDate,
+    phone4: applicant.phone4,
+    choice1: applicant.choice1 || '',
+    choice2: applicant.choice2 || '',
+    choice3: applicant.choice3 || '',
+    applied_at: applicant.createdAt,
+    cancelled_at: new Date().toISOString(),
+  });
+  await supabase.from('assignments').delete().eq('applicant_id', applicant.id);
+  await supabase.from('applicants').delete().eq('id', applicant.id);
+}
+
+// 취소자 전체 조회
+export async function getAllCancelledApplicants(): Promise<CancelledApplicant[]> {
+  const { data, error } = await supabase
+    .from('cancelled_applicants')
+    .select('*')
+    .order('cancelled_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map((row) => ({
+    id: row.id,
+    name: row.name,
+    birthDate: row.birth_date,
+    phone4: row.phone4,
+    choice1: row.choice1 || '',
+    choice2: row.choice2 || '',
+    choice3: row.choice3 || '',
+    appliedAt: row.applied_at,
+    cancelledAt: row.cancelled_at,
+  }));
 }
 
 // 자소서 신청자 삭제

@@ -123,3 +123,23 @@ ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS review_goal TEXT DEFAULT 
 ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS queue_number INTEGER DEFAULT 0;
 ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS resume_sections JSONB DEFAULT '{}'::JSONB;
 ALTER TABLE resume_applicants ADD COLUMN IF NOT EXISTS job_posting_urls JSONB DEFAULT '[]'::JSONB;
+
+-- ============================================
+-- 신청 취소 기록 테이블
+-- ============================================
+CREATE TABLE IF NOT EXISTS cancelled_applicants (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  birth_date TEXT NOT NULL,
+  phone4 TEXT NOT NULL,
+  choice1 TEXT DEFAULT '',
+  choice2 TEXT DEFAULT '',
+  choice3 TEXT DEFAULT '',
+  applied_at TIMESTAMPTZ,
+  cancelled_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_cancelled_applicants_name ON cancelled_applicants (name, phone4);
+
+ALTER TABLE cancelled_applicants ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "Service role full access" ON cancelled_applicants FOR ALL USING (true) WITH CHECK (true);

@@ -11,6 +11,7 @@ const translations = {
   'nav.mentors': { ko: '멘토 소개', en: 'Mentors', zh: '导师介绍' },
   'nav.apply': { ko: '신청하기', en: 'Apply', zh: '申请' },
   'nav.my': { ko: '내 배정 확인', en: 'My Assign', zh: '我的分配' },
+  'nav.cancel': { ko: '신청 취소', en: 'Cancel', zh: '取消申请' },
 
   // ── Home – Hero ──
   'home.date': { ko: '2026년 5월 9일 (토) 오후 2:30', en: 'May 9, 2026 (Sat) 2:30 PM', zh: '2026年5月9日（周六）下午2:30' },
@@ -247,6 +248,10 @@ const translations = {
   'resume.noticeTitle': { ko: '📢 주요 변경 안내', en: '📢 Important Updates', zh: '📢 重要变更通知' },
   'resume.noticeItem1': { ko: '멘토 정보가 업데이트되었습니다. 멘토 정보를 잘 확인해주세요.', en: 'Mentor information has been updated. Please review the mentor profiles carefully.', zh: '导师信息已更新，请仔细查看导师信息。' },
   'resume.noticeItem2': { ko: '자소서 작성 폼이 변경되었습니다. 새로운 양식을 확인해주세요.', en: 'The resume writing form has been updated. Please check the new format.', zh: '简历填写表格已更改，请确认新格式。' },
+  'resume.noticeCancel': { ko: '신청 취소 페이지가 추가되었습니다!', en: 'A cancellation page has been added!', zh: '取消申请页面已上线！' },
+  'resume.noticeCancelBefore': { ko: '부득이하게 참여가 어려우신 분들은 꼭 ', en: 'If you are unable to attend, please use ', zh: '如果您无法参加，请务必通过 ' },
+  'resume.noticeCancelLink': { ko: '신청 취소', en: 'Cancel Application', zh: '取消申请' },
+  'resume.noticeCancelAfter': { ko: '를 통해 다른 분께 자리를 양보해 주시면 감사하겠습니다. 🙏', en: ' to let others take your spot. 🙏', zh: '将명액让给其他同덕。 🙏' },
   'resume.noticeConfirm': { ko: '확인했습니다', en: 'Got it', zh: '已确认' },
   'resume.noticeDismissToday': { ko: '오늘은 그만보기', en: 'Don\u2019t show today', zh: '今天不再显示' },
   'resume.subtitle': { ko: '전문 멘토에게 자소서 첨삭을 받아보세요', en: 'Get your resume reviewed by expert mentors', zh: '由专业导师帮您修改简历' },

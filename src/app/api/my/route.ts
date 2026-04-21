@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMyAssignment, findApplicant, findApplicants, deleteApplicant } from '@/lib/data';
+import { getMyAssignment, findApplicant, findApplicants, cancelApplicant } from '@/lib/data';
 
 export const dynamic = 'force-dynamic';
 
@@ -98,7 +98,7 @@ export async function DELETE(request: NextRequest) {
       });
     }
 
-    await deleteApplicant(applicant.id);
+    await cancelApplicant(applicant);
 
     return NextResponse.json({
       success: true,

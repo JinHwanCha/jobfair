@@ -27,6 +27,7 @@ export default function Header() {
     { href: '/apply', label: t('nav.apply') },
     { href: '/resume/apply', label: t('nav.resume') },
     { href: '/my', label: t('nav.my') },
+    { href: '/cancel', label: t('nav.cancel') },
   ];
 
   return (
