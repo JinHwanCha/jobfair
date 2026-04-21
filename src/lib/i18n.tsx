@@ -52,6 +52,11 @@ const translations = {
   'home.ctaButton': { ko: '멘토링 신청하기', en: 'Apply for Mentoring', zh: '申请导师辅导' },
   'home.footer': { ko: '© 2026 내수동교회 직업박람회. All rights reserved.', en: '© 2026 Naesudong Church Job Fair. All rights reserved.', zh: '© 2026 内秀洞教会职业博览会。保留所有权利。' },
   'home.footerContact': { ko: '문의: 내수동교회 청년부', en: 'Contact: Naesudong Church Young Adults Dept.', zh: '咨询：内秀洞教会青年部' },
+  'contact.errorTitle': { ko: '📩 신청 오류 문의', en: '📩 Application Error Support', zh: '📩 申请错误咨询' },
+  'contact.errorDesc': { ko: '신청 중 오류가 발생하면 아래로 문의해주세요.', en: 'If you encounter an error during application, please contact below.', zh: '申请过程中遇到错误，请通过以下方式联系。' },
+  'contact.errorInfo': { ko: '청년부 94또래 차진환 · 카카오톡 ID: atom103', en: 'Jinhwan Cha (Youth Group) · KakaoTalk ID: atom103', zh: '青年部 차진환 · KakaoTalk ID: atom103' },
+  'contact.errorHint': { ko: '문제가 지속되면 청년부 94또래 차진환에게 문의해주세요.', en: 'If the problem persists, please contact Jinhwan Cha (Youth Group).', zh: '如果问题持续，请联系青年部차진환。' },
+  'contact.kakaoId': { ko: '카카오톡 ID: atom103', en: 'KakaoTalk ID: atom103', zh: 'KakaoTalk ID: atom103' },
 
   // ── Mentors Page ──
   'mentors.title': { ko: '멘토 소개', en: 'Meet the Mentors', zh: '导师介绍' },

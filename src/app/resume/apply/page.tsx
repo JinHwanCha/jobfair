@@ -564,8 +564,8 @@ export default function ResumeApplyPage() {
                   <div className="bg-red-50 border border-red-200 p-3 rounded-xl text-sm mb-4 space-y-1">
                     <p className="text-red-600">{submitError}</p>
                     <p className="text-red-500 text-xs border-t border-red-200 pt-2">
-                      문제가 지속되면 청년부 94또래 <span className="font-bold">차진환</span>에게 문의해주세요.<br />
-                      카카오톡 ID: <span className="font-bold">atom103</span>
+                      {t('contact.errorHint')}<br />
+                      {t('contact.kakaoId')}
                     </p>
                   </div>
                 )}
