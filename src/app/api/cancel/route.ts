@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
         const a = applicants[0];
         return NextResponse.json({
           success: true,
-          data: { name: a.name, birthDate: a.birthDate, phone4: a.phone4, choice1: a.choice1, choice2: a.choice2, choice3: a.choice3 },
+          data: { name: a.name, birthDate: a.birthDate, phone4: a.phone4, choice1: a.choice1, choice2: a.choice2, choice3: a.choice3, choice4: a.choice4, choice5: a.choice5, choice6: a.choice6 },
         });
       }
       return NextResponse.json({
@@ -40,7 +40,7 @@ export async function GET(request: NextRequest) {
     }
     return NextResponse.json({
       success: true,
-      data: { name: applicant.name, birthDate: applicant.birthDate, phone4: applicant.phone4, choice1: applicant.choice1, choice2: applicant.choice2, choice3: applicant.choice3 },
+      data: { name: applicant.name, birthDate: applicant.birthDate, phone4: applicant.phone4, choice1: applicant.choice1, choice2: applicant.choice2, choice3: applicant.choice3, choice4: applicant.choice4, choice5: applicant.choice5, choice6: applicant.choice6 },
     });
   } catch (error) {
     console.error('취소 조회 오류:', error);

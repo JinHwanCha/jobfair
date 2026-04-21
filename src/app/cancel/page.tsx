@@ -1,7 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from '@/components/Header';
+import { Mentor } from '@/types';
 
 interface ApplicantInfo {
   name: string;
@@ -10,6 +11,9 @@ interface ApplicantInfo {
   choice1: string;
   choice2: string;
   choice3: string;
+  choice4: string;
+  choice5: string;
+  choice6: string;
 }
 
 export default function CancelPage() {
@@ -24,6 +28,18 @@ export default function CancelPage() {
   const [needBirthDate, setNeedBirthDate] = useState(false);
   const [selectedBirthDate, setSelectedBirthDate] = useState('');
   const [cancelled, setCancelled] = useState(false);
+  const [mentors, setMentors] = useState<Mentor[]>([]);
+
+  useEffect(() => {
+    fetch('/api/mentors').then(r => r.json()).then(res => {
+      if (res.success) setMentors(res.data);
+    }).catch(() => {});
+  }, []);
+
+  const getMentorName = (id: string) => {
+    if (!id) return null;
+    return mentors.find(m => m.id === id)?.name || id;
+  };
 
   const handleSearch = async (birthDate?: string) => {
     if (!name || !phone4) {
@@ -193,18 +209,16 @@ export default function CancelPage() {
                 </div>
 
                 <div className="space-y-2 text-sm text-gray-700">
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-500">1지망</span>
-                    <span className="font-medium">{applicant.choice1 || '-'}</span>
-                  </div>
-                  <div className="flex justify-between py-2 border-b border-gray-100">
-                    <span className="text-gray-500">2지망</span>
-                    <span className="font-medium">{applicant.choice2 || '-'}</span>
-                  </div>
-                  <div className="flex justify-between py-2">
-                    <span className="text-gray-500">3지망</span>
-                    <span className="font-medium">{applicant.choice3 || '-'}</span>
-                  </div>
+                  {([applicant.choice1, applicant.choice2, applicant.choice3, applicant.choice4, applicant.choice5, applicant.choice6] as string[]).map((choiceId, i) => {
+                    const mname = getMentorName(choiceId);
+                    if (!mname) return null;
+                    return (
+                      <div key={i} className={`flex justify-between py-2 ${i < 5 ? 'border-b border-gray-100' : ''}`}>
+                        <span className="text-gray-500">{i + 1}지망</span>
+                        <span className="font-medium">{mname}</span>
+                      </div>
+                    );
+                  })}
                 </div>
 
                 <div className="bg-red-50 rounded-xl p-4 text-sm text-red-700">

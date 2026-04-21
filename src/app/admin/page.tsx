@@ -291,47 +291,48 @@ export default function AdminPage() {
             {/* 데스크톱 테이블 뷰 */}
             <div className="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[900px]">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">생년월일</th>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">전화</th>
+                      <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-20">이름</th>
+                      <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-16">생년월일</th>
+                      <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-12">전화</th>
                       {Array.from({ length: 6 }, (_, i) => (
-                        <th key={i} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">{i + 1}지망</th>
+                        <th key={i} className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase">{i + 1}지망</th>
                       ))}
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">신청일</th>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">수정일</th>
-                      <th className="px-3 py-3 text-center text-xs font-medium text-gray-500 uppercase">삭제</th>
+                      <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-28">신청일</th>
+                      <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-28">수정일</th>
+                      <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase w-12">삭제</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {applicants.map((applicant) => (
                       <tr key={applicant.id} className="hover:bg-gray-50">
-                        <td className="px-3 py-3 text-sm font-medium text-gray-900">{applicant.name}</td>
-                        <td className="px-3 py-3 text-sm text-gray-500">{applicant.birthDate}</td>
-                        <td className="px-3 py-3 text-sm text-gray-500">{applicant.phone4}</td>
+                        <td className="px-2 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">{applicant.name}</td>
+                        <td className="px-2 py-2 text-xs text-gray-500">{applicant.birthDate}</td>
+                        <td className="px-2 py-2 text-xs text-gray-500">{applicant.phone4}</td>
                         {Array.from({ length: 6 }, (_, i) => {
                           const choiceId = applicant[`choice${i + 1}` as ChoiceKey];
+                          const mname = mentors.find(m => m.id === choiceId)?.name;
                           return (
-                            <td key={i} className="px-3 py-3 text-sm text-gray-500">
-                              {mentors.find(m => m.id === choiceId)?.name || '-'}
+                            <td key={i} className="px-2 py-2 text-xs text-gray-600 max-w-[80px]">
+                              <span className="block truncate" title={mname}>{mname || <span className="text-gray-300">-</span>}</span>
                             </td>
                           );
                         })}
-                        <td className="px-3 py-3 text-sm text-gray-500 whitespace-nowrap">
-                          {new Date(applicant.createdAt).toLocaleString('ko-KR')}
+                        <td className="px-2 py-2 text-xs text-gray-500 whitespace-nowrap">
+                          {new Date(applicant.createdAt).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}
                         </td>
-                        <td className="px-3 py-3 text-sm whitespace-nowrap">
+                        <td className="px-2 py-2 text-xs whitespace-nowrap">
                           {applicant.updatedAt !== applicant.createdAt ? (
-                            <span className="text-orange-500">{new Date(applicant.updatedAt).toLocaleString('ko-KR')}</span>
+                            <span className="text-orange-500">{new Date(applicant.updatedAt).toLocaleDateString('ko-KR', { month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })}</span>
                           ) : (
-                            <span className="text-gray-400">-</span>
+                            <span className="text-gray-300">-</span>
                           )}
                         </td>
-                        <td className="px-3 py-3 text-center">
+                        <td className="px-2 py-2 text-center">
                           <button onClick={() => deleteApplicant(applicant.id, applicant.name)}
-                            className="text-red-500 hover:text-red-700 text-xs font-medium px-2 py-1 rounded hover:bg-red-50">삭제</button>
+                            className="text-red-500 hover:text-red-700 text-xs font-medium px-1.5 py-0.5 rounded hover:bg-red-50">삭제</button>
                         </td>
                       </tr>
                     ))}
@@ -381,34 +382,39 @@ export default function AdminPage() {
             </div>
             <div className="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full">
+                <table className="w-full min-w-[700px]">
                   <thead className="bg-gray-50">
                     <tr>
-                      <th className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">이름</th>
                       {Array.from({ length: 4 }, (_, i) => (
-                        <th key={i} className="px-3 py-3 text-left text-xs font-medium text-gray-500 uppercase" colSpan={2}>{i + 1}타임 / 장소</th>
+                        <th key={i} className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">{i + 1}타임</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
                     {assignments.map((assignment) => (
                       <tr key={assignment.applicantId} className="hover:bg-gray-50">
-                        <td className="px-3 py-3 text-sm font-medium text-gray-900">{assignment.applicantName} <span className="text-xs text-gray-400">({assignment.phone4})</span></td>
+                        <td className="px-3 py-2 text-sm font-medium text-gray-900 whitespace-nowrap">
+                          {assignment.applicantName}
+                          <span className="text-xs text-gray-400 font-normal ml-1">({assignment.phone4})</span>
+                        </td>
                         {Array.from({ length: 4 }, (_, i) => {
                           const slot = (assignment as unknown as Record<string, unknown>)[`time${i + 1}`] as Assignment['time1'];
-                          return [
-                            <td key={`m${i}`} className="px-3 py-3 text-sm">
+                          return (
+                            <td key={i} className="px-3 py-2 text-xs">
                               {slot ? (
-                                <span className={slot.isOriginalChoice ? 'text-green-600' : 'text-orange-600'}>
-                                  {slot.mentorName}
+                                <>
+                                  <span className={slot.isOriginalChoice ? 'font-medium text-green-700' : 'font-medium text-orange-600'}>
+                                    {slot.mentorName}
+                                  </span>
                                   {!slot.isOriginalChoice && slot.originalChoice && (
-                                    <span className="text-xs text-gray-400 block">(원래: {slot.originalChoice})</span>
+                                    <span className="text-gray-400 block">원래: {slot.originalChoice}</span>
                                   )}
-                                </span>
-                              ) : '-'}
-                            </td>,
-                            <td key={`l${i}`} className="px-3 py-3 text-sm text-gray-500">{slot?.location || '-'}</td>
-                          ];
+                                  <span className="text-gray-400 block">{slot.location}</span>
+                                </>
+                              ) : <span className="text-gray-300">-</span>}
+                            </td>
+                          );
                         })}
                       </tr>
                     ))}
