@@ -123,6 +123,21 @@ export default function MentorModal({ mentor, onClose }: MentorModalProps) {
 
         {/* 하단 닫기 */}
         <div className="px-6 pb-6 pt-2">
+          {mentor.name === '김지선' && (
+            <div className="mb-3 bg-yellow-50 border border-yellow-300 rounded-xl px-4 py-3">
+              <p className="text-xs text-yellow-800 leading-relaxed">
+                {t('kimJiseon.modalNotice')}
+              </p>
+              <a
+                href="https://open.kakao.com/o/gnKtJyri"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-block mt-2 text-xs font-semibold text-yellow-900 underline underline-offset-2"
+              >
+                {t('kimJiseon.openKakao')} →
+              </a>
+            </div>
+          )}
           <button
             onClick={onClose}
             className="btn-secondary w-full"

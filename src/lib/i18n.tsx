@@ -329,6 +329,38 @@ const translations = {
   'resume.queueWaitlist': { ko: '예비 순번', en: 'Waitlist #', zh: '候补编号' },
   'resume.queueWaitlistHint': { ko: '앞순번 수정 시 올라갈 수 있습니다', en: 'May move up if earlier spots open', zh: '前面的人修改时可能会上升' },
   'resume.waitlistBadge': { ko: '예비', en: 'Waitlist', zh: '候补' },
+
+  // ── 김지선 멘토 불참 공지 ──
+  'kimJiseon.applyBannerTitle': {
+    ko: '📢 김지선 멘토 관련 안내',
+    en: '📢 Notice about Mentor 김지선',
+    zh: '📢 关于导师김지선的通知',
+  },
+  'kimJiseon.applyBannerDesc': {
+    ko: '아쉽게도 김지선 멘토가 당일 사정으로 직접 참석이 어렵게 되었어요. 오픈카톡방을 통해 별도로 멘토링이 이어질 예정이에요.',
+    en: "Unfortunately, mentor 김지선 won't be able to attend in person on the day. Mentoring will continue through the open KakaoTalk chat.",
+    zh: '很遗憾，김지선导师当天有事无法亲自到场。将通过开放聊天室另行安排导师辅导。',
+  },
+  'kimJiseon.openKakao': {
+    ko: '오픈카톡방 바로가기',
+    en: 'Open KakaoTalk Chat',
+    zh: '进入开放聊天室',
+  },
+  'kimJiseon.modalNotice': {
+    ko: '아쉽게도 김지선 멘토는 부득이한 사정으로 이번 직업박람회에 직접 오시기 어렵게 되었습니다. 오픈카톡방을 통해 별도로 멘토링이 이어질 예정이니 참고부탁드립니다.',
+    en: "Unfortunately, mentor 김지선 is unable to attend the Job Fair in person. Mentoring will be arranged via the open KakaoTalk chat — we hope you'll still connect! :)",
+    zh: '很遗憾，김지선导师因不可避免的原因无法亲自出席本次职业博览会。将通过开放聊天室单独安排导师辅导，敬请期待。',
+  },
+  'kimJiseon.myPageNotice': {
+    ko: '아쉽게도 김지선 멘토가 당일 사정으로 직접 참석이 어렵게 되었습니다. 아래 오픈카톡방을 통해 별도로 멘토링이 진행될 예정이니 참고해 주세요.',
+    en: "Unfortunately, mentor 김지선 is unable to attend in person. Mentoring will be held separately via the open KakaoTalk chat below.",
+    zh: '很遗憾，김지선导师当天无法亲自到场。将通过以下开放聊天室单独安排导师辅导，请了解。',
+  },
+  'kimJiseon.myPageWarning': {
+    ko: '⚠️ 현재 희망 멘토를 변경하여 재신청하실 경우, 신청 순번이 맨 뒤로 밀려 원하는 멘토와의 매칭에 어려움이 생길 수 있습니다. 꼭 필요한 경우에만 신중하게 변경해 주세요.',
+    en: '⚠️ Re-applying with different mentor choices will move you to the back of the queue, which may affect your matching. Only make changes if absolutely necessary.',
+    zh: '⚠️ 重新申请并修改希望导师后，您的申请顺序将被移至最后，可能影响与导师的匹配。如非必要，请谨慎修改。',
+  },
 } as const;
 
 type TranslationKey = keyof typeof translations;
