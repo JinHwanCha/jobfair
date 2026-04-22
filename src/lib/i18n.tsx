@@ -200,6 +200,7 @@ const translations = {
   'my.note3': { ko: '문의사항은 안내 데스크로 연락해주세요.', en: 'For inquiries, contact the help desk.', zh: '如有疑问，请联系咨询台。' },
   'my.notFound': { ko: '배정 정보를 찾을 수 없습니다.', en: 'Assignment not found.', zh: '未找到分配信息。' },
   'my.notFoundDesc': { ko: '신청 시 입력한 이름과 전화번호를 다시 확인해주세요.', en: 'Please verify your name and phone number.', zh: '请重新确认申请时输入的姓名和电话号码。' },
+  'my.contactKakao': { ko: '문의: 카카오톡 ID', en: 'Contact: KakaoTalk ID', zh: '咨询：KakaoTalk ID' },
   'my.promptSearch': { ko: '위 정보를 입력하고 조회 버튼을 눌러주세요.', en: 'Enter your info above and press Search.', zh: '请输入以上信息并点击查询按钮。' },
   'my.errorBoth': { ko: '이름과 전화번호 뒷자리를 입력해주세요.', en: 'Please enter your name and last 4 digits of phone.', zh: '请输入姓名和手机号码后4位。' },
   'my.errorPhone': { ko: '전화번호 뒷자리 4자리를 입력해주세요.', en: 'Please enter the last 4 digits.', zh: '请输入手机号码后4位。' },

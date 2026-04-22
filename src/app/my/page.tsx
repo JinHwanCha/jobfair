@@ -328,6 +328,9 @@ export default function MyPage() {
                 <p className="text-sm text-gray-500">
                   {t('my.notFoundDesc')}
                 </p>
+                <p className="text-sm text-gray-500 mt-4">
+                  {t('my.contactKakao')} <span className="font-semibold text-yellow-600">atom103</span>
+                </p>
               </div>
             )}
           </>
