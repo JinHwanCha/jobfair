@@ -23,8 +23,8 @@ export async function getResumeMentors(): Promise<Mentor[]> {
 
 // 신청자 조회 (이름 + 전화번호 뒷자리 + 생년월일로)
 export async function findApplicant(name: string, phone4: string, birthDate?: string): Promise<Applicant | undefined> {
-  const normalizedName = name.normalize('NFC');
-  // phone4(숫자)로만 DB 조회 후 JS에서 이름 비교 (DB의 Unicode 인코딩 차이 대응)
+  const normalizedName = name.trim().normalize('NFC');
+  // phone4(숫자)로만 DB 조회 후 JS에서 이름 비교 (DB의 Unicode 인코딩/공백 차이 대응)
   let query = supabase
     .from('applicants')
     .select('*')
@@ -37,15 +37,15 @@ export async function findApplicant(name: string, phone4: string, birthDate?: st
   const { data } = await query;
 
   if (!data || data.length === 0) return undefined;
-  const match = data.find((row: { name: string }) => row.name.normalize('NFC') === normalizedName);
+  const match = data.find((row: { name: string }) => row.name.trim().normalize('NFC') === normalizedName);
   if (!match) return undefined;
   return dbToApplicant(match);
 }
 
 // 이름 + 전화번호로 신청자 목록 조회 (생년월일 선택용)
 export async function findApplicants(name: string, phone4: string): Promise<Applicant[]> {
-  const normalizedName = name.normalize('NFC');
-  // phone4(숫자)로만 DB 조회 후 JS에서 이름 비교 (DB의 Unicode 인코딩 차이 대응)
+  const normalizedName = name.trim().normalize('NFC');
+  // phone4(숫자)로만 DB 조회 후 JS에서 이름 비교 (DB의 Unicode 인코딩/공백 차이 대응)
   const { data } = await supabase
     .from('applicants')
     .select('*')
@@ -53,7 +53,7 @@ export async function findApplicants(name: string, phone4: string): Promise<Appl
 
   if (!data) return [];
   return data
-    .filter((row: { name: string }) => row.name.normalize('NFC') === normalizedName)
+    .filter((row: { name: string }) => row.name.trim().normalize('NFC') === normalizedName)
     .map(dbToApplicant);
 }
 
@@ -61,7 +61,7 @@ export async function findApplicants(name: string, phone4: string): Promise<Appl
 export async function upsertApplicant(input: Omit<Applicant, 'id' | 'createdAt' | 'updatedAt'>): Promise<Applicant> {
   const existing = await findApplicant(input.name, input.phone4, input.birthDate);
 
-  input = { ...input, name: input.name.normalize('NFC') };
+  input = { ...input, name: input.name.trim().normalize('NFC') };
 
   if (existing) {
     const { data, error } = await supabase
@@ -215,7 +215,7 @@ export async function getMentorSlots(): Promise<MentorSlot[]> {
 
 // 배정 결과 조회 (개인)
 export async function getMyAssignment(name: string, phone4: string, birthDate?: string): Promise<Assignment | undefined> {
-  const normalizedName = name.normalize('NFC');
+  const normalizedName = name.trim().normalize('NFC');
   if (birthDate) {
     // birthDate가 주어지면 신청자 조회 후 applicantId로 배정 검색
     const applicant = await findApplicant(normalizedName, phone4, birthDate);
@@ -237,7 +237,7 @@ export async function getMyAssignment(name: string, phone4: string, birthDate?: 
     .eq('phone4', phone4);
 
   if (!data || data.length === 0) return undefined;
-  const match = data.find((row: { applicant_name: string }) => row.applicant_name.normalize('NFC') === normalizedName);
+  const match = data.find((row: { applicant_name: string }) => row.applicant_name.trim().normalize('NFC') === normalizedName);
   if (!match) return undefined;
   return dbToAssignment(match);
 }
