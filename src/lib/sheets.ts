@@ -176,7 +176,7 @@ export async function fetchMentorsFromSheet(): Promise<Mentor[]> {
         bibleVerse: bibleVerse || undefined,
         advice: advice || undefined,
         location: `장소${i}`,
-        maxCapacity: 3,
+        maxCapacity: 4,
         jobPosition: extra?.jobPosition || undefined,
         major: extra?.major || undefined,
         oneLiner: extra?.oneLiner || undefined,
