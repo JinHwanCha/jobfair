@@ -1,7 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMyAssignment, findApplicant, findApplicants, cancelApplicant } from '@/lib/data';
+import { getMyAssignment, findApplicant, findApplicants, cancelApplicant, getMentors } from '@/lib/data';
 
 export const dynamic = 'force-dynamic';
+
+async function checkHasKimJiseonChoice(choiceIds: string[]): Promise<boolean> {
+  try {
+    const mentors = await getMentors();
+    const jiseon = mentors.find(m => m.name === '김지선');
+    if (!jiseon) return false;
+    return choiceIds.includes(jiseon.id);
+  } catch {
+    return false;
+  }
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -36,7 +47,10 @@ export async function GET(request: NextRequest) {
             applied: true,
           });
         }
-        return NextResponse.json({ success: true, data: assignment, birthDate: applicants[0].birthDate });
+        const applicant0 = applicants[0];
+        const choiceIds = [applicant0.choice1, applicant0.choice2, applicant0.choice3, applicant0.choice4, applicant0.choice5, applicant0.choice6].filter(Boolean);
+        const hasKimJiseonChoice = await checkHasKimJiseonChoice(choiceIds);
+        return NextResponse.json({ success: true, data: assignment, birthDate: applicants[0].birthDate, hasKimJiseonChoice });
       }
       // 여러 명 → 생년월일 선택 필요
       return NextResponse.json({
@@ -65,9 +79,16 @@ export async function GET(request: NextRequest) {
       });
     }
 
+    const applicantForChoice = await findApplicant(name, phone4, birthDate);
+    const choiceIds2 = applicantForChoice
+      ? [applicantForChoice.choice1, applicantForChoice.choice2, applicantForChoice.choice3, applicantForChoice.choice4, applicantForChoice.choice5, applicantForChoice.choice6].filter(Boolean)
+      : [];
+    const hasKimJiseonChoice2 = await checkHasKimJiseonChoice(choiceIds2);
+
     return NextResponse.json({
       success: true,
       data: assignment,
+      hasKimJiseonChoice: hasKimJiseonChoice2,
     });
   } catch (error) {
     console.error('배정 조회 오류:', error);

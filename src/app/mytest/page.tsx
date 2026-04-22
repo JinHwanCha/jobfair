@@ -19,6 +19,7 @@ export default function MyPage() {
   const [needBirthDate, setNeedBirthDate] = useState(false);
   const [selectedBirthDate, setSelectedBirthDate] = useState<string>('');
   const [isCancelling, setIsCancelling] = useState(false);
+  const [hasKimJiseonChoice, setHasKimJiseonChoice] = useState(false);
 
   const handleSearch = async (selectedBirthDate2?: string) => {
     if (!name || !phone4) {
@@ -44,6 +45,7 @@ export default function MyPage() {
 
       if (result.success && result.data) {
         setAssignment(result.data);
+        setHasKimJiseonChoice(result.hasKimJiseonChoice || false);
         setNeedBirthDate(false);
         setBirthDates([]);
         setSelectedBirthDate(selectedBirthDate2 || result.birthDate || '');
@@ -260,6 +262,33 @@ export default function MyPage() {
           <>
             {assignment ? (
               <div className="space-y-6">
+                {/* 김지선 멘토 당일 불참 공지 */}
+                {hasKimJiseonChoice && (
+                  <div className="bg-yellow-50 border-2 border-yellow-400 rounded-2xl p-5">
+                    <div className="flex items-start gap-3">
+                      <span className="text-2xl flex-shrink-0">📢</span>
+                      <div>
+                        <h3 className="font-bold text-yellow-800 mb-1">김지선 멘토 관련 안내</h3>
+                        <p className="text-sm text-yellow-700 leading-relaxed">
+                          김지선 멘토가 당일 사정으로 인해 참석이 어렵게 되었습니다.<br />
+                          김지선 멘토를 희망하셨던 분들은 아래 오픈카톡방을 통해 별도로 일정을 조율해 주세요.
+                        </p>
+                        <a
+                          href="https://open.kakao.com/o/gnKtJyri"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 mt-3 px-4 py-2 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-semibold rounded-xl text-sm transition-colors"
+                        >
+                          <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 5.92 2 10.76c0 3.06 1.72 5.77 4.35 7.45l-.88 3.28 3.74-2.02A11.1 11.1 0 0 0 12 19.52c5.52 0 10-3.92 10-8.76S17.52 2 12 2Z" />
+                          </svg>
+                          오픈카톡방 입장하기
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* 안내 메시지 */}
                 <div className="bg-primary-100 rounded-2xl p-5 text-center">
                   <p className="text-lg font-medium text-gray-900 mb-1">

@@ -4,7 +4,9 @@ import { runAutoAssignment } from '@/lib/assignment';
 
 export async function POST() {
   try {
-    const mentors = await getMentors();
+    const allMentors = await getMentors();
+    // 김지선 멘토는 당일 불참으로 배정 제외
+    const mentors = allMentors.filter(m => m.name !== '김지선');
     const applicants = await getAllApplicants();
 
     if (applicants.length === 0) {
