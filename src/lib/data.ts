@@ -24,33 +24,37 @@ export async function getResumeMentors(): Promise<Mentor[]> {
 // 신청자 조회 (이름 + 전화번호 뒷자리 + 생년월일로)
 export async function findApplicant(name: string, phone4: string, birthDate?: string): Promise<Applicant | undefined> {
   const normalizedName = name.normalize('NFC');
+  // phone4(숫자)로만 DB 조회 후 JS에서 이름 비교 (DB의 Unicode 인코딩 차이 대응)
   let query = supabase
     .from('applicants')
     .select('*')
-    .eq('name', normalizedName)
     .eq('phone4', phone4);
 
   if (birthDate) {
     query = query.eq('birth_date', birthDate);
   }
 
-  const { data } = await query.limit(1).single();
+  const { data } = await query;
 
-  if (!data) return undefined;
-  return dbToApplicant(data);
+  if (!data || data.length === 0) return undefined;
+  const match = data.find((row: { name: string }) => row.name.normalize('NFC') === normalizedName);
+  if (!match) return undefined;
+  return dbToApplicant(match);
 }
 
 // 이름 + 전화번호로 신청자 목록 조회 (생년월일 선택용)
 export async function findApplicants(name: string, phone4: string): Promise<Applicant[]> {
   const normalizedName = name.normalize('NFC');
+  // phone4(숫자)로만 DB 조회 후 JS에서 이름 비교 (DB의 Unicode 인코딩 차이 대응)
   const { data } = await supabase
     .from('applicants')
     .select('*')
-    .eq('name', normalizedName)
     .eq('phone4', phone4);
 
   if (!data) return [];
-  return data.map(dbToApplicant);
+  return data
+    .filter((row: { name: string }) => row.name.normalize('NFC') === normalizedName)
+    .map(dbToApplicant);
 }
 
 // 신청자 추가/수정
@@ -226,16 +230,16 @@ export async function getMyAssignment(name: string, phone4: string, birthDate?: 
     return dbToAssignment(data);
   }
 
+  // birthDate 없는 fallback: phone4로 조회 후 JS에서 이름 비교
   const { data } = await supabase
     .from('assignments')
     .select('*')
-    .eq('applicant_name', normalizedName)
-    .eq('phone4', phone4)
-    .limit(1)
-    .single();
+    .eq('phone4', phone4);
 
-  if (!data) return undefined;
-  return dbToAssignment(data);
+  if (!data || data.length === 0) return undefined;
+  const match = data.find((row: { applicant_name: string }) => row.applicant_name.normalize('NFC') === normalizedName);
+  if (!match) return undefined;
+  return dbToAssignment(match);
 }
 
 // 멘토별 신청 수 집계
