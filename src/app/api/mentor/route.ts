@@ -100,12 +100,55 @@ export async function POST(request: NextRequest) {
       timeSlots.push({ time: t, mentees });
     }
 
+    // 이 멘토를 선택했지만 배정되지 않은 신청자
+    const allAssignedIds = new Set<string>();
+    for (let t = 1; t <= 4; t++) {
+      const slotKey = `time${t}` as keyof typeof mySlot;
+      const ids: string[] = mySlot ? (mySlot[slotKey] as string[]) || [] : [];
+      ids.forEach(id => allAssignedIds.add(id));
+    }
+
+    const unassignedApplicants = applicants
+      .filter(a => !allAssignedIds.has(a.id))
+      .filter(a => {
+        for (let c = 1; c <= 6; c++) {
+          const choiceKey = `choice${c}` as keyof typeof a;
+          if (a[choiceKey] === mentor.id) return true;
+        }
+        return false;
+      })
+      .map(a => {
+        let choiceNum = 0;
+        let message = '';
+        for (let c = 1; c <= 6; c++) {
+          const choiceKey = `choice${c}` as keyof typeof a;
+          if (a[choiceKey] === mentor.id) {
+            choiceNum = c;
+            const msgKey = `message${c}` as keyof typeof a;
+            message = (a[msgKey] as string) || '';
+            break;
+          }
+        }
+        return {
+          name: a.name,
+          choiceNum,
+          message,
+          department: a.department || '',
+          birthYear: a.birthYear || '',
+          currentStatus: a.currentStatus || '',
+          desiredField: a.desiredField || '',
+          interestTopics: a.interestTopics || [],
+        };
+      })
+      .sort((a, b) => a.choiceNum - b.choiceNum);
+
     return NextResponse.json({
       success: true,
       data: {
         mentorName: mentor.name,
         mentorJob: mentor.job,
         timeSlots,
+        unassignedApplicants,
       },
     });
   } catch (error) {
