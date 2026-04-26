@@ -422,8 +422,9 @@ export default function ApplyPage() {
                 </div>
               </div>
               <div>
-                <label className="label">{t('apply.currentStatus')}</label>
+                <label className="label" htmlFor="currentStatus">{t('apply.currentStatus')}</label>
                 <select
+                  id="currentStatus"
                   name="currentStatus"
                   value={formData.currentStatus}
                   onChange={(e) => setFormData({ ...formData, currentStatus: e.target.value })}
@@ -527,6 +528,24 @@ export default function ApplyPage() {
                   className="inline-block mt-2 text-xs font-semibold text-yellow-900 underline underline-offset-2"
                 >
                   {t('kimJiseon.openKakao')} →
+                </a>
+              </div>
+            )}
+
+            {/* 김교은 멘토 불참 공지 */}
+            {!isLoadingMentors && mentors.some(m => m.name === '김교은') && (
+              <div className="bg-yellow-50 border border-yellow-300 rounded-2xl px-4 py-3 mb-4">
+                <p className="text-sm font-semibold text-yellow-900 mb-1">{t('kimGyoeun.applyBannerTitle')}</p>
+                <p className="text-sm text-yellow-800 leading-relaxed">
+                  {t('kimGyoeun.modalNotice')}
+                </p>
+                <a
+                  href="https://invite.kakao.com/tc/1aUucdNOpT"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-2 text-xs font-semibold text-yellow-900 underline underline-offset-2"
+                >
+                  {t('kimGyoeun.openKakao')} →
                 </a>
               </div>
             )}

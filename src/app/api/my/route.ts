@@ -14,6 +14,17 @@ async function checkHasKimJiseonChoice(choiceIds: string[]): Promise<boolean> {
   }
 }
 
+async function checkHasKimGyoeunChoice(choiceIds: string[]): Promise<boolean> {
+  try {
+    const mentors = await getMentors();
+    const gyoeun = mentors.find(m => m.name === '김교은');
+    if (!gyoeun) return false;
+    return choiceIds.includes(gyoeun.id);
+  } catch {
+    return false;
+  }
+}
+
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
@@ -50,7 +61,8 @@ export async function GET(request: NextRequest) {
         const applicant0 = applicants[0];
         const choiceIds = [applicant0.choice1, applicant0.choice2, applicant0.choice3, applicant0.choice4, applicant0.choice5, applicant0.choice6].filter(Boolean);
         const hasKimJiseonChoice = await checkHasKimJiseonChoice(choiceIds);
-        return NextResponse.json({ success: true, data: assignment, birthDate: applicants[0].birthDate, hasKimJiseonChoice });
+        const hasKimGyoeunChoice = await checkHasKimGyoeunChoice(choiceIds);
+        return NextResponse.json({ success: true, data: assignment, birthDate: applicants[0].birthDate, hasKimJiseonChoice, hasKimGyoeunChoice });
       }
       // 여러 명 → 생년월일 선택 필요
       return NextResponse.json({
@@ -84,11 +96,13 @@ export async function GET(request: NextRequest) {
       ? [applicantForChoice.choice1, applicantForChoice.choice2, applicantForChoice.choice3, applicantForChoice.choice4, applicantForChoice.choice5, applicantForChoice.choice6].filter(Boolean)
       : [];
     const hasKimJiseonChoice2 = await checkHasKimJiseonChoice(choiceIds2);
+    const hasKimGyoeunChoice2 = await checkHasKimGyoeunChoice(choiceIds2);
 
     return NextResponse.json({
       success: true,
       data: assignment,
       hasKimJiseonChoice: hasKimJiseonChoice2,
+      hasKimGyoeunChoice: hasKimGyoeunChoice2,
     });
   } catch (error) {
     console.error('배정 조회 오류:', error);
