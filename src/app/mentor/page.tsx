@@ -408,54 +408,42 @@ export default function MentorPage() {
                     <p className="text-center text-gray-400 text-sm py-6">미배정된 신청자가 없습니다.</p>
                   ) : (
                     data.unassignedApplicants.map((mentee, idx) => (
-                      <div key={idx} className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
-                        <div
-                          className="flex items-center justify-between cursor-pointer px-4 py-3"
-                          onClick={() => setExpandedUnassignedIdx(expandedUnassignedIdx === idx ? -1 : idx)}
-                        >
-                          <div className="flex items-center gap-3">
-                            <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
-                              mentee.choiceNum === 1 ? 'bg-blue-100 text-blue-700' :
-                              mentee.choiceNum === 2 ? 'bg-green-100 text-green-700' :
-                              mentee.choiceNum === 3 ? 'bg-purple-100 text-purple-700' :
-                              mentee.choiceNum === 4 ? 'bg-orange-100 text-orange-700' :
-                              mentee.choiceNum === 5 ? 'bg-pink-100 text-pink-700' :
-                              'bg-teal-100 text-teal-700'
-                            }`}>
-                              {mentee.choiceNum}지
-                            </span>
-                            <span className="font-medium text-gray-800">{mentee.name}</span>
-                            <span className="text-xs text-gray-400">{mentee.department} · {mentee.currentStatus}</span>
-                          </div>
-                          <span className="text-gray-400 text-sm">{expandedUnassignedIdx === idx ? '▲' : '▼'}</span>
+                      <div key={idx} className="flex flex-col gap-1 p-3 bg-white border border-gray-100 rounded-xl shadow-sm">
+                        <div className="flex items-center gap-2">
+                          <span className={`inline-flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold ${
+                            mentee.choiceNum === 1 ? 'bg-blue-100 text-blue-700' :
+                            mentee.choiceNum === 2 ? 'bg-green-100 text-green-700' :
+                            mentee.choiceNum === 3 ? 'bg-purple-100 text-purple-700' :
+                            mentee.choiceNum === 4 ? 'bg-orange-100 text-orange-700' :
+                            mentee.choiceNum === 5 ? 'bg-pink-100 text-pink-700' :
+                            'bg-teal-100 text-teal-700'
+                          }`}>
+                            {mentee.choiceNum}지
+                          </span>
+                          <span className="font-medium text-gray-800">{mentee.name}</span>
                         </div>
-
-                        {expandedUnassignedIdx === idx && (
-                          <div className="px-4 pb-4 pt-1 border-t border-gray-100">
-                            <div className="flex flex-wrap gap-1.5 mb-2">
-                              {mentee.department && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700">{mentee.department}</span>
-                              )}
-                              {mentee.birthYear && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-700">{mentee.birthYear}{t('mentor.yearBorn')}</span>
-                              )}
-                              {mentee.currentStatus && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700">{mentee.currentStatus}</span>
-                              )}
-                              {mentee.desiredField && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-orange-50 text-orange-700">{t('mentor.desired')}: {mentee.desiredField}</span>
-                              )}
-                              {mentee.interestTopics && mentee.interestTopics.length > 0 && (
-                                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-pink-50 text-pink-700">
-                                  {mentee.interestTopics.map(topic => t(`apply.topic_${topic}` as Parameters<typeof t>[0])).join(', ')}
-                                </span>
-                              )}
-                            </div>
-                            {mentee.message && (
-                              <div className="text-sm text-gray-600 bg-gray-50 rounded-md px-3 py-2 border border-gray-100">
-                                💬 {mentee.message}
-                              </div>
-                            )}
+                        <div className="ml-9 flex flex-wrap gap-1.5 mt-1">
+                          {mentee.department && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-blue-50 text-blue-700">{mentee.department}</span>
+                          )}
+                          {mentee.birthYear && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-purple-50 text-purple-700">{mentee.birthYear}{t('mentor.yearBorn')}</span>
+                          )}
+                          {mentee.currentStatus && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-green-50 text-green-700">{mentee.currentStatus}</span>
+                          )}
+                          {mentee.desiredField && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-orange-50 text-orange-700">{t('mentor.desired')}: {mentee.desiredField}</span>
+                          )}
+                          {mentee.interestTopics && mentee.interestTopics.length > 0 && (
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-pink-50 text-pink-700">
+                              {mentee.interestTopics.map(topic => t(`apply.topic_${topic}` as Parameters<typeof t>[0])).join(', ')}
+                            </span>
+                          )}
+                        </div>
+                        {mentee.message && (
+                          <div className="ml-9 text-sm text-gray-600 bg-gray-50 rounded-md px-3 py-2 border border-gray-100 mt-1">
+                            💬 {mentee.message}
                           </div>
                         )}
                       </div>
