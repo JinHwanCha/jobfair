@@ -18,7 +18,8 @@ export default function AdminPage() {
     return found || '기타';
   };
 
-  const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors' | 'resume' | 'cancelled'>('applicants');
+  const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors' | 'resume' | 'cancelled' | 'table'>('applicants');
+  const [tableLangFilter, setTableLangFilter] = useState<'all' | 'korean' | 'english' | 'chinese'>('all');
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -33,6 +34,38 @@ export default function AdminPage() {
   const [mentorCategory, setMentorCategory] = useState('전체');
   const [expandedMentor, setExpandedMentor] = useState<string | null>(null);
   const [expandedResume, setExpandedResume] = useState<string | null>(null);
+
+  // 신청자 ID → 언어 그룹 맵
+  const applicantLangMap = useMemo(() => {
+    const map = new Map<string, 'korean' | 'english' | 'chinese'>();
+    applicants.forEach(a => {
+      if (!a.isForeigner) map.set(a.id, 'korean');
+      else if (a.languageGroup === 'english') map.set(a.id, 'english');
+      else if (a.languageGroup === 'chinese') map.set(a.id, 'chinese');
+      else map.set(a.id, 'korean');
+    });
+    return map;
+  }, [applicants]);
+
+  // 멘토 중심 배정표 데이터 (mentorId → time1~4 배정자 목록)
+  type SlotEntry = { applicantId: string; applicantName: string; isOriginalChoice: boolean };
+  const mentorTableData = useMemo(() => {
+    const data: Record<string, { time1: SlotEntry[]; time2: SlotEntry[]; time3: SlotEntry[]; time4: SlotEntry[] }> = {};
+    mentors.forEach(m => { data[m.id] = { time1: [], time2: [], time3: [], time4: [] }; });
+    assignments.forEach(a => {
+      for (let t = 1; t <= 4; t++) {
+        const slot = (a as unknown as Record<string, unknown>)[`time${t}`] as Assignment['time1'];
+        if (slot && data[slot.mentorId]) {
+          data[slot.mentorId][`time${t}` as 'time1' | 'time2' | 'time3' | 'time4'].push({
+            applicantId: a.applicantId,
+            applicantName: a.applicantName,
+            isOriginalChoice: slot.isOriginalChoice,
+          });
+        }
+      }
+    });
+    return data;
+  }, [assignments, mentors]);
 
   // 멘토별 신청자 목록 (이름과 메시지 포함)
   const mentorApplicantsMap = useMemo(() => {
@@ -232,8 +265,8 @@ export default function AdminPage() {
       {/* 탭 네비게이션 */}
       <div className="max-w-6xl mx-auto px-4 mt-4 sm:mt-6">
         <div className="flex gap-1 sm:gap-2 bg-white rounded-lg p-1 shadow-sm">
-          {(['applicants', 'assignments', 'mentors', 'resume', 'cancelled'] as const).map((tab) => {
-            const labels = { applicants: `신청자 (${applicants.length})`, assignments: `배정 (${assignments.length})`, mentors: `멘토 (${mentors.length})`, resume: `자소서 (${resumeApplicants.length})`, cancelled: `취소 (${cancelledApplicants.length})` };
+          {(['applicants', 'assignments', 'table', 'mentors', 'resume', 'cancelled'] as const).map((tab) => {
+            const labels = { applicants: `신청자 (${applicants.length})`, assignments: `배정 (${assignments.length})`, table: '배정표', mentors: `멘토 (${mentors.length})`, resume: `자소서 (${resumeApplicants.length})`, cancelled: `취소 (${cancelledApplicants.length})` };
             return (
               <button key={tab} onClick={() => setActiveTab(tab)}
                 className={`flex-1 py-2 px-2 sm:px-4 rounded-lg text-xs sm:text-sm font-medium transition-colors ${
@@ -689,6 +722,99 @@ export default function AdminPage() {
                   </div>
                 );
               })()}
+            </div>
+          </>
+        )}
+
+        {/* 배정표 (멘토별 타임 슬롯) */}
+        {activeTab === 'table' && (
+          <>
+            {/* 언어 그룹 필터 */}
+            <div className="mb-4 flex flex-wrap gap-2">
+              {(['all', 'korean', 'english', 'chinese'] as const).map((lang) => {
+                const labels = { all: '전체', korean: '한국인', english: '영어권', chinese: '중화권' };
+                const colors = { all: 'bg-gray-700 text-white', korean: 'bg-blue-600 text-white', english: 'bg-green-600 text-white', chinese: 'bg-red-600 text-white' };
+                const inactive = 'bg-gray-100 text-gray-600 hover:bg-gray-200';
+                return (
+                  <button key={lang} onClick={() => setTableLangFilter(lang)}
+                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+                      tableLangFilter === lang ? colors[lang] : inactive
+                    }`}>
+                    {labels[lang]}
+                  </button>
+                );
+              })}
+            </div>
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[800px]">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase sticky left-0 bg-gray-50 w-28">멘토</th>
+                      <th className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase w-32">분야</th>
+                      {[1, 2, 3, 4].map(t => (
+                        <th key={t} className="px-3 py-2 text-left text-xs font-medium text-gray-500 uppercase">
+                          {t}타임
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-gray-100">
+                    {mentors.map(mentor => {
+                      const slotData = mentorTableData[mentor.id];
+                      if (!slotData) return null;
+                      const filteredSlots = ([1, 2, 3, 4] as const).map(t => {
+                        const entries = slotData[`time${t}`];
+                        if (tableLangFilter === 'all') return entries;
+                        return entries.filter(e => applicantLangMap.get(e.applicantId) === tableLangFilter);
+                      });
+                      const totalVisible = filteredSlots.reduce((sum, s) => sum + s.length, 0);
+                      return (
+                        <tr key={mentor.id} className={`hover:bg-gray-50 ${
+                          tableLangFilter !== 'all' && totalVisible === 0 ? 'opacity-30' : ''
+                        }`}>
+                          <td className="px-3 py-2 text-sm font-bold text-gray-900 sticky left-0 bg-white whitespace-nowrap">
+                            {mentor.name}
+                          </td>
+                          <td className="px-3 py-2 text-xs text-gray-500 whitespace-nowrap">
+                            {mentor.field || mentor.job}
+                          </td>
+                          {filteredSlots.map((entries, idx) => (
+                            <td key={idx} className="px-3 py-2 align-top">
+                              {entries.length === 0 ? (
+                                <span className="text-gray-200 text-xs">-</span>
+                              ) : (
+                                <div className="space-y-0.5">
+                                  {entries.map((e, i) => {
+                                    const lang = applicantLangMap.get(e.applicantId);
+                                    const langDot = lang === 'english' ? '🟢' : lang === 'chinese' ? '🔴' : '';
+                                    return (
+                                      <div key={i} className="flex items-center gap-1">
+                                        {tableLangFilter === 'all' && langDot && (
+                                          <span className="text-xs leading-none">{langDot}</span>
+                                        )}
+                                        <span className={`text-xs whitespace-nowrap ${
+                                          e.isOriginalChoice ? 'text-gray-800' : 'text-orange-500'
+                                        }`}>
+                                          {e.applicantName}
+                                        </span>
+                                      </div>
+                                    );
+                                  })}
+                                  <div className="text-xs text-gray-400 mt-0.5">{entries.length}명</div>
+                                </div>
+                              )}
+                            </td>
+                          ))}
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+                {assignments.length === 0 && (
+                  <div className="text-center py-12 text-gray-500">아직 배정 결과가 없습니다.</div>
+                )}
+              </div>
             </div>
           </>
         )}
