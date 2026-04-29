@@ -188,22 +188,23 @@ function assignSingleApplicant(
   const earlyPhaseAssignedMentorIds = new Set<string>();
 
   // Phase 0 (외국어 전용): 이미 같은 언어 그룹 슬롯이 있는 멘토 우선 배정
-  // 나중 지망에 있는 통합 대상 멘토를 먼저 배정하여 같은 타임에 통합 가능하게 함
-  // (예: André choice6=서성구, 류웬리가 이미 서성구 time1에 english로 배정됨 → André도 time1에 배정)
+  // 핵심: 통합 후보를 choiceNum 내림차순으로 처리 → 늦은 지망일수록 남은 time이 부족해지므로
+  // 먼저 처리해야 통합 가능. (예: André choice1=이수지(english↑이윤영), choice6=서성구(english↑류웬리)
+  //   → 이수지(choice1)보다 서성구(choice6)를 먼저 처리해야 André가 서성구 time1에 배정됨)
   if (langGroup !== 'korean') {
-    for (const { choiceNum, mentorId } of choices) {
+    // 통합 가능 후보: 이미 같은 언어 그룹 슬롯이 있는 멘토들만 수집
+    const consolidationCandidates = choices.filter(({ mentorId }) => {
+      for (let t = 1; t <= NUM_TIMES; t++) {
+        if (slotLangMap.get(slotLangKey(mentorId, t)) === langGroup) return true;
+      }
+      return false;
+    });
+    // 높은 choiceNum 순 정렬: 나중 지망(늦게 처리 시 time 부족)을 먼저 해결
+    consolidationCandidates.sort((a, b) => b.choiceNum - a.choiceNum);
+
+    for (const { choiceNum, mentorId } of consolidationCandidates) {
       if (assignedTimes.size >= NUM_TIMES) break;
       if (earlyPhaseAssignedMentorIds.has(mentorId)) continue;
-
-      // 이 멘토에 이미 같은 언어 그룹 타임 슬롯이 있는지 확인
-      let hasConsolidationSlot = false;
-      for (let t = 1; t <= NUM_TIMES; t++) {
-        if (slotLangMap.get(slotLangKey(mentorId, t)) === langGroup) {
-          hasConsolidationSlot = true;
-          break;
-        }
-      }
-      if (!hasConsolidationSlot) continue;
 
       const mentor = mentorMap.get(mentorId);
       if (!mentor) continue;
