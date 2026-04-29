@@ -219,9 +219,14 @@ function assignSingleApplicant(
     if (slot) assignedMentorIds.add(slot.mentorId);
   }
 
+  // Phase 1에서 배정되지 못한 지망 목록 (timeNum과 choiceNum을 동일시하는 오류 방지)
+  const phase1AssignedMentorIds = new Set<string>(assignedMentorIds);
+  const remainingChoices = choices.filter(c => !phase1AssignedMentorIds.has(c.mentorId));
+  let remainingChoiceIdx = 0;
+
   for (const timeNum of unassignedTimes) {
-    // 해당 타임에 원래 어떤 지망을 선택했는지 추적 (대체 배정 시 표시용)
-    const originalChoiceForTime = choices[timeNum - 1];
+    // Phase 1에서 배정 못한 지망을 순서대로 "원래 희망" 표시용으로 사용
+    const originalChoiceForTime = remainingChoices[remainingChoiceIdx++] ?? null;
     const originalChoiceName = originalChoiceForTime ? mentorMap.get(originalChoiceForTime.mentorId)?.name : undefined;
     const originalMessage = originalChoiceForTime
       ? ((applicant as unknown as Record<string, unknown>)[`message${originalChoiceForTime.choiceNum}`] as string | undefined)
@@ -482,15 +487,20 @@ function tryAssignToMentor(
 
   if (compatibleTimes.length === 0) return null;
 
-  // 관심 주제 겹침 + 나이 그룹 일치 점수가 높은 타임 우선 선택
+  // 언어 그룹 통합(consolidation) + 관심 주제 겹침 + 나이 그룹 일치 점수가 높은 타임 우선 선택
+  // consolidation 보너스: 이미 같은 언어 그룹으로 태깅된 슬롯을 빈 슬롯보다 우선 (같은 언어권 묶기)
   compatibleTimes.sort((a, b) => {
+    const langA = slotLangMap.get(slotLangKey(mentor.id, a));
+    const langB = slotLangMap.get(slotLangKey(mentor.id, b));
+    // 이미 같은 언어로 태깅된 슬롯 +2 보너스 (ageScore 페널티 -1 을 극복할 수 있도록)
+    const consolidationA = (langA !== null && langA !== undefined) ? 2 : 0;
+    const consolidationB = (langB !== null && langB !== undefined) ? 2 : 0;
     const topicScoreA = getTopicOverlapScore(slotTopicMap, mentor.id, a, applicantTopics);
     const topicScoreB = getTopicOverlapScore(slotTopicMap, mentor.id, b, applicantTopics);
     const ageScoreA = getAgeGroupScore(slotAgeGroupMap, mentor.id, a, ageGroup);
     const ageScoreB = getAgeGroupScore(slotAgeGroupMap, mentor.id, b, ageGroup);
-    // 주제 점수 우선, 동점 시 나이 그룹 점수로 판단
-    const totalA = topicScoreA + ageScoreA;
-    const totalB = topicScoreB + ageScoreB;
+    const totalA = consolidationA + topicScoreA + ageScoreA;
+    const totalB = consolidationB + topicScoreB + ageScoreB;
     return totalB - totalA;
   });
 
