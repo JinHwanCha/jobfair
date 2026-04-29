@@ -86,21 +86,10 @@ export function runAutoAssignment(
     (a, b) => new Date(a.updatedAt).getTime() - new Date(b.updatedAt).getTime()
   );
 
-  // 관심 주제 + 나이 그룹별로 그룹핑 (같은 주제·나이 신청자들이 연속 배정되도록)
-  const topicAgeGroups: Map<string, Applicant[]> = new Map();
-  for (const applicant of sortedApplicants) {
-    const topicKey = (applicant.interestTopics || []).slice().sort().join(',') || 'none';
-    const ageKey = getApplicantAgeGroup(applicant);
-    const groupKey = `${topicKey}|${ageKey}`;
-    const group = topicAgeGroups.get(groupKey) || [];
-    group.push(applicant);
-    topicAgeGroups.set(groupKey, group);
-  }
-  // 그룹 내에서 선착순 유지하면서 그룹별로 묶어서 배정
-  const groupedApplicants: Applicant[] = [];
-  for (const group of topicAgeGroups.values()) {
-    groupedApplicants.push(...group);
-  }
+  // 선착순 그대로 처리 (topic/age 그룹핑 제거)
+  // 그룹핑은 그룹 간 선착순을 왜곡시켜 빠른 신청자가 밀리는 버그 유발
+  // 관심주제·나이 선호는 tryAssignToMentor 내 scoring(topicOverlap, ageScore)으로 처리됨
+  const groupedApplicants = sortedApplicants;
 
   const assignments: Assignment[] = [];
   const mentorMap = new Map(mentors.map(m => [m.id, m]));
