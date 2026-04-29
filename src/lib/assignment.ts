@@ -184,9 +184,50 @@ function assignSingleApplicant(
   const primaryChoices = choices.filter(c => c.choiceNum <= 4);
   const secondaryChoices = choices.filter(c => c.choiceNum > 4);
 
+  // Phase 0~2 공통: 배정된 멘토 중복 방지 (같은 멘토를 두 타임에 배정하는 오류 방지)
+  const earlyPhaseAssignedMentorIds = new Set<string>();
+
+  // Phase 0 (외국어 전용): 이미 같은 언어 그룹 슬롯이 있는 멘토 우선 배정
+  // 나중 지망에 있는 통합 대상 멘토를 먼저 배정하여 같은 타임에 통합 가능하게 함
+  // (예: André choice6=서성구, 류웬리가 이미 서성구 time1에 english로 배정됨 → André도 time1에 배정)
+  if (langGroup !== 'korean') {
+    for (const { choiceNum, mentorId } of choices) {
+      if (assignedTimes.size >= NUM_TIMES) break;
+      if (earlyPhaseAssignedMentorIds.has(mentorId)) continue;
+
+      // 이 멘토에 이미 같은 언어 그룹 타임 슬롯이 있는지 확인
+      let hasConsolidationSlot = false;
+      for (let t = 1; t <= NUM_TIMES; t++) {
+        if (slotLangMap.get(slotLangKey(mentorId, t)) === langGroup) {
+          hasConsolidationSlot = true;
+          break;
+        }
+      }
+      if (!hasConsolidationSlot) continue;
+
+      const mentor = mentorMap.get(mentorId);
+      if (!mentor) continue;
+      const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
+      if (!mentorSlot) continue;
+
+      const choiceMessage = (applicant as unknown as Record<string, unknown>)[`message${choiceNum}`] as string | undefined;
+
+      const result = tryAssignToMentor(
+        applicant.id, mentor, mentorSlot, assignedTimes, true, choiceMessage,
+        langGroup, slotLangMap, applicantTopics, slotTopicMap, ageGroup, slotAgeGroupMap
+      );
+      if (result) {
+        assignedTimes.add(result.timeNum);
+        earlyPhaseAssignedMentorIds.add(mentorId);
+        setAssignmentSlot(assignment, result.timeNum, result.slot);
+      }
+    }
+  }
+
   // Phase 1: 1~4지망 우선 배정 (4개 타임 다 채울 때까지)
   for (const { choiceNum, mentorId } of primaryChoices) {
     if (assignedTimes.size >= NUM_TIMES) break;
+    if (earlyPhaseAssignedMentorIds.has(mentorId)) continue; // Phase 0에서 이미 배정
 
     const mentor = mentorMap.get(mentorId);
     if (!mentor) continue;
@@ -213,6 +254,7 @@ function assignSingleApplicant(
 
     if (result) {
       assignedTimes.add(result.timeNum);
+      earlyPhaseAssignedMentorIds.add(mentorId);
       setAssignmentSlot(assignment, result.timeNum, result.slot);
     }
   }
@@ -220,6 +262,7 @@ function assignSingleApplicant(
   // Phase 2: 5~6지망으로 남은 타임 보충
   for (const { choiceNum, mentorId } of secondaryChoices) {
     if (assignedTimes.size >= NUM_TIMES) break;
+    if (earlyPhaseAssignedMentorIds.has(mentorId)) continue; // Phase 0에서 이미 배정
 
     const mentor = mentorMap.get(mentorId);
     if (!mentor) continue;
@@ -246,6 +289,7 @@ function assignSingleApplicant(
 
     if (result) {
       assignedTimes.add(result.timeNum);
+      earlyPhaseAssignedMentorIds.add(mentorId);
       setAssignmentSlot(assignment, result.timeNum, result.slot);
     }
   }
