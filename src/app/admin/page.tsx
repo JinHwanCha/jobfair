@@ -6,6 +6,28 @@ import { Applicant, Assignment, Mentor, ResumeApplicant, CancelledApplicant, get
 type ChoiceKey = 'choice1' | 'choice2' | 'choice3' | 'choice4' | 'choice5' | 'choice6';
 type MessageKey = 'message1' | 'message2' | 'message3' | 'message4' | 'message5' | 'message6';
 
+type LangFilter = 'all' | 'korean' | 'english' | 'chinese';
+function LangFilterBar({ value, onChange }: { value: LangFilter; onChange: (v: LangFilter) => void }) {
+  const options: { key: LangFilter; label: string; active: string }[] = [
+    { key: 'all', label: '전체', active: 'bg-gray-700 text-white' },
+    { key: 'korean', label: '한국인', active: 'bg-blue-600 text-white' },
+    { key: 'english', label: '영어권', active: 'bg-green-600 text-white' },
+    { key: 'chinese', label: '중화권', active: 'bg-red-600 text-white' },
+  ];
+  return (
+    <div className="mb-4 flex flex-wrap gap-2">
+      {options.map(o => (
+        <button key={o.key} onClick={() => onChange(o.key)}
+          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
+            value === o.key ? o.active : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+          }`}>
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function AdminPage() {
 
   const extractShortCategory = (category: string): string => {
@@ -20,6 +42,8 @@ export default function AdminPage() {
 
   const [activeTab, setActiveTab] = useState<'applicants' | 'assignments' | 'mentors' | 'resume' | 'cancelled' | 'table'>('applicants');
   const [tableLangFilter, setTableLangFilter] = useState<'all' | 'korean' | 'english' | 'chinese'>('all');
+  const [applicantsLangFilter, setApplicantsLangFilter] = useState<'all' | 'korean' | 'english' | 'chinese'>('all');
+  const [assignmentsLangFilter, setAssignmentsLangFilter] = useState<'all' | 'korean' | 'english' | 'chinese'>('all');
   const [applicants, setApplicants] = useState<Applicant[]>([]);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [mentors, setMentors] = useState<Mentor[]>([]);
@@ -284,9 +308,10 @@ export default function AdminPage() {
         {/* 신청자 목록 */}
         {activeTab === 'applicants' && (
           <>
+            <LangFilterBar value={applicantsLangFilter} onChange={setApplicantsLangFilter} />
             {/* 모바일 카드 뷰 */}
             <div className="sm:hidden space-y-3">
-              {applicants.map((applicant) => (
+              {applicants.filter(a => applicantsLangFilter === 'all' || applicantLangMap.get(a.id) === applicantsLangFilter).map((applicant) => (
                 <div key={applicant.id} className="bg-white rounded-xl shadow-sm p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className="font-bold text-gray-900">{applicant.name}</span>
@@ -317,7 +342,7 @@ export default function AdminPage() {
                   </p>
                 </div>
               ))}
-              {applicants.length === 0 && (
+              {applicants.filter(a => applicantsLangFilter === 'all' || applicantLangMap.get(a.id) === applicantsLangFilter).length === 0 && (
                 <div className="text-center py-12 text-gray-500 bg-white rounded-xl">아직 신청자가 없습니다.</div>
               )}
             </div>
@@ -339,7 +364,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {applicants.map((applicant) => (
+                    {applicants.filter(a => applicantsLangFilter === 'all' || applicantLangMap.get(a.id) === applicantsLangFilter).map((applicant) => (
                       <tr key={applicant.id} className="hover:bg-gray-50">
                         <td className="px-2 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">{applicant.name}</td>
                         <td className="px-2 py-2 text-xs text-gray-500">{applicant.birthDate}</td>
@@ -371,7 +396,7 @@ export default function AdminPage() {
                     ))}
                   </tbody>
                 </table>
-                {applicants.length === 0 && (
+                {applicants.filter(a => applicantsLangFilter === 'all' || applicantLangMap.get(a.id) === applicantsLangFilter).length === 0 && (
                   <div className="text-center py-12 text-gray-500">아직 신청자가 없습니다.</div>
                 )}
               </div>
@@ -382,8 +407,9 @@ export default function AdminPage() {
         {/* 배정 결과 */}
         {activeTab === 'assignments' && (
           <>
+            <LangFilterBar value={assignmentsLangFilter} onChange={setAssignmentsLangFilter} />
             <div className="sm:hidden space-y-3">
-              {assignments.map((assignment) => (
+              {assignments.filter(a => assignmentsLangFilter === 'all' || applicantLangMap.get(a.applicantId) === assignmentsLangFilter).map((assignment) => (
                 <div key={assignment.applicantId} className="bg-white rounded-xl shadow-sm p-4">
                   <h4 className="font-bold text-gray-900 mb-1">{assignment.applicantName}
                     <span className="text-xs text-gray-400 font-normal ml-2">({assignment.phone4})</span>
@@ -409,7 +435,7 @@ export default function AdminPage() {
                   </div>
                 </div>
               ))}
-              {assignments.length === 0 && (
+              {assignments.filter(a => assignmentsLangFilter === 'all' || applicantLangMap.get(a.applicantId) === assignmentsLangFilter).length === 0 && (
                 <div className="text-center py-12 text-gray-500 bg-white rounded-xl">아직 배정 결과가 없습니다.</div>
               )}
             </div>
@@ -425,7 +451,7 @@ export default function AdminPage() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-200">
-                    {assignments.map((assignment) => (
+                    {assignments.filter(a => assignmentsLangFilter === 'all' || applicantLangMap.get(a.applicantId) === assignmentsLangFilter).map((assignment) => (
                       <tr key={assignment.applicantId} className="hover:bg-gray-50">
                         <td className="px-3 py-2 text-sm font-medium text-gray-900 whitespace-nowrap">
                           {assignment.applicantName}
@@ -453,7 +479,7 @@ export default function AdminPage() {
                     ))}
                   </tbody>
                 </table>
-                {assignments.length === 0 && (
+                {assignments.filter(a => assignmentsLangFilter === 'all' || applicantLangMap.get(a.applicantId) === assignmentsLangFilter).length === 0 && (
                   <div className="text-center py-12 text-gray-500">아직 배정 결과가 없습니다.</div>
                 )}
               </div>
@@ -729,23 +755,67 @@ export default function AdminPage() {
         {/* 배정표 (멘토별 타임 슬롯) */}
         {activeTab === 'table' && (
           <>
-            {/* 언어 그룹 필터 */}
-            <div className="mb-4 flex flex-wrap gap-2">
-              {(['all', 'korean', 'english', 'chinese'] as const).map((lang) => {
-                const labels = { all: '전체', korean: '한국인', english: '영어권', chinese: '중화권' };
-                const colors = { all: 'bg-gray-700 text-white', korean: 'bg-blue-600 text-white', english: 'bg-green-600 text-white', chinese: 'bg-red-600 text-white' };
-                const inactive = 'bg-gray-100 text-gray-600 hover:bg-gray-200';
+            <LangFilterBar value={tableLangFilter} onChange={setTableLangFilter} />
+
+            {/* 모바일 카드 뷰 */}
+            <div className="sm:hidden space-y-3">
+              {mentors.map(mentor => {
+                const slotData = mentorTableData[mentor.id];
+                if (!slotData) return null;
+                const filteredSlots = ([1, 2, 3, 4] as const).map(t => {
+                  const entries = slotData[`time${t}`];
+                  if (tableLangFilter === 'all') return entries;
+                  return entries.filter(e => applicantLangMap.get(e.applicantId) === tableLangFilter);
+                });
+                const totalVisible = filteredSlots.reduce((sum, s) => sum + s.length, 0);
+                if (tableLangFilter !== 'all' && totalVisible === 0) return null;
                 return (
-                  <button key={lang} onClick={() => setTableLangFilter(lang)}
-                    className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-                      tableLangFilter === lang ? colors[lang] : inactive
-                    }`}>
-                    {labels[lang]}
-                  </button>
+                  <div key={mentor.id} className="bg-white rounded-xl shadow-sm p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <span className="font-bold text-gray-900">{mentor.name}</span>
+                        <span className="text-xs text-gray-500 ml-2">{mentor.field || mentor.job}</span>
+                      </div>
+                      <span className="text-xs text-gray-400 font-medium">{totalVisible}명</span>
+                    </div>
+                    <div className="grid grid-cols-2 gap-2">
+                      {filteredSlots.map((entries, idx) => (
+                        <div key={idx} className="bg-gray-50 rounded-lg p-2">
+                          <div className="text-xs font-semibold text-gray-500 mb-1">{idx + 1}타임</div>
+                          {entries.length === 0 ? (
+                            <span className="text-gray-300 text-xs">-</span>
+                          ) : (
+                            <div className="space-y-0.5">
+                              {entries.map((e, i) => {
+                                const lang = applicantLangMap.get(e.applicantId);
+                                const langDot = lang === 'english' ? '🟢' : lang === 'chinese' ? '🔴' : '';
+                                return (
+                                  <div key={i} className="flex items-center gap-1">
+                                    {tableLangFilter === 'all' && langDot && (
+                                      <span className="text-xs leading-none">{langDot}</span>
+                                    )}
+                                    <span className={`text-xs ${e.isOriginalChoice ? 'text-gray-800' : 'text-orange-500'}`}>
+                                      {e.applicantName}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+                              <div className="text-xs text-gray-400">{entries.length}명</div>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 );
               })}
+              {assignments.length === 0 && (
+                <div className="text-center py-12 text-gray-500 bg-white rounded-xl">아직 배정 결과가 없습니다.</div>
+              )}
             </div>
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+
+            {/* 데스크톱 테이블 뷰 */}
+            <div className="hidden sm:block bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[800px]">
                   <thead className="bg-gray-50">

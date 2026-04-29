@@ -122,6 +122,11 @@ export function runAutoAssignment(
     }
   });
 
+  // 신청자 ID → 언어 그룹 맵 (후처리 통합 패스에 사용)
+  const applicantLangByIdMap = new Map<string, LangGroup>(
+    groupedApplicants.map(a => [a.id, getApplicantLangGroup(a)])
+  );
+
   // 전체 신청자를 관심 주제 + 나이 그룹별로 배정 (언어 그룹별 슬롯 분리)
   for (const applicant of groupedApplicants) {
     const langGroup = getApplicantLangGroup(applicant);
@@ -131,6 +136,9 @@ export function runAutoAssignment(
     );
     assignments.push(assignment);
   }
+
+  // 후처리: 같은 멘토에 배정된 동일 외국어 그룹 신청자를 같은 타임으로 통합
+  runConsolidationPass(assignments, mentorSlots, slotLangMap, applicantLangByIdMap, mentors);
 
   return { assignments, mentorSlots };
 }
@@ -172,9 +180,13 @@ function assignSingleApplicant(
   const assignedTimes = new Set<number>();
   const applicantTopics = applicant.interestTopics || [];
 
-  // Phase 1: 1~6지망 순서대로 빈 타임에 배정 시도 (4개 타임 다 채울 때까지)
-  for (const { choiceNum, mentorId } of choices) {
-    if (assignedTimes.size >= NUM_TIMES) break; // 4타임 다 찼으면 중단
+  // 1~4지망과 5~6지망 분리
+  const primaryChoices = choices.filter(c => c.choiceNum <= 4);
+  const secondaryChoices = choices.filter(c => c.choiceNum > 4);
+
+  // Phase 1: 1~4지망 우선 배정 (4개 타임 다 채울 때까지)
+  for (const { choiceNum, mentorId } of primaryChoices) {
+    if (assignedTimes.size >= NUM_TIMES) break;
 
     const mentor = mentorMap.get(mentorId);
     if (!mentor) continue;
@@ -205,7 +217,40 @@ function assignSingleApplicant(
     }
   }
 
-  // Phase 2: 아직 빈 타임이 있으면 대체 배정
+  // Phase 2: 5~6지망으로 남은 타임 보충
+  for (const { choiceNum, mentorId } of secondaryChoices) {
+    if (assignedTimes.size >= NUM_TIMES) break;
+
+    const mentor = mentorMap.get(mentorId);
+    if (!mentor) continue;
+
+    const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
+    if (!mentorSlot) continue;
+
+    const choiceMessage = (applicant as unknown as Record<string, unknown>)[`message${choiceNum}`] as string | undefined;
+
+    const result = tryAssignToMentor(
+      applicant.id,
+      mentor,
+      mentorSlot,
+      assignedTimes,
+      true,
+      choiceMessage,
+      langGroup,
+      slotLangMap,
+      applicantTopics,
+      slotTopicMap,
+      ageGroup,
+      slotAgeGroupMap
+    );
+
+    if (result) {
+      assignedTimes.add(result.timeNum);
+      setAssignmentSlot(assignment, result.timeNum, result.slot);
+    }
+  }
+
+  // Phase 3: 아직 빈 타임이 있으면 대체 배정
   const allTimes = Array.from({ length: NUM_TIMES }, (_, i) => i + 1);
   const unassignedTimes = allTimes.filter(t => !assignedTimes.has(t));
 
@@ -219,13 +264,13 @@ function assignSingleApplicant(
     if (slot) assignedMentorIds.add(slot.mentorId);
   }
 
-  // Phase 1에서 배정되지 못한 지망 목록 (timeNum과 choiceNum을 동일시하는 오류 방지)
+  // Phase 1~2에서 배정되지 못한 지망 목록 (timeNum과 choiceNum을 동일시하는 오류 방지)
   const phase1AssignedMentorIds = new Set<string>(assignedMentorIds);
   const remainingChoices = choices.filter(c => !phase1AssignedMentorIds.has(c.mentorId));
   let remainingChoiceIdx = 0;
 
   for (const timeNum of unassignedTimes) {
-    // Phase 1에서 배정 못한 지망을 순서대로 "원래 희망" 표시용으로 사용
+    // Phase 1~2에서 배정 못한 지망을 순서대로 "원래 희망" 표시용으로 사용
     const originalChoiceForTime = remainingChoices[remainingChoiceIdx++] ?? null;
     const originalChoiceName = originalChoiceForTime ? mentorMap.get(originalChoiceForTime.mentorId)?.name : undefined;
     const originalMessage = originalChoiceForTime
@@ -234,7 +279,7 @@ function assignSingleApplicant(
 
     let assigned = false;
 
-    // 2-1: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도 (신청자 수 적은 순)
+    // 3-1: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도 (신청자 수 적은 순)
     const sortedChoices = [...choices].sort((a, b) => {
       const slotA = mentorSlots.find(s => s.mentorId === a.mentorId);
       const slotB = mentorSlots.find(s => s.mentorId === b.mentorId);
@@ -260,7 +305,7 @@ function assignSingleApplicant(
 
     if (assigned) continue;
 
-    // 2-2: 희망직군(desiredField)에 해당하는 멘토 우선 배정
+    // 3-2: 희망직군(desiredField)에 해당하는 멘토 우선 배정
     if (applicant.desiredField) {
       const fieldMentors = fieldMentorsMap.get(applicant.desiredField) || [];
       const fieldAlternatives = fieldMentors
@@ -289,7 +334,7 @@ function assignSingleApplicant(
 
     if (assigned) continue;
 
-    // 2-3: 같은 카테고리 대체 멘토
+    // 3-3: 같은 카테고리 대체 멘토
     const originalCategories = originalChoiceIds
       .map(id => mentorMap.get(id)?.category)
       .filter((c): c is string => !!c);
@@ -336,7 +381,7 @@ function assignSingleApplicant(
       }
     }
 
-    // 2-4: 최후 수단 - 아무 멘토나 배정 (신청자 수 적은 순)
+    // 3-4: 최후 수단 - 아무 멘토나 배정 (신청자 수 적은 순)
     if (!assigned) {
       const sortedMentors = [...mentors].sort((a, b) => {
         const slotA = mentorSlots.find(s => s.mentorId === a.id);
@@ -374,6 +419,114 @@ function assignSingleApplicant(
   }
 
   return assignment;
+}
+
+/**
+ * 후처리 통합 패스: 같은 멘토에 배정된 동일 외국어 그룹(영어권/중화권) 신청자가
+ * 서로 다른 타임에 분산된 경우, 두 타임 배정을 swap하여 같은 타임으로 모음.
+ *
+ * Swap 조건:
+ * - mentor M의 tA, tB 모두 같은 외국어 언어권으로 태깅되어 있을 것
+ * - M의 tA에 여유 자리가 있을 것
+ * - 신청자의 기존 tA 멘토(Y)의 tB가 언어 호환 + 여유 자리 있을 것
+ * 변화가 없을 때까지 반복하여 여러 명 통합 가능
+ */
+function runConsolidationPass(
+  assignments: Assignment[],
+  mentorSlots: MentorSlot[],
+  slotLangMap: SlotLangMap,
+  applicantLangByIdMap: Map<string, LangGroup>,
+  mentors: Mentor[]
+): void {
+  const assignmentById = new Map(assignments.map(a => [a.applicantId, a]));
+  const mentorSlotById = new Map(mentorSlots.map(s => [s.mentorId, s]));
+  const mentorById = new Map(mentors.map(m => [m.id, m]));
+
+  let madeSwap = true;
+  while (madeSwap) {
+    madeSwap = false;
+
+    outer:
+    for (const mentor of mentors) {
+      const mSlot = mentorSlotById.get(mentor.id);
+      if (!mSlot) continue;
+
+      for (let tA = 1; tA <= NUM_TIMES; tA++) {
+        for (let tB = tA + 1; tB <= NUM_TIMES; tB++) {
+          const langA = slotLangMap.get(slotLangKey(mentor.id, tA));
+          const langB = slotLangMap.get(slotLangKey(mentor.id, tB));
+
+          // 두 타임 모두 같은 외국어 그룹이어야 함 (korean 제외)
+          if (!langA || !langB || langA === 'korean' || langB === 'korean') continue;
+          if (langA !== langB) continue;
+
+          const lang = langA;
+          const tAArr = getSlotArray(mSlot, tA);
+          const tBArr = getSlotArray(mSlot, tB);
+
+          // tB 신청자를 tA로 이동 시도
+          for (let i = tBArr.length - 1; i >= 0; i--) {
+            const applicantId = tBArr[i];
+            const applicantLang = applicantLangByIdMap.get(applicantId);
+            if (!applicantLang || applicantLang === 'korean') continue;
+
+            // M의 tA에 여유 자리 필요
+            if (tAArr.length >= mentor.maxCapacity) break;
+
+            // 신청자의 현재 tA 배정 멘토 Y 조회
+            const asgn = assignmentById.get(applicantId);
+            if (!asgn) continue;
+            const slotAtTA = (asgn as unknown as Record<string, unknown>)[`time${tA}`] as AssignmentSlot | null;
+            if (!slotAtTA) continue;
+            // 이미 같은 멘토 M에 tA 배정된 경우 skip
+            if (slotAtTA.mentorId === mentor.id) continue;
+
+            const mentorY = mentorById.get(slotAtTA.mentorId);
+            if (!mentorY) continue;
+            const ySlot = mentorSlotById.get(mentorY.id);
+            if (!ySlot) continue;
+
+            const yTBArr = getSlotArray(ySlot, tB);
+            const yLangAtTB = slotLangMap.get(slotLangKey(mentorY.id, tB));
+
+            // Y의 tB: 언어 호환 + 여유 자리 필요
+            if (yTBArr.length >= mentorY.maxCapacity) continue;
+            if (yLangAtTB !== null && yLangAtTB !== undefined && yLangAtTB !== lang) continue;
+
+            // === Swap 실행 ===
+            // M: tB에서 제거 → tA에 추가
+            tBArr.splice(i, 1);
+            tAArr.push(applicantId);
+
+            // Y: tA에서 제거 → tB에 추가
+            const yTAArr = getSlotArray(ySlot, tA);
+            const yIdx = yTAArr.indexOf(applicantId);
+            if (yIdx >= 0) yTAArr.splice(yIdx, 1);
+            yTBArr.push(applicantId);
+
+            // 배정 레코드: tA ↔ tB 교환
+            const rec = asgn as unknown as Record<string, unknown>;
+            const oldTA = rec[`time${tA}`] as AssignmentSlot;
+            const oldTB = rec[`time${tB}`] as AssignmentSlot;
+            rec[`time${tA}`] = oldTB;
+            rec[`time${tB}`] = oldTA;
+
+            // slotLangMap 갱신
+            if (!yLangAtTB) slotLangMap.set(slotLangKey(mentorY.id, tB), lang);
+            if (tBArr.length === 0) slotLangMap.set(slotLangKey(mentor.id, tB), null);
+            const hasForeignInYtA = yTAArr.some(id => {
+              const l = applicantLangByIdMap.get(id);
+              return l && l !== 'korean';
+            });
+            if (!hasForeignInYtA) slotLangMap.set(slotLangKey(mentorY.id, tA), null);
+
+            madeSwap = true;
+            break outer;
+          }
+        }
+      }
+    }
+  }
 }
 
 /**
