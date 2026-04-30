@@ -74,7 +74,9 @@ export async function POST(request: NextRequest) {
 
     // 자동 배정 실행 (모든 신청자 대상으로 재배정)
     try {
-      const mentors = await getMentors();
+      const allMentors = await getMentors();
+      // 김지선, 김교은 멘토는 당일 불참으로 배정 제외
+      const mentors = allMentors.filter(m => m.name !== '김지선' && m.name !== '김교은');
       const allApplicants = await getAllApplicants();
       if (mentors.length > 0 && allApplicants.length > 0) {
         const { assignments, mentorSlots } = runAutoAssignment(allApplicants, mentors);
