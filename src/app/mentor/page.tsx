@@ -48,6 +48,7 @@ interface ResumeApplicantView {
 interface MentorData {
   mentorName: string;
   mentorJob: string;
+  mentorLocation?: string;
   isResumeMentor?: boolean;
   timeSlots?: TimeSlotData[];
   resumeApplicants?: ResumeApplicantView[];
@@ -166,6 +167,11 @@ export default function MentorPage() {
               {data.mentorName} {t('mentor.mentorSuffix')}
             </p>
             <p className="text-gray-700 text-sm">{data.mentorJob}</p>
+            {data.mentorLocation && (
+              <p className="text-sm text-gray-800 mt-2 font-medium">
+                📍 멘토링 장소: <span className="text-primary-800">{data.mentorLocation}</span>
+              </p>
+            )}
             {data.isResumeMentor && (
               <p className="text-sm text-primary-800 mt-1 font-medium">
                 {t('resume.totalApplicants')}: {data.resumeApplicants?.length || 0}{t('resume.personUnit')}

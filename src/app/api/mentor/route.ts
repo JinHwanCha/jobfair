@@ -41,6 +41,7 @@ export async function POST(request: NextRequest) {
         data: {
           mentorName: resumeMentor.name,
           mentorJob: resumeMentor.job,
+          mentorLocation: resumeMentor.location,
           isResumeMentor: true,
           resumeApplicants: resumeApplicants.map(a => ({
             name: a.name,
@@ -147,6 +148,7 @@ export async function POST(request: NextRequest) {
       data: {
         mentorName: mentor.name,
         mentorJob: mentor.job,
+        mentorLocation: mentor.location,
         timeSlots,
         unassignedApplicants,
       },
