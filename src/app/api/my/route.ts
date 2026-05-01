@@ -1,7 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getMyAssignment, findApplicant, findApplicants, cancelApplicant, getMentors } from '@/lib/data';
+import { Assignment, AssignmentSlot } from '@/types';
 
 export const dynamic = 'force-dynamic';
+
+// DB에 저장된 배정 결과의 location 값을 현재 멘토 데이터로 최신화
+async function enrichAssignmentLocations(assignment: Assignment): Promise<Assignment> {
+  try {
+    const allMentors = await getMentors();
+    const mentorMap = new Map(allMentors.map(m => [m.id, m.location]));
+    const enrichSlot = (slot: AssignmentSlot | null): AssignmentSlot | null => {
+      if (!slot) return null;
+      const currentLocation = mentorMap.get(slot.mentorId);
+      return currentLocation ? { ...slot, location: currentLocation } : slot;
+    };
+    return {
+      ...assignment,
+      time1: enrichSlot(assignment.time1),
+      time2: enrichSlot(assignment.time2),
+      time3: enrichSlot(assignment.time3),
+      time4: enrichSlot(assignment.time4),
+    };
+  } catch {
+    return assignment;
+  }
+}
 
 async function checkHasKimJiseonChoice(choiceIds: string[]): Promise<boolean> {
   try {
@@ -50,14 +73,15 @@ export async function GET(request: NextRequest) {
       }
       if (applicants.length === 1) {
         // 한 명만 있으면 바로 배정 조회
-        const assignment = await getMyAssignment(name, phone4, applicants[0].birthDate);
-        if (!assignment) {
+        const rawAssignment = await getMyAssignment(name, phone4, applicants[0].birthDate);
+        if (!rawAssignment) {
           return NextResponse.json({
             success: false,
             error: '신청은 완료되었으나 아직 배정이 처리되지 않았습니다. 잠시 후 다시 확인해주세요.',
             applied: true,
           });
         }
+        const assignment = await enrichAssignmentLocations(rawAssignment);
         const applicant0 = applicants[0];
         const choiceIds = [applicant0.choice1, applicant0.choice2, applicant0.choice3, applicant0.choice4, applicant0.choice5, applicant0.choice6].filter(Boolean);
         const hasKimJiseonChoice = await checkHasKimJiseonChoice(choiceIds);
@@ -74,9 +98,10 @@ export async function GET(request: NextRequest) {
     }
 
     // birthDate가 있으면 정확히 조회
-    const assignment = await getMyAssignment(name, phone4, birthDate);
+    const rawAssignment2 = await getMyAssignment(name, phone4, birthDate);
+    const assignment = rawAssignment2 ? await enrichAssignmentLocations(rawAssignment2) : null;
 
-    if (!assignment) {
+    if (!rawAssignment2) {
       const applicant = await findApplicant(name, phone4, birthDate);
       if (applicant) {
         return NextResponse.json({
