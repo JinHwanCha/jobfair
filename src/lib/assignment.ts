@@ -3,6 +3,29 @@ import { Mentor, Applicant, Assignment, AssignmentSlot, MentorSlot, MentoringTop
 const NUM_TIMES = 4; // 4개 타임 슬롯
 const NUM_CHOICES = 6; // 6지망까지 선택
 
+/**
+ * 특정 멘티-멘토 쌍을 배정에서 영구 제외 (이름 기준)
+ * 예) 두나린-장한솔: 개인적 친분으로 공식 멘토링 불필요
+ * 형식: { applicantName, mentorName }
+ */
+const EXCLUDED_PAIRS_BY_NAME: { applicantName: string; mentorName: string }[] = [
+  { applicantName: '두나린', mentorName: '장한솔' },
+];
+
+/** EXCLUDED_PAIRS_BY_NAME을 applicantId/mentorId 쌍으로 변환 */
+function buildExcludedPairs(
+  applicants: Applicant[],
+  mentors: Mentor[]
+): { applicantId: string; mentorId: string }[] {
+  const result: { applicantId: string; mentorId: string }[] = [];
+  for (const { applicantName, mentorName } of EXCLUDED_PAIRS_BY_NAME) {
+    const applicant = applicants.find(a => a.name === applicantName);
+    const mentor = mentors.find(m => m.name === mentorName);
+    if (applicant && mentor) result.push({ applicantId: applicant.id, mentorId: mentor.id });
+  }
+  return result;
+}
+
 // 신청자의 나이 그룹 결정 (1-2학년 / 3-4학년·취준·기타)
 type AgeGroup = 'junior' | 'senior';
 function getApplicantAgeGroup(applicant: Applicant): AgeGroup {
@@ -60,8 +83,10 @@ function slotLangKey(mentorId: string, timeNum: number): string {
 export function runAutoAssignment(
   applicants: Applicant[],
   mentors: Mentor[],
-  excludePairs: { applicantId: string; mentorId: string }[] = []
+  extraExcludePairs: { applicantId: string; mentorId: string }[] = []
 ): { assignments: Assignment[]; mentorSlots: MentorSlot[] } {
+  // 하드코딩된 제외 쌍 + 호출자가 넘긴 추가 제외 쌍 합산
+  const excludePairs = [...buildExcludedPairs(applicants, mentors), ...extraExcludePairs];
   // 멘토 슬롯 초기화 (4타임)
   const mentorSlots: MentorSlot[] = mentors.map(mentor => ({
     mentorId: mentor.id,

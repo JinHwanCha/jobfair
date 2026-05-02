@@ -2,11 +2,8 @@ import { NextResponse } from 'next/server';
 import { getAllApplicants, setAssignments, setMentorSlots, getMentors } from '@/lib/data';
 import { runAutoAssignment } from '@/lib/assignment';
 
-export async function POST(req: Request) {
+export async function POST() {
   try {
-    const body = await req.json().catch(() => ({}));
-    const excludePairs: { applicantId: string; mentorId: string }[] = body.excludePairs ?? [];
-
     const allMentors = await getMentors();
     // 김지선, 김교은 멘토는 당일 불참으로 배정 제외
     const mentors = allMentors.filter(m => m.name !== '김지선' && m.name !== '김교은');
@@ -19,8 +16,8 @@ export async function POST(req: Request) {
       });
     }
 
-    // 자동 배정 실행
-    const { assignments, mentorSlots } = runAutoAssignment(applicants, mentors, excludePairs);
+    // 자동 배정 실행 (하드코딩된 제외 쌍은 runAutoAssignment 내부에서 자동 적용)
+    const { assignments, mentorSlots } = runAutoAssignment(applicants, mentors);
 
     // 결과 저장
     await setAssignments(assignments);
