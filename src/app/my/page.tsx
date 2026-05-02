@@ -332,6 +332,12 @@ export default function MyPage() {
                   </p>
                 </div>
 
+                {/* 대체 배정 안내 */}
+                <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+                  <span className="text-blue-400 flex-shrink-0 text-lg">💡</span>
+                  <p className="text-sm text-blue-700 leading-relaxed">{t('my.alternativeNotice')}</p>
+                </div>
+
                 {/* 타임별 배정 */}
                 <div className="grid gap-4">
                   {Array.from({ length: 4 }, (_, i) => {

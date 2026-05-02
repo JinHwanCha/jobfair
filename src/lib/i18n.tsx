@@ -192,6 +192,7 @@ const translations = {
   'my.alternative': { ko: '대체 배정', en: 'Alternative', zh: '替代分配' },
   'my.notAssigned': { ko: '배정되지 않음', en: 'Not assigned', zh: '未分配' },
   'my.originalChoice': { ko: '원래 선택: ', en: 'Original choice: ', zh: '原选择：' },
+  'my.alternativeNotice': { ko: '직업박람회 당일, 희망하셨던 멘토에게 직접 찾아가 궁금한 점을 물어보셔도 됩니다.', en: 'On the day of the event, feel free to visit your preferred mentor directly and ask any questions.', zh: '活动当天，您也可以直接找到您希望的导师，向他/她提问。' },
   'my.originalMessage': { ko: '하고 싶었던 말', en: 'Your message', zh: '想说的话' },
   'my.myMessage': { ko: '멘토에게 한마디', en: 'Your message', zh: '给导师的话' },
   'my.notes': { ko: '유의사항', en: 'Notes', zh: '注意事项' },
