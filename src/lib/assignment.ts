@@ -59,7 +59,8 @@ function slotLangKey(mentorId: string, timeNum: number): string {
  */
 export function runAutoAssignment(
   applicants: Applicant[],
-  mentors: Mentor[]
+  mentors: Mentor[],
+  excludePairs: { applicantId: string; mentorId: string }[] = []
 ): { assignments: Assignment[]; mentorSlots: MentorSlot[] } {
   // 멘토 슬롯 초기화 (4타임)
   const mentorSlots: MentorSlot[] = mentors.map(mentor => ({
@@ -116,12 +117,20 @@ export function runAutoAssignment(
     groupedApplicants.map(a => [a.id, getApplicantLangGroup(a)])
   );
 
-  // 전체 신청자를 관심 주제 + 나이 그룹별로 배정 (언어 그룹별 슬롯 분리)
+  // excludePairs를 신청자별 제외 멘토 Set으로 변환
+  const excludeByApplicant = new Map<string, Set<string>>();
+  for (const { applicantId, mentorId } of excludePairs) {
+    if (!excludeByApplicant.has(applicantId)) excludeByApplicant.set(applicantId, new Set());
+    excludeByApplicant.get(applicantId)!.add(mentorId);
+  }
+
+  // 전체 신청자를 선착순으로 배정 (언어 그룹별 슬롯 분리)
   for (const applicant of groupedApplicants) {
     const langGroup = getApplicantLangGroup(applicant);
     const ageGroup = getApplicantAgeGroup(applicant);
+    const excludedMentors = excludeByApplicant.get(applicant.id) ?? new Set<string>();
     const assignment = assignSingleApplicant(
-      applicant, langGroup, ageGroup, mentors, mentorSlots, slotLangMap, slotTopicMap, slotAgeGroupMap, mentorMap, categoryMentorsMap, fieldMentorsMap
+      applicant, langGroup, ageGroup, mentors, mentorSlots, slotLangMap, slotTopicMap, slotAgeGroupMap, mentorMap, categoryMentorsMap, fieldMentorsMap, excludedMentors
     );
     assignments.push(assignment);
   }
@@ -149,7 +158,8 @@ function assignSingleApplicant(
   slotAgeGroupMap: SlotAgeGroupMap,
   mentorMap: Map<string, Mentor>,
   categoryMentorsMap: Map<string, Mentor[]>,
-  fieldMentorsMap: Map<string, Mentor[]>
+  fieldMentorsMap: Map<string, Mentor[]>,
+  excludedMentors: Set<string> = new Set()
 ): Assignment {
   const assignment: Assignment = {
     applicantId: applicant.id,
@@ -158,11 +168,11 @@ function assignSingleApplicant(
     time1: null, time2: null, time3: null, time4: null,
   };
 
-  // 6지망까지 전부 수집
+  // 6지망까지 전부 수집 (제외 멘토 필터링)
   const choices: { choiceNum: number; mentorId: string }[] = [];
   for (let i = 1; i <= NUM_CHOICES; i++) {
     const mentorId = (applicant as unknown as Record<string, unknown>)[`choice${i}`] as string;
-    if (mentorId) choices.push({ choiceNum: i, mentorId });
+    if (mentorId && !excludedMentors.has(mentorId)) choices.push({ choiceNum: i, mentorId });
   }
 
   // 각 타임에 배정될 슬롯 추적

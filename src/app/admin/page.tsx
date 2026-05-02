@@ -52,6 +52,8 @@ export default function AdminPage() {
   const [mentorCounts, setMentorCounts] = useState<Record<string, Record<string, number>>>({});
   const [isLoading, setIsLoading] = useState(true);
   const [isAssigning, setIsAssigning] = useState(false);
+  const [excludePairsText, setExcludePairsText] = useState(''); // "멘티이름,멘토이름" 한 줄씩
+  const [showExclude, setShowExclude] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const [message, setMessage] = useState('');
   const [mentorSearch, setMentorSearch] = useState('');
@@ -137,7 +139,21 @@ export default function AdminPage() {
     setIsAssigning(true);
     setMessage('');
     try {
-      const response = await fetch('/api/admin/assign', { method: 'POST' });
+      // excludePairsText: "멘티이름,멘토이름" 한 줄씩 파싱 → applicantId/mentorId로 변환
+      const excludePairs: { applicantId: string; mentorId: string }[] = [];
+      for (const line of excludePairsText.split('\n')) {
+        const parts = line.trim().split(',');
+        if (parts.length < 2) continue;
+        const [applicantName, mentorName] = parts.map(s => s.trim());
+        const applicant = applicants.find(a => a.name === applicantName);
+        const mentor = mentors.find(m => m.name === mentorName);
+        if (applicant && mentor) excludePairs.push({ applicantId: applicant.id, mentorId: mentor.id });
+      }
+      const response = await fetch('/api/admin/assign', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ excludePairs }),
+      });
       const result = await response.json();
       if (result.success) {
         setMessage(`배정 완료! ${result.data.count}명이 배정되었습니다.`);
@@ -272,6 +288,10 @@ export default function AdminPage() {
                 className="px-3 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 text-xs sm:text-sm font-medium">
                 내보내기
               </button>
+              <button onClick={() => setShowExclude(v => !v)}
+                className="px-3 py-2 bg-yellow-100 text-yellow-800 rounded-lg hover:bg-yellow-200 text-xs sm:text-sm font-medium">
+                제외 설정
+              </button>
               <button onClick={runAssignment} disabled={isAssigning || applicants.length === 0}
                 className="px-3 py-2 bg-primary-400 text-gray-900 rounded-lg hover:bg-primary-500 text-xs sm:text-sm font-medium disabled:opacity-50">
                 {isAssigning ? '배정 중...' : '자동 배정'}
@@ -281,6 +301,19 @@ export default function AdminPage() {
           {message && (
             <div className={`mt-4 p-3 rounded-lg text-sm ${message.includes('오류') ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700'}`}>
               {message}
+            </div>
+          )}
+          {showExclude && (
+            <div className="mt-3 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+              <p className="text-xs font-medium text-yellow-800 mb-1">배정 제외 쌍 (멘티이름,멘토이름 — 한 줄에 하나)</p>
+              <textarea
+                value={excludePairsText}
+                onChange={e => setExcludePairsText(e.target.value)}
+                placeholder={'두나린,장한솔\n홍길동,김철수'}
+                rows={3}
+                className="w-full text-xs border border-yellow-300 rounded p-2 font-mono resize-y bg-white"
+              />
+              <p className="text-xs text-yellow-600 mt-1">자동 배정 실행 시 해당 쌍은 제외되고 다른 멘토로 재배정됩니다.</p>
             </div>
           )}
         </div>
