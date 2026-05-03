@@ -516,8 +516,15 @@ function runConsolidationPass(
   const mentorById = new Map(mentors.map(m => [m.id, m]));
 
   let madeSwap = true;
+  let iterCount = 0;
+  // 한 pass에서 이미 swap된 신청자 추적 (ping-pong 무한 루프 방지)
+  // M 멘토 통합 swap을 다음 iteration에서 Y 멘토 분석이 되돌리는 cycle 발생 가능
+  const swappedApplicants = new Set<string>();
+  const MAX_ITER = 500;
   while (madeSwap) {
     madeSwap = false;
+    iterCount++;
+    if (iterCount > MAX_ITER) break; // 안전장치: 수렴 안 되면 강제 종료
 
     outer:
     for (const mentor of mentors) {
@@ -540,6 +547,8 @@ function runConsolidationPass(
           // tB 신청자를 tA로 이동 시도
           for (let i = tBArr.length - 1; i >= 0; i--) {
             const applicantId = tBArr[i];
+            // 이미 이번 pass에서 swap된 신청자는 스킵 (ping-pong 방지)
+            if (swappedApplicants.has(applicantId)) continue;
             const applicantLang = applicantLangByIdMap.get(applicantId);
             if (!applicantLang || applicantLang === 'korean') continue;
 
@@ -570,6 +579,7 @@ function runConsolidationPass(
             // M: tB에서 제거 → tA에 추가
             tBArr.splice(i, 1);
             tAArr.push(applicantId);
+            swappedApplicants.add(applicantId);
 
             // Y: tA에서 제거 → tB에 추가
             const yTAArr = getSlotArray(ySlot, tA);
