@@ -149,13 +149,16 @@ export function runAutoAssignment(
     excludeByApplicant.get(applicantId)!.add(mentorId);
   }
 
+  // 멘토 ID → MentorSlot Map (find() O(N) 반복 제거 → O(1))
+  const mentorSlotMap = new Map(mentorSlots.map(s => [s.mentorId, s]));
+
   // 전체 신청자를 선착순으로 배정 (언어 그룹별 슬롯 분리)
   for (const applicant of groupedApplicants) {
     const langGroup = getApplicantLangGroup(applicant);
     const ageGroup = getApplicantAgeGroup(applicant);
     const excludedMentors = excludeByApplicant.get(applicant.id) ?? new Set<string>();
     const assignment = assignSingleApplicant(
-      applicant, langGroup, ageGroup, mentors, mentorSlots, slotLangMap, slotTopicMap, slotAgeGroupMap, mentorMap, categoryMentorsMap, fieldMentorsMap, excludedMentors
+      applicant, langGroup, ageGroup, mentors, mentorSlots, mentorSlotMap, slotLangMap, slotTopicMap, slotAgeGroupMap, mentorMap, categoryMentorsMap, fieldMentorsMap, excludedMentors
     );
     assignments.push(assignment);
   }
@@ -178,6 +181,7 @@ function assignSingleApplicant(
   ageGroup: AgeGroup,
   mentors: Mentor[],
   mentorSlots: MentorSlot[],
+  mentorSlotMap: Map<string, MentorSlot>,
   slotLangMap: SlotLangMap,
   slotTopicMap: SlotTopicMap,
   slotAgeGroupMap: SlotAgeGroupMap,
@@ -232,7 +236,7 @@ function assignSingleApplicant(
 
       const mentor = mentorMap.get(mentorId);
       if (!mentor) continue;
-      const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
+      const mentorSlot = mentorSlotMap.get(mentorId);
       if (!mentorSlot) continue;
 
       const choiceMessage = (applicant as unknown as Record<string, unknown>)[`message${choiceNum}`] as string | undefined;
@@ -257,7 +261,7 @@ function assignSingleApplicant(
     const mentor = mentorMap.get(mentorId);
     if (!mentor) continue;
 
-    const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
+    const mentorSlot = mentorSlotMap.get(mentorId);
     if (!mentorSlot) continue;
 
     const choiceMessage = (applicant as unknown as Record<string, unknown>)[`message${choiceNum}`] as string | undefined;
@@ -292,7 +296,7 @@ function assignSingleApplicant(
     const mentor = mentorMap.get(mentorId);
     if (!mentor) continue;
 
-    const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
+    const mentorSlot = mentorSlotMap.get(mentorId);
     if (!mentorSlot) continue;
 
     const choiceMessage = (applicant as unknown as Record<string, unknown>)[`message${choiceNum}`] as string | undefined;
@@ -350,15 +354,15 @@ function assignSingleApplicant(
 
     // 3-1: 원래 선택했지만 아직 배정되지 않은 멘토 다시 시도 (신청자 수 적은 순)
     const sortedChoices = [...choices].sort((a, b) => {
-      const slotA = mentorSlots.find(s => s.mentorId === a.mentorId);
-      const slotB = mentorSlots.find(s => s.mentorId === b.mentorId);
+      const slotA = mentorSlotMap.get(a.mentorId);
+      const slotB = mentorSlotMap.get(b.mentorId);
       return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
     });
     for (const { mentorId } of sortedChoices) {
       if (assignedMentorIds.has(mentorId)) continue;
       const mentor = mentorMap.get(mentorId);
       if (!mentor) continue;
-      const mentorSlot = mentorSlots.find(s => s.mentorId === mentorId);
+      const mentorSlot = mentorSlotMap.get(mentorId);
       if (!mentorSlot) continue;
 
       const result = tryAssignToMentorAtTime(
@@ -380,13 +384,13 @@ function assignSingleApplicant(
       const fieldAlternatives = fieldMentors
         .filter(m => !assignedMentorIds.has(m.id))
         .sort((a, b) => {
-          const slotA = mentorSlots.find(s => s.mentorId === a.id);
-          const slotB = mentorSlots.find(s => s.mentorId === b.id);
+          const slotA = mentorSlotMap.get(a.id);
+          const slotB = mentorSlotMap.get(b.id);
           return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
         });
 
       for (const altMentor of fieldAlternatives) {
-        const altSlot = mentorSlots.find(s => s.mentorId === altMentor.id);
+        const altSlot = mentorSlotMap.get(altMentor.id);
         if (!altSlot) continue;
 
         const result = tryAssignToMentorAtTime(
@@ -416,13 +420,13 @@ function assignSingleApplicant(
       const alternativeMentors = sameCategoryMentors
         .filter(m => !assignedMentorIds.has(m.id))
         .sort((a, b) => {
-          const slotA = mentorSlots.find(s => s.mentorId === a.id);
-          const slotB = mentorSlots.find(s => s.mentorId === b.id);
+          const slotA = mentorSlotMap.get(a.id);
+          const slotB = mentorSlotMap.get(b.id);
           return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
         });
 
       for (const altMentor of alternativeMentors) {
-        const altSlot = mentorSlots.find(s => s.mentorId === altMentor.id);
+        const altSlot = mentorSlotMap.get(altMentor.id);
         if (!altSlot) continue;
 
         const result = tryAssignToMentorAtTime(
@@ -453,13 +457,13 @@ function assignSingleApplicant(
     // 3-4: 최후 수단 - 아무 멘토나 배정 (신청자 수 적은 순)
     if (!assigned) {
       const sortedMentors = [...mentors].sort((a, b) => {
-        const slotA = mentorSlots.find(s => s.mentorId === a.id);
-        const slotB = mentorSlots.find(s => s.mentorId === b.id);
+        const slotA = mentorSlotMap.get(a.id);
+        const slotB = mentorSlotMap.get(b.id);
         return (slotA ? getTotalAssigned(slotA) : 0) - (slotB ? getTotalAssigned(slotB) : 0);
       });
       for (const mentor of sortedMentors) {
         if (assignedMentorIds.has(mentor.id)) continue;
-        const slot = mentorSlots.find(s => s.mentorId === mentor.id);
+        const slot = mentorSlotMap.get(mentor.id);
         if (!slot) continue;
 
         const result = tryAssignToMentorAtTime(

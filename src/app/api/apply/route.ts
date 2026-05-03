@@ -3,6 +3,9 @@ import { upsertApplicant, getAllApplicants, getMentors, setAssignments, setMento
 import { ApplyFormData } from '@/types';
 import { runAutoAssignment } from '@/lib/assignment';
 
+// Vercel 함수 타임아웃 연장 (기본 10초 → 60초)
+export const maxDuration = 60;
+
 export async function POST(request: NextRequest) {
   try {
     const body: ApplyFormData = await request.json();

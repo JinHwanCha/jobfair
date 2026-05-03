@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { getAllApplicants, setAssignments, setMentorSlots, getMentors } from '@/lib/data';
 import { runAutoAssignment } from '@/lib/assignment';
 
+// Vercel 함수 타임아웃 연장 (기본 10초 → 60초)
+export const maxDuration = 60;
+
 export async function POST() {
   try {
     const allMentors = await getMentors();
