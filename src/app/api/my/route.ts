@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getMyAssignment, findApplicant, findApplicants, cancelApplicant, getMentors } from '@/lib/data';
+import { getMyAssignment, findApplicant, findApplicants, cancelApplicant, getMentors, getAllApplicants, setAssignments, setMentorSlots } from '@/lib/data';
 import { Assignment, AssignmentSlot } from '@/types';
+import { runAutoAssignment } from '@/lib/assignment';
 
 export const dynamic = 'force-dynamic';
+
+// Vercel 함수 타임아웃 연장 (기본 10초 → 60초)
+export const maxDuration = 60;
 
 // DB에 저장된 배정 결과의 location 값을 현재 멘토 데이터로 최신화
 async function enrichAssignmentLocations(assignment: Assignment): Promise<Assignment> {
@@ -159,6 +163,21 @@ export async function DELETE(request: NextRequest) {
     }
 
     await cancelApplicant(applicant);
+
+    // 자동 재배정 실행 (취소로 비워진 슬롯을 활용해 전체 재배정)
+    try {
+      const allMentors = await getMentors();
+      // 김지선, 김교은 멘토는 당일 불참으로 배정 제외
+      const mentors = allMentors.filter(m => m.name !== '김지선' && m.name !== '김교은');
+      const allApplicants = await getAllApplicants();
+      if (mentors.length > 0 && allApplicants.length > 0) {
+        const { assignments, mentorSlots } = runAutoAssignment(allApplicants, mentors);
+        await setAssignments(assignments);
+        await setMentorSlots(mentorSlots);
+      }
+    } catch (assignError) {
+      console.error('자동 재배정 오류 (취소는 완료됨):', assignError);
+    }
 
     return NextResponse.json({
       success: true,

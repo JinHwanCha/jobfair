@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { findApplicant, findApplicants, cancelApplicant } from '@/lib/data';
+import { findApplicant, findApplicants, cancelApplicant, getAllApplicants, getMentors, setAssignments, setMentorSlots } from '@/lib/data';
+import { runAutoAssignment } from '@/lib/assignment';
 
 export const dynamic = 'force-dynamic';
+
+// Vercel 함수 타임아웃 연장 (기본 10초 → 60초)
+export const maxDuration = 60;
 
 // 신청자 조회 (취소 전 본인 확인)
 export async function GET(request: NextRequest) {
@@ -64,6 +68,22 @@ export async function DELETE(request: NextRequest) {
     }
 
     await cancelApplicant(applicant);
+
+    // 자동 재배정 실행 (취소로 비워진 슬롯을 활용해 전체 재배정)
+    try {
+      const allMentors = await getMentors();
+      // 김지선, 김교은 멘토는 당일 불참으로 배정 제외
+      const mentors = allMentors.filter(m => m.name !== '김지선' && m.name !== '김교은');
+      const allApplicants = await getAllApplicants();
+      if (mentors.length > 0 && allApplicants.length > 0) {
+        const { assignments, mentorSlots } = runAutoAssignment(allApplicants, mentors);
+        await setAssignments(assignments);
+        await setMentorSlots(mentorSlots);
+      }
+    } catch (assignError) {
+      console.error('자동 재배정 오류 (취소는 완료됨):', assignError);
+    }
+
     return NextResponse.json({ success: true, message: '신청이 취소되었습니다.' });
   } catch (error) {
     console.error('신청 취소 오류:', error);
