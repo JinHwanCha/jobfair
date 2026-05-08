@@ -197,7 +197,7 @@ export default function ResumeApplyPage() {
         {mentors.length > 0 && (
           <div className="mb-8">
             <h3 className="font-bold text-gray-800 mb-3">{t('resume.mentorsTitle')}</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               {mentors.map(m => (
                 <MentorCard
                   key={m.id}

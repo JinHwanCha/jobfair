@@ -317,7 +317,7 @@ export default function HomePage() {
           </div>
 
           {resumeMentors.length > 0 && (
-            <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
               {resumeMentors.map(m => (
                 <MentorCard
                   key={m.id}
