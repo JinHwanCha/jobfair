@@ -467,6 +467,18 @@ export default function MentorPage() {
               <li>{t('mentor.note2')}</li>
             </ul>
           </div>
+
+          {/* 행사 당일 안내 */}
+          <div className="mt-4 space-y-2">
+            <div className="flex gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3">
+              <span className="text-xl shrink-0">⏰</span>
+              <p className="text-sm text-blue-800">{t('resume.noticeItem1')}</p>
+            </div>
+            <div className="flex gap-3 bg-amber-50 border border-amber-100 rounded-xl p-3">
+              <span className="text-xl shrink-0">🎪</span>
+              <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
+            </div>
+          </div>
         </div>
       )}
 

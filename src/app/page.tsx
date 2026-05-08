@@ -81,11 +81,11 @@ export default function HomePage() {
             <h3 className="text-lg font-bold text-gray-800 mb-4">{t('resume.noticeTitle')}</h3>
             <div className="space-y-3 mb-6">
               <div className="flex gap-3 bg-blue-50 rounded-xl p-3">
-                <span className="text-xl shrink-0">👤</span>
+                <span className="text-xl shrink-0">⏰</span>
                 <p className="text-sm text-blue-800">{t('resume.noticeItem1')}</p>
               </div>
               <div className="flex gap-3 bg-amber-50 rounded-xl p-3">
-                <span className="text-xl shrink-0">✍️</span>
+                <span className="text-xl shrink-0">🎪</span>
                 <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
               </div>
               <div className="flex gap-3 bg-red-50 rounded-xl p-3">
