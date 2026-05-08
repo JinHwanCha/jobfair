@@ -254,7 +254,7 @@ const translations = {
   'resume.title': { ko: '자소서 첨삭 신청', en: 'Resume Review Application', zh: '简历修改申请' },
   'resume.noticeTitle': { ko: '📢 주요 변경 안내', en: '📢 Important Updates', zh: '📢 重要变更通知' },
   'resume.noticeItem1': { ko: '행사 당일 원활한 진행을 위해 오후 2시 30분까지 웰컴등록을 해주시면 감사하겠습니다.', en: 'For the smooth running of the event, please complete welcome registration by 2:30 PM on the day of the event. Thank you.', zh: '为了活动当天顺利进行，请在下午2点30分之前完成欢迎登记。谢谢您的配合。' },
-  'resume.noticeItem2': { ko: '직업박람회는 오후 2시 50분부터 진행 예정입니다. 감사합니다.', en: 'The Job Fair is scheduled to begin at 2:50 PM. Thank you.', zh: '职业博览会将于下午2点50分开始，敬请期待。谢谢。' },
+  'resume.noticeItem2': { ko: '직업박람회는 오후 2시 30분부터 진행 예정입니다. 감사합니다.', en: 'The Job Fair is scheduled to begin at 2:30 PM. Thank you.', zh: '职业博览会将于下午2点30分开始，敬请期待。谢谢。' },
   'resume.noticeItem3': { ko: '원활한 행사 진행을 위해 쉴물 앞 주차를 금지합니다.', en: 'For the smooth running of the event, parking in front of Shilmul Cafe is prohibited.', zh: '为确保活动顺利进行，禁止在Shilmul咖啡厅前方停车。' },
   'resume.noticeCancel': { ko: '신청 취소 페이지가 추가되었습니다!', en: 'A cancellation page has been added!', zh: '取消申请页面已上线！' },
   'resume.noticeCancelBefore': { ko: '부득이하게 참여가 어려우신 분들은 꼭 ', en: 'If you are unable to attend, please use ', zh: '如果您无法参加，请务必通过 ' },
