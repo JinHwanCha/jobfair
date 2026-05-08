@@ -417,6 +417,10 @@ export default function MyPage() {
                 <span className="text-xl shrink-0">🎪</span>
                 <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
               </div>
+              <div className="flex gap-3 bg-rose-50 border border-rose-100 rounded-xl p-3">
+                <span className="text-xl shrink-0">🚗</span>
+                <p className="text-sm text-rose-800">{t('resume.noticeItem3')}</p>
+              </div>
             </div>
             <div className="text-center py-8 text-gray-500">
               <p>{t('my.promptSearch')}</p>
