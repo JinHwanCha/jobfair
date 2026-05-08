@@ -12,6 +12,7 @@ interface Mentee {
   currentStatus: string;
   desiredField: string;
   interestTopics: string[];
+  attended?: boolean;
 }
 
 interface UnassignedMentee {
@@ -23,6 +24,7 @@ interface UnassignedMentee {
   currentStatus: string;
   desiredField: string;
   interestTopics: string[];
+  attended?: boolean;
 }
 
 interface TimeSlotData {
@@ -353,7 +355,7 @@ export default function MentorPage() {
                             <span className="inline-flex items-center justify-center w-6 h-6 bg-primary-200 text-gray-900 rounded-full text-xs font-bold">
                               {idx + 1}
                             </span>
-                            <span className="font-medium text-gray-800">{mentee.name}</span>
+                            <span className="font-medium text-gray-800">{mentee.attended && '✅ '}{mentee.name}</span>
                           </div>
                           {/* 멘티 프로필 정보 */}
                           <div className="ml-8 flex flex-wrap gap-1.5 mt-1">
@@ -432,7 +434,7 @@ export default function MentorPage() {
                           }`}>
                             {mentee.choiceNum}지
                           </span>
-                          <span className="font-medium text-gray-800">{mentee.name}</span>
+                          <span className="font-medium text-gray-800">{mentee.attended && '✅ '}{mentee.name}</span>
                         </div>
                         <div className="ml-9 flex flex-wrap gap-1.5 mt-1">
                           {mentee.department && (

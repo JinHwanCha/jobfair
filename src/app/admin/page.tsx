@@ -59,6 +59,39 @@ export default function AdminPage() {
   const [expandedMentor, setExpandedMentor] = useState<string | null>(null);
   const [expandedResume, setExpandedResume] = useState<string | null>(null);
 
+  // 신청자 ID → 출석 여부 맵 (이름 앞 ✅ 표기용)
+  const attendedMap = useMemo(() => {
+    const map = new Map<string, boolean>();
+    applicants.forEach(a => map.set(a.id, !!a.attended));
+    return map;
+  }, [applicants]);
+  const attendedNameSet = useMemo(() => {
+    const set = new Set<string>();
+    applicants.forEach(a => { if (a.attended) set.add(a.name.trim()); });
+    return set;
+  }, [applicants]);
+
+  const toggleAttendance = async (applicantId: string, current: boolean) => {
+    // 올하면 즉시 UI 반영
+    setApplicants(prev => prev.map(a => a.id === applicantId ? { ...a, attended: !current } : a));
+    try {
+      const res = await fetch('/api/admin/attendance', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ applicantId, attended: !current }),
+      });
+      const json = await res.json();
+      if (!json.success) {
+        // 롤백
+        setApplicants(prev => prev.map(a => a.id === applicantId ? { ...a, attended: current } : a));
+        setMessage(`출석 업데이트 실패: ${json.error || ''}`);
+      }
+    } catch {
+      setApplicants(prev => prev.map(a => a.id === applicantId ? { ...a, attended: current } : a));
+      setMessage('출석 업데이트 중 오류가 발생했습니다.');
+    }
+  };
+
   // 신청자 ID → 언어 그룹 맵
   const applicantLangMap = useMemo(() => {
     const map = new Map<string, 'korean' | 'english' | 'chinese'>();
@@ -314,9 +347,15 @@ export default function AdminPage() {
               {applicants.filter(a => applicantsLangFilter === 'all' || applicantLangMap.get(a.id) === applicantsLangFilter).map((applicant) => (
                 <div key={applicant.id} className="bg-white rounded-xl shadow-sm p-4">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="font-bold text-gray-900">{applicant.name}</span>
-                    <button onClick={() => deleteApplicant(applicant.id, applicant.name)}
-                      className="text-red-500 text-xs font-medium px-2 py-1 rounded hover:bg-red-50">삭제</button>
+                    <span className="font-bold text-gray-900">{applicant.attended && '✅ '}{applicant.name}</span>
+                    <div className="flex items-center gap-2">
+                      <button onClick={() => toggleAttendance(applicant.id, !!applicant.attended)}
+                        className={`text-xs font-medium px-2 py-1 rounded ${applicant.attended ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                        {applicant.attended ? '✅ 출석됨' : '출석확인'}
+                      </button>
+                      <button onClick={() => deleteApplicant(applicant.id, applicant.name)}
+                        className="text-red-500 text-xs font-medium px-2 py-1 rounded hover:bg-red-50">삭제</button>
+                    </div>
                   </div>
                   <div className="grid grid-cols-2 gap-1 text-xs text-gray-500">
                     <span>생년월일: {applicant.birthDate}</span>
@@ -353,6 +392,7 @@ export default function AdminPage() {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-20">이름</th>
+                      <th className="px-2 py-2 text-center text-xs font-medium text-gray-500 uppercase w-20">출석</th>
                       <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-16">생년월일</th>
                       <th className="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase w-12">전화</th>
                       {Array.from({ length: 6 }, (_, i) => (
@@ -366,7 +406,13 @@ export default function AdminPage() {
                   <tbody className="divide-y divide-gray-200">
                     {applicants.filter(a => applicantsLangFilter === 'all' || applicantLangMap.get(a.id) === applicantsLangFilter).map((applicant) => (
                       <tr key={applicant.id} className="hover:bg-gray-50">
-                        <td className="px-2 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">{applicant.name}</td>
+                        <td className="px-2 py-2 text-xs font-medium text-gray-900 whitespace-nowrap">{applicant.attended && '✅ '}{applicant.name}</td>
+                        <td className="px-2 py-2 text-center">
+                          <button onClick={() => toggleAttendance(applicant.id, !!applicant.attended)}
+                            className={`text-xs font-medium px-2 py-0.5 rounded ${applicant.attended ? 'bg-green-100 text-green-700 hover:bg-green-200' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                            {applicant.attended ? '✅' : '체크'}
+                          </button>
+                        </td>
                         <td className="px-2 py-2 text-xs text-gray-500">{applicant.birthDate}</td>
                         <td className="px-2 py-2 text-xs text-gray-500">{applicant.phone4}</td>
                         {Array.from({ length: 6 }, (_, i) => {
@@ -411,7 +457,7 @@ export default function AdminPage() {
             <div className="sm:hidden space-y-3">
               {assignments.filter(a => assignmentsLangFilter === 'all' || applicantLangMap.get(a.applicantId) === assignmentsLangFilter).map((assignment) => (
                 <div key={assignment.applicantId} className="bg-white rounded-xl shadow-sm p-4">
-                  <h4 className="font-bold text-gray-900 mb-1">{assignment.applicantName}
+                  <h4 className="font-bold text-gray-900 mb-1">{attendedMap.get(assignment.applicantId) && '✅ '}{assignment.applicantName}
                     <span className="text-xs text-gray-400 font-normal ml-2">({assignment.phone4})</span>
                   </h4>
                   <div className="space-y-2">
@@ -454,7 +500,7 @@ export default function AdminPage() {
                     {assignments.filter(a => assignmentsLangFilter === 'all' || applicantLangMap.get(a.applicantId) === assignmentsLangFilter).map((assignment) => (
                       <tr key={assignment.applicantId} className="hover:bg-gray-50">
                         <td className="px-3 py-2 text-sm font-medium text-gray-900 whitespace-nowrap">
-                          {assignment.applicantName}
+                          {attendedMap.get(assignment.applicantId) && '✅ '}{assignment.applicantName}
                           <span className="text-xs text-gray-400 font-normal ml-1">({assignment.phone4})</span>
                         </td>
                         {Array.from({ length: 4 }, (_, i) => {
@@ -563,7 +609,7 @@ export default function AdminPage() {
                                     }`}>
                                       {item.choiceNum}지망
                                     </span>
-                                    <span className="text-sm font-medium text-gray-800">{item.name}</span>
+                                    <span className="text-sm font-medium text-gray-800">{attendedNameSet.has(item.name.trim()) && '✅ '}{item.name}</span>
                                   </div>
                                   {item.message && (
                                     <p className="text-xs text-gray-500 mt-1 ml-1 italic">&ldquo;{item.message}&rdquo;</p>
@@ -795,7 +841,7 @@ export default function AdminPage() {
                                       <span className="text-xs leading-none">{langDot}</span>
                                     )}
                                     <span className={`text-xs ${e.isOriginalChoice ? 'text-gray-800' : 'text-orange-500'}`}>
-                                      {e.applicantName}
+                                      {attendedMap.get(e.applicantId) && '✅ '}{e.applicantName}
                                     </span>
                                   </div>
                                 );
@@ -866,7 +912,7 @@ export default function AdminPage() {
                                         <span className={`text-xs whitespace-nowrap ${
                                           e.isOriginalChoice ? 'text-gray-800' : 'text-orange-500'
                                         }`}>
-                                          {e.applicantName}
+                                          {attendedMap.get(e.applicantId) && '✅ '}{e.applicantName}
                                         </span>
                                       </div>
                                     );

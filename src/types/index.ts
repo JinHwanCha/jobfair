@@ -52,6 +52,7 @@ export interface Applicant {
   message5?: string; // 5지망 멘토에게 하고싶은 말
   message6?: string; // 6지망 멘토에게 하고싶은 말
   agreedToTerms: boolean;
+  attended?: boolean; // 출석 여부 (관리자가 체크)
   createdAt: string;
   updatedAt: string;
 }

@@ -329,6 +329,15 @@ export async function deleteAllData(): Promise<void> {
   await supabase.from('applicants').delete().neq('id', '');
 }
 
+// 출석 여부 업데이트
+export async function setApplicantAttendance(applicantId: string, attended: boolean): Promise<void> {
+  const { error } = await supabase
+    .from('applicants')
+    .update({ attended })
+    .eq('id', applicantId);
+  if (error) throw error;
+}
+
 // 개별 신청자 삭제 (관리자용 - 취소 기록 없이 강제 삭제)
 export async function deleteApplicant(applicantId: string): Promise<void> {
   await supabase.from('assignments').delete().eq('applicant_id', applicantId);
@@ -408,6 +417,7 @@ function dbToApplicant(row: any): Applicant {
     desiredField: row.desired_field || '',
     interestTopics: (row.interest_topics as MentoringTopic[]) || [],
     agreedToTerms: row.agreed_to_terms,
+    attended: row.attended || false,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
