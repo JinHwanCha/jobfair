@@ -179,6 +179,12 @@ export default function MentorPage() {
             )}
           </div>
 
+          {/* 점심 안내 공지 */}
+          <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 mb-6 flex items-start gap-3">
+            <span className="text-amber-500 flex-shrink-0 text-lg">🍱</span>
+            <p className="text-sm text-amber-800 leading-relaxed">{t('mentor.lunchNotice')}</p>
+          </div>
+
           {/* 자소서 첨삭 멘토: 신청자 목록 */}
           {data.isResumeMentor && data.resumeApplicants && (
             <div className="space-y-4">

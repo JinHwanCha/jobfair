@@ -249,6 +249,7 @@ const translations = {
   'mentor.note1': { ko: '이 페이지는 멘토 본인만 확인할 수 있습니다.', en: 'This page is only accessible to the mentor.', zh: '此页面仅供导师本人查看。' },
   'mentor.note2': { ko: '멘티의 메시지는 신청 시 작성한 내용입니다.', en: 'Mentee messages were written during application.', zh: '学员的留言是申请时填写的内容。' },
   'mentor.prompt': { ko: '이름과 전화번호 뒷자리를 입력하고 확인 버튼을 눌러주세요.', en: 'Enter your name and last 4 digits of phone, then press View.', zh: '请输入姓名和电话号码后4位，然后点击查看。' },
+  'mentor.lunchNotice': { ko: '5/9 직업박람회를 섬겨주시는 멘토들을 위해 점심이 준비되어있습니다. 12시 점심 식사 이후 멘토링 함께 준비해주시면 감사하겠습니다. 감사합니다.', en: 'Lunch will be provided for mentors serving at the 5/9 Job Fair. Please join us for lunch at 12:00 and then prepare for the mentoring sessions together. Thank you.', zh: '为5/9职业博览会服务的导师们准备了午餐。请于12点共进午餐后一起准备导师辅导。谢谢。' },
 
   // ── Resume Review (자소서 첨삭) ──
   'nav.resume': { ko: '자소서 첨삭', en: 'Resume Review', zh: '简历修改' },
