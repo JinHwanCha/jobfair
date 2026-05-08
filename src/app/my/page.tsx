@@ -386,18 +386,6 @@ export default function MyPage() {
                     {isCancelling ? '취소 처리 중...' : '신청 취소하기'}
                   </button>
                 </div>
-
-                {/* 행사 당일 안내 */}
-                <div className="space-y-2">
-                  <div className="flex gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3">
-                    <span className="text-xl shrink-0">⏰</span>
-                    <p className="text-sm text-blue-800">{t('resume.noticeItem1')}</p>
-                  </div>
-                  <div className="flex gap-3 bg-amber-50 border border-amber-100 rounded-xl p-3">
-                    <span className="text-xl shrink-0">🎪</span>
-                    <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
-                  </div>
-                </div>
               </div>
             ) : (
               <div className="text-center py-12">
@@ -418,9 +406,22 @@ export default function MyPage() {
 
         {/* 아직 조회하지 않은 경우 */}
         {!searched && (
-          <div className="text-center py-8 text-gray-500">
-            <p>{t('my.promptSearch')}</p>
-          </div>
+          <>
+            {/* 행사 당일 안내 */}
+            <div className="max-w-md mx-auto mb-6 space-y-2">
+              <div className="flex gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3">
+                <span className="text-xl shrink-0">⏰</span>
+                <p className="text-sm text-blue-800">{t('resume.noticeItem1')}</p>
+              </div>
+              <div className="flex gap-3 bg-amber-50 border border-amber-100 rounded-xl p-3">
+                <span className="text-xl shrink-0">🎪</span>
+                <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
+              </div>
+            </div>
+            <div className="text-center py-8 text-gray-500">
+              <p>{t('my.promptSearch')}</p>
+            </div>
+          </>
         )}
         </>
         )}

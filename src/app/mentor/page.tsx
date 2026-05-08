@@ -467,9 +467,14 @@ export default function MentorPage() {
               <li>{t('mentor.note2')}</li>
             </ul>
           </div>
+        </div>
+      )}
 
+      {/* 초기 상태 */}
+      {!data && !error && !loading && (
+        <>
           {/* 행사 당일 안내 */}
-          <div className="mt-4 space-y-2">
+          <div className="mb-6 space-y-2">
             <div className="flex gap-3 bg-blue-50 border border-blue-100 rounded-xl p-3">
               <span className="text-xl shrink-0">⏰</span>
               <p className="text-sm text-blue-800">{t('resume.noticeItem1')}</p>
@@ -479,14 +484,10 @@ export default function MentorPage() {
               <p className="text-sm text-amber-800">{t('resume.noticeItem2')}</p>
             </div>
           </div>
-        </div>
-      )}
-
-      {/* 초기 상태 */}
-      {!data && !error && !loading && (
-        <div className="text-center py-12 text-gray-400">
-          <p>{t('mentor.prompt')}</p>
-        </div>
+          <div className="text-center py-12 text-gray-400">
+            <p>{t('mentor.prompt')}</p>
+          </div>
+        </>
       )}
     </div>
   );
