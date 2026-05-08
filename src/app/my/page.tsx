@@ -338,6 +338,12 @@ export default function MyPage() {
                   <p className="text-sm text-blue-700 leading-relaxed">{t('my.alternativeNotice')}</p>
                 </div>
 
+                {/* 배정 규칙 안내 */}
+                <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex items-start gap-3">
+                  <span className="text-amber-500 flex-shrink-0 text-lg">📢</span>
+                  <p className="text-sm text-amber-800 leading-relaxed">{t('my.assignmentRuleNotice')}</p>
+                </div>
+
                 {/* 타임별 배정 */}
                 <div className="grid gap-4">
                   {Array.from({ length: 4 }, (_, i) => {
