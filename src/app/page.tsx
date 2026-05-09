@@ -92,6 +92,10 @@ export default function HomePage() {
                 <span className="text-xl shrink-0">🚗</span>
                 <p className="text-sm text-rose-800">{t('resume.noticeItem3')}</p>
               </div>
+              <div className="flex gap-3 bg-purple-50 rounded-xl p-3">
+                <span className="text-xl shrink-0">🔄</span>
+                <p className="text-sm text-purple-800 font-semibold">{t('resume.noticeReassign')}</p>
+              </div>
               <div className="flex gap-3 bg-red-50 rounded-xl p-3">
                 <span className="text-xl shrink-0">🚫</span>
                 <p className="text-sm text-red-800">
