@@ -193,7 +193,7 @@ const translations = {
   'my.notAssigned': { ko: '배정되지 않음', en: 'Not assigned', zh: '未分配' },
   'my.originalChoice': { ko: '원래 선택: ', en: 'Original choice: ', zh: '原选择：' },
   'my.alternativeNotice': { ko: '직업박람회 당일, 희망하셨던 멘토에게 직접 찾아가 궁금한 점을 물어보셔도 됩니다.', en: 'On the day of the event, feel free to visit your preferred mentor directly and ask any questions.', zh: '活动当天，您也可以直接找到您希望的导师，向他/她提问。' },
-  'my.assignmentRuleNotice': { ko: '선착순 배정 / 4지망 우선 순위 / 5,6지망 이후 랜덤 배정되었습니다. 원하시는 멘토가 아닐지라도 열심히 준비해주신 멘토분들과 좋은시간 되길 소망합니다🙏🙏', en: 'Assignments were made on a first-come, first-served basis with priority given through the 4th choice, and 5th/6th choices and beyond assigned randomly. Even if it isn\'t your preferred mentor, we hope you have a great time with the mentors who have prepared diligently for you 🙏🙏', zh: '按先到先得顺序分配，前4个志愿优先，第5、6志愿及之后采取随机分配。即使不是您希望的导师，也希望您能与用心准备的导师们度过美好的时光🙏🙏' },
+  'my.assignmentRuleNotice': { ko: '선착순 배정 / 4지망 우선 순위 / 5,6지망 이후 랜덤 배정되었습니다. 원하시는 멘토가 아닐지라도 열심히 준비해주신 멘토분들과 좋은시간 되길 소망합니다🙏', en: 'Assignments were made on a first-come, first-served basis with priority given through the 4th choice, and 5th/6th choices and beyond assigned randomly. Even if it isn\'t your preferred mentor, we hope you have a great time with the mentors who have prepared diligently for you 🙏🙏', zh: '按先到先得顺序分配，前4个志愿优先，第5、6志愿及之后采取随机分配。即使不是您希望的导师，也希望您能与用心准备的导师们度过美好的时光🙏🙏' },
   'my.originalMessage': { ko: '하고 싶었던 말', en: 'Your message', zh: '想说的话' },
   'my.myMessage': { ko: '멘토에게 한마디', en: 'Your message', zh: '给导师的话' },
   'my.notes': { ko: '유의사항', en: 'Notes', zh: '注意事项' },
